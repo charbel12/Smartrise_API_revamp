@@ -58,9 +58,9 @@ APP.all('/roles/*', ROLES);
 APP.all('/roles', ROLES);
 APP.all('/permissions', ROLES);
 
-// const ALARMS = require('./modules/alarms/controllers/index.js');
-// APP.all('/alarms/*', ALARMS);
-// APP.all('/alarms', ALARMS);
+const ALARMS = require('./modules/alarms/controllers/index.js');
+ APP.all('/alarms/*', ALARMS);
+ APP.all('/alarms', ALARMS);
 
 // const SECURITY = require('./modules/security/controllers/index.js');
 // APP.all('/security/*', SECURITY);

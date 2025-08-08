@@ -11,6 +11,8 @@ const User = require('./User')(sequelize, DataTypes);
 const Role = require('./Role')(sequelize, DataTypes);
 const Permission = require('./Permission')(sequelize, DataTypes);
 const Faults = require('./Faults')(sequelize, DataTypes);
+const Alarms = require('./Alarms')(sequelize, DataTypes);
+
 
 
 // Pivot Tables
@@ -57,6 +59,7 @@ module.exports = {
     sequelize,
     Sequelize,
     User,
+    Alarms,
     Faults,
     Role,
     Permission,

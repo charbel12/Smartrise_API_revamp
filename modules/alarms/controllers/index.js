@@ -7,6 +7,8 @@ const ROUTER_MIDDLEWARE = require('../../../middlewares/router.js');
 const MODEL = require('../models/index.js');
 const AUTH = require('../../../helpers/authentication.js');
 
+const { Alarms } = require('../../../models');
+
 //ROUTER_MIDDLEWARE.USE_STANDARD(APP); //for non authenticated routes
 ROUTER_MIDDLEWARE.USE_AUTHENTICATED(APP); //for secured/authenticated routes
 
@@ -183,6 +185,41 @@ APP.get(`${VARS.base_route}/:id/car`, (req,res)=>{
 		});
 	});
 });
+
+
+APP.get('/alarms', async (req, res) => {
+  try {
+    console.log(req.query);
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const elevator_id = req.query.elevator_id;
+
+    const offset = (page - 1) * limit;
+
+    const whereClause = {};
+    if (elevator_id) {
+      whereClause.elevator_id = elevator_id;
+    }
+
+    const faults = await Alarms.findAndCountAll({
+      where: whereClause,
+      limit: limit,
+      offset: offset,
+    });
+
+    res.json({
+      total: faults.count,
+      page,
+      limit,
+      data: faults.rows,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 
 module.exports = APP;
