@@ -12,6 +12,7 @@ const fs = require("fs");
 
 var group = require('../../../helpers/group.js')
 
+const { Faults } = require('../../../models');
 /**
  * @route GET /faults
  * @Faults - Faults definition
@@ -62,7 +63,7 @@ APP.post(`${VARS.base_route}/:groupID/cars/:carID/datatables`, async(req, res) =
     })
 
 
-    req.body.zone = req.headers.zone ? req.headers.zone : "+00:00";
+    req.body.zone = req.headers.zone ? req.headers.zone : "+03:00";
 
     MODEL.datatables(req.params.groupID, req.params.carID, req.body, function(err, result) {
         if (result.data) {
@@ -216,6 +217,10 @@ APP.get(`${VARS.base_route}/oldest-record`, (req, res) => {
  * @returns {AuthResponseFailed.model} 401 - Access is denied.
  * @security JWT
  */
+
+
+
+
 APP.get(`${VARS.base_route}/:id/number`, (req, res) => {
     MODEL.getNumber(req.params.id, function(err, result) {
         res.json({
@@ -225,5 +230,40 @@ APP.get(`${VARS.base_route}/:id/number`, (req, res) => {
         });
     });
 });
+
+
+APP.get('/faults', async (req, res) => {
+  try {
+    console.log(req.query);
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const elevator_id = req.query.elevator_id;
+
+    const offset = (page - 1) * limit;
+
+    const whereClause = {};
+    if (elevator_id) {
+      whereClause.elevator_id = elevator_id;
+    }
+
+    const faults = await Faults.findAndCountAll({
+      where: whereClause,
+      limit: limit,
+      offset: offset,
+    });
+
+    res.json({
+      total: faults.count,
+      page,
+      limit,
+      data: faults.rows,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 module.exports = APP;

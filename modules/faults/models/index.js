@@ -7,7 +7,7 @@ const TOOLS = require('../../../helpers/tools.js');
 const MOMENT = require('moment');
 
 module.exports = {
-	datatables: function(groupID,carID,data, callback = null){
+	datatables: function(groupID,carID, data, callback = null){
 		var async = require('async'),
 		    QueryBuilder = require('datatable');
         //  console.log(data);
@@ -44,6 +44,7 @@ module.exports = {
         
          
 		var queryBuilder = new QueryBuilder(tableDefinition);
+        
 		 
 		// requestQuery is normally provided by the DataTables AJAX call
 		var requestQuery = {
@@ -56,7 +57,6 @@ module.exports = {
         };
 
         const date = data.search.value ? MOMENT(data.search.value, "YYYY-MM-DD", true) : "";
-
         if(date){
             if(date.isValid()){
                 data.search.value = MOMENT(data.search.value).format("YYYY-MM-DD")
@@ -75,7 +75,7 @@ module.exports = {
         opts = TOOLS.datatableColumnName(opts);
         // Build an object of SQL statements
         var queries = queryBuilder.buildQuery(opts);
-        
+        console.log(queries[0]);
 		// Connect to the database
 		var _params = {
             recordsTotal: function(cb) {

@@ -50,7 +50,7 @@ APP.get(`/permissions`, async(req, res, next) => {
 });
 
 
-APP.delete(`${VARS.base_route}/:id`, async(req, res, next) => {
+APP.delete(`${VARS.base_route}/:id/delete`, async(req, res, next) => {
     MODEL.deleteRole(req, res, function(err, result) {
         return result
     })

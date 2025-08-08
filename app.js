@@ -18,6 +18,10 @@ APP.use(cors(corsOptions));
 APP.use(EXPRESS.json());
 APP.use(EXPRESS.urlencoded({ extended: true }));
 
+
+APP.use(cors({
+  origin: 'http://localhost:5173'  // Your frontend origin
+}));
 fs.readFile('./appversion.txt', 'utf8', (err, data) => {
     if (err) {
         console.error(err)
@@ -37,9 +41,9 @@ APP.get("/", function(req, res) {
 const CONTROLS = require('./modules/controls/controllers/index.js');
 APP.all('/controls/*', CONTROLS);
 
-// const FAULT = require('./modules/faults/controllers/index.js');
-// APP.all('/faults/*', FAULT);
-// APP.all('/faults', FAULT);
+ const FAULT = require('./modules/faults/controllers/index.js');
+APP.all('/faults/*', FAULT);
+ APP.all('/faults', FAULT);
 
 const AUTH = require('./modules/auth/controllers/index.js');
 APP.all('/auth/*', AUTH);

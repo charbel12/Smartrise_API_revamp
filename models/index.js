@@ -10,6 +10,8 @@ const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USERNAME
 const User = require('./User')(sequelize, DataTypes);
 const Role = require('./Role')(sequelize, DataTypes);
 const Permission = require('./Permission')(sequelize, DataTypes);
+const Faults = require('./Faults')(sequelize, DataTypes);
+
 
 // Pivot Tables
 const UserRole = sequelize.define('UserRole', {}, {
@@ -55,6 +57,7 @@ module.exports = {
     sequelize,
     Sequelize,
     User,
+    Faults,
     Role,
     Permission,
     UserRole,
