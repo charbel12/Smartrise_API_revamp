@@ -398,7 +398,7 @@ module.exports = {
     carCallsFloor: function (data, callback = null) {
 
         data = alterData(data);
-        
+        console.log("data",data)
         var _query = `
         SELECT 
         group_id,
@@ -423,6 +423,7 @@ module.exports = {
         
         mysql.pool(_query, [data.group_id, data.date_from, data.date_to], function (err, result) {
             console.log("DBERR::",err);
+            console.log('result',result)
             callback(err, result);
         })
     },
@@ -434,7 +435,6 @@ module.exports = {
                 group_id,
                 car_id,
                 count(id) as total_count,
-                date_created,
                 DATE(date_created) as day_created,
                 HOUR(date_created) as hour_created
             FROM 
@@ -450,7 +450,7 @@ module.exports = {
                 hour_created
         `;
         mysql.pool(_query, [data.group_id, data.date_from, data.date_to], function (err, result) {
-            //console.log("DBERR::",err);
+            console.log("DBERR::",err);
             callback(err, result);
         })
     },
@@ -514,7 +514,7 @@ module.exports = {
     doorTimes: function (data, callback = null) {
         data = alterData(data);
 
-        if(typeof data.floor === "undefined"){
+        if(typeof data.floor_id === "undefined"){
             data.floor = "null is null";
         }
         

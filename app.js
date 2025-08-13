@@ -70,9 +70,9 @@ APP.all('/alarms', ALARMS);
 // APP.all('/dynamic-security/*', DYNAMIC_SECURITY);
 // APP.all('/dynamic-security', DYNAMIC_SECURITY);
 
-// const REPORTS = require('./modules/reports/controllers/index.js');
-// APP.all('/reports/*', REPORTS);
-// APP.all('/reports', REPORTS);
+const REPORTS = require('./modules/reports/controllers/index.js');
+ APP.all('/reports/*', REPORTS);
+ APP.all('/reports', REPORTS);
 
 const GROUPS = require('./modules/groups/controllers/index.js');
 APP.all('/groups/*', GROUPS);
