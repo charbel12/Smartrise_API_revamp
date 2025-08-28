@@ -89,6 +89,16 @@ APP.get(`${VARS.base_route}`,(req,res)=>{
 * @returns {AuthResponseFailed.model} 401 - Access is denied.
 * @security JWT
 */
+APP.get(`${VARS.base_route}/:groupID/car-labels`,(req,res)=>{
+	MODEL.getCarLabels(req.params.groupID,function(err,result){
+		res.json({
+			successful: (err ? false : true),
+			message: (err ? err : ""),
+			data: result
+		});
+	});
+});
+
 APP.get(`${VARS.base_route}/:groupID/cars`,(req,res)=>{
 	MODEL.getAllCars(req.params.groupID,function(err,result){
 		res.json({

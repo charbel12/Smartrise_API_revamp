@@ -6,7 +6,10 @@ const TOOLS = require('../../../helpers/tools.js');
 
 const fs = require('fs');
 
-var PI = JSON.parse(fs.readFileSync(process.env.SETTINGS_PI_LOCATION, 'utf-8'))['data'];
+const PI = JSON.parse(fs.readFileSync(process.env.SETTINGS_PI_LOCATION, 'utf-8'))['data'];
+
+const GroupFiles = require('../../settings/models/group-config.js');
+
 // const PI = [
 //   process.env.PI_0,
 //   process.env.PI_1,
@@ -105,26 +108,6 @@ module.exports = {
 		callback(null,_result);
 	},
 	getAllCars: function(groupID, callback = null){
-		/*var _query = `
-			SELECT
-				e.*
-			FROM
-				elevators e
-			LEFT JOIN 
-				elevator_groups eg
-			ON
-				e.id= eg.elevator_id
-			LEFT JOIN
-				groups g
-			ON
-				g.id = eg.group_id
-			WHERE
-				g.id = ?
-
-		`;
-		mysql.query(_query,[groupID],function(err,result){
-			callback(err,result);
-		})*/
 		var GroupFiles = require('../../settings/models/group-config.js');
 		var _result = [];
 		
@@ -140,6 +123,11 @@ module.exports = {
 				}
 			})
 			callback(null,_result);
+		});
+	},
+	getCarLabels: function(groupID, callback = null){
+		GroupFiles.getCarLabelsFromConfigs(function(err,files){
+			callback(null,files);
 		});
 	},
 	getAllPiLabels: function(groupID, callback = null) {

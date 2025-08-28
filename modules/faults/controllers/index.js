@@ -6,7 +6,7 @@ const TOOLS = require('../../../helpers/tools.js');
 const ROUTER_MIDDLEWARE = require('../../../middlewares/router.js');
 const MODEL = require('../models/index.js');
 //ROUTER_MIDDLEWARE.USE_STANDARD(APP); //for non authenticated routes
-ROUTER_MIDDLEWARE.USE_AUTHENTICATED(APP); //for secured/authenticated routes
+// ROUTER_MIDDLEWARE.USE_AUTHENTICATED(APP); //for secured/authenticated routes
 
 const fs = require("fs");
 

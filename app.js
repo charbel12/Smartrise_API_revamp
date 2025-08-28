@@ -5,7 +5,6 @@ const APP = EXPRESS();
 const PORT = process.env.APP_PORT;
 var expressWs = require('express-ws')(APP);
 var cors = require('cors')
-const UPDATE_FAULTS_OR_ALARMS = require('../SMARTRISE_API/helpers/updateFaultsAlarms.js');
 const fs = require('fs')
 
 const corsOptions = {
