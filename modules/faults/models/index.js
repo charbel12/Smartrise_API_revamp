@@ -75,7 +75,6 @@ module.exports = {
         opts = TOOLS.datatableColumnName(opts);
         // Build an object of SQL statements
         var queries = queryBuilder.buildQuery(opts);
-        console.log(queries[0]);
 		// Connect to the database
 		var _params = {
             recordsTotal: function(cb) {

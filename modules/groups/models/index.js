@@ -2,13 +2,10 @@ const VARS = require('../vars.js');
 
 var mysql = require('../../../helpers/mysqlConnector.js')
 const TABLE_NAME = VARS.table_name;
-const TABLE_SUB_NAME = VARS.table_sub_name;
 const TOOLS = require('../../../helpers/tools.js');
 
-const { execSync } = require("child_process");
-
 const fs = require('fs');
-const axios = require('axios');
+
 var PI = JSON.parse(fs.readFileSync(process.env.SETTINGS_PI_LOCATION, 'utf-8'))['data'];
 // const PI = [
 //   process.env.PI_0,

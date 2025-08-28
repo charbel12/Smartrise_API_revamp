@@ -1,7 +1,6 @@
 const VARS = require('../vars.js');
 const MOMENT = require('moment');
 var mysql = require('../../../helpers/mysqlConnector.js')
-const TABLE_NAME = VARS.table_name;
 const TOOLS = require('../../../helpers/tools.js');
 
 module.exports = {

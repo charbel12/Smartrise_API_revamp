@@ -20,8 +20,9 @@ APP.use(EXPRESS.urlencoded({ extended: true }));
 
 
 APP.use(cors({
-  origin: 'http://localhost:5173'  // Your frontend origin
+    origin: '*'
 }));
+
 fs.readFile('./appversion.txt', 'utf8', (err, data) => {
     if (err) {
         console.error(err)
@@ -41,9 +42,9 @@ APP.get("/", function(req, res) {
 const CONTROLS = require('./modules/controls/controllers/index.js');
 APP.all('/controls/*', CONTROLS);
 
- const FAULT = require('./modules/faults/controllers/index.js');
+const FAULT = require('./modules/faults/controllers/index.js');
 APP.all('/faults/*', FAULT);
- APP.all('/faults', FAULT);
+APP.all('/faults', FAULT);
 
 const AUTH = require('./modules/auth/controllers/index.js');
 APP.all('/auth/*', AUTH);
@@ -59,8 +60,8 @@ APP.all('/roles', ROLES);
 APP.all('/permissions', ROLES);
 
 const ALARMS = require('./modules/alarms/controllers/index.js');
- APP.all('/alarms/*', ALARMS);
- APP.all('/alarms', ALARMS);
+APP.all('/alarms/*', ALARMS);
+APP.all('/alarms', ALARMS);
 
 // const SECURITY = require('./modules/security/controllers/index.js');
 // APP.all('/security/*', SECURITY);
@@ -74,9 +75,9 @@ const ALARMS = require('./modules/alarms/controllers/index.js');
 // APP.all('/reports/*', REPORTS);
 // APP.all('/reports', REPORTS);
 
-// const GROUPS = require('./modules/groups/controllers/index.js');
-// APP.all('/groups/*', GROUPS);
-// APP.all('/groups', GROUPS);
+const GROUPS = require('./modules/groups/controllers/index.js');
+APP.all('/groups/*', GROUPS);
+APP.all('/groups', GROUPS);
 
 // const MANAGE = require('./modules/manage/controllers/index.js');
 // APP.all('/manage/*', MANAGE);

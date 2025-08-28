@@ -53,8 +53,9 @@ module.exports = {
         try {
             const user = await User.findByPk(req.params.id, {
                 include: [{
-                    model: UserRole,
-                    attributes: ['role_id']
+                    model: Role,
+                    attributes: ['id', 'name'],
+                    through: { attributes: [] }
                 }]
             });
 
@@ -64,6 +65,7 @@ module.exports = {
                 data: user
             }));
         } catch (err) {
+            console.log('err: ', err);
             return callback(err, res.status(400).json({ message: err.message }));
         }
     },

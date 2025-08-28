@@ -54,7 +54,7 @@ APP.get(`${VARS.base_route}/:groupID/set-ratio-up/:ratio`,(req,res)=>{
 });
 
 //
-ROUTER_MIDDLEWARE.USE_AUTHENTICATED(APP); //for secured/authenticated routes
+ROUTER_MIDDLEWARE.USE_STANDARD(APP); //for secured/authenticated routes
 
 
 /**

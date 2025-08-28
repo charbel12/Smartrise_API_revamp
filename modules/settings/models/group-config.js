@@ -1,8 +1,4 @@
-const { dirname } = require('path');
-var mysql = require('../../../helpers/mysqlConnector.js')
-const TOOLS = require('../../../helpers/tools.js');
 const { exec } = require("child_process");
-const axios = require('axios');
 
 module.exports = {
 	getGroup: function(id, callback = null) {
