@@ -13,6 +13,9 @@ const Permission = require('./Permission')(sequelize, DataTypes);
 const Faults = require('./Faults')(sequelize, DataTypes);
 const Alarms = require('./Alarms')(sequelize, DataTypes);
 
+const RptFaults = require('./rpt_faults')(sequelize, DataTypes);
+const SystemFaults = require('./system_faults')(sequelize, DataTypes);
+
 
 
 // Pivot Tables
@@ -54,6 +57,11 @@ Permission.belongsToMany(Role, {
     otherKey: 'role_id'
 });
 
+RptFaults.belongsTo(SystemFaults, {
+  as: 'system_fault',
+  foreignKey: 'fault_id',
+  targetKey: 'number',
+});
 // Expose everything
 module.exports = {
     sequelize,
@@ -61,6 +69,8 @@ module.exports = {
     User,
     Alarms,
     Faults,
+    RptFaults,
+    SystemFaults,
     Role,
     Permission,
     UserRole,

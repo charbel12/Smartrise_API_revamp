@@ -193,6 +193,8 @@ module.exports = {
     },
     datatableColumnName: function(query){
         var _cols = query['columns'];
+        console.log('_cols ',_cols);
+
         _cols.forEach(function(col,i){
             if(col.name == ''){
                 query['columns'][i]['name'] = col.data;
