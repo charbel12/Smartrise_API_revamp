@@ -159,7 +159,7 @@ APP.post(`${VARS.base_route}/:groupID/rule`,async(req,res)=>{
 	.then(function (response) {
 		res.status(200).json("true");
 	}).catch(error => {
-		console.log(error)
+
 		res.status(500).json("false");
 	});
 });

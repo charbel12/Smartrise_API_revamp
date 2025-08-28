@@ -173,7 +173,7 @@ APP.get(`${VARS.base_route}/v2/:scheduleID/:controls/schedules`,(req,res) => {
 */
 APP.delete(`${VARS.base_route}/:scheduleID/delete/schedules`,(req,res)=>{
 	MODEL.deleteByScheduleId(req.params.scheduleID,function(err,result){
-		console.log(err)
+
 		res.json({
 			"successful":(err ? false : true),
 			"message":err,

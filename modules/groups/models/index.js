@@ -97,7 +97,7 @@ module.exports = {
 						});
 					}
 				} catch(e) {
-					console.log(e)
+
 					_result.push({
 						id: p['GroupID'],
 						name: p['GroupID']

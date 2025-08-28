@@ -10,7 +10,6 @@ module.exports = {
 	datatables: function(groupID,carID, data, callback = null){
 		var async = require('async'),
 		    QueryBuilder = require('datatable');
-        //  console.log(data);
          // CONVERT_TZ(DATE_FORMAT(ef.date_created, "%d/%m/%Y %H:%i:%s %p"), '+00:00', @@session.time_zone) as new_date
 		var tableDefinition = {
 			sSelectSql: `*`,

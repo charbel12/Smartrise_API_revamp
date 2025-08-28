@@ -9,7 +9,7 @@ module.exports = function(ws, req) {
 
 	ws.on('message', function(msg) {
 		//ws.send(msg);
-		//console.log(msg);
+
 		if(_user = "beaglebone"){
 			var _m = JSON.parse(msg);
 			beaglebone = _m;
@@ -33,7 +33,7 @@ module.exports = function(ws, req) {
 			}
 			catch(err){
 				var _ret = (socket === ws) ? false : true
-				//console.log(err);
+
 			}
 	    });
 		

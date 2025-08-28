@@ -11,7 +11,7 @@ var fs = require('fs');
 var storage = MULTER.diskStorage({
     destination: function (req, file, cb) {
         fs.mkdir(process.env.Dirname + "/" + process.env.SETTINGS_GROUP_LOCATION, err => function (err, dir) {
-            console.log("ERR", err);
+
         });
         cb(null, process.env.SETTINGS_GROUP_LOCATION)
     },
@@ -58,8 +58,8 @@ APP.post(`${VARS.base_route}/group-config/site-id-config`, function (req, res) {
     const { exec } = require('child_process');
     exec("/files/Smartrise_Local_Monitor/site_id_setter " + site_id, (err, stdout, stderr) => {
         exec("/files/Smartrise_Local_Monitor/remote_monitoring_status_setter.sh " + remote_enabled, (err, stdout, stderr) => {
-            console.log('err', err)
-            console.log('stderr',stderr)
+
+
             res.json({successful: true, message: 'Site ID updated successfully!', remote_enabled: remote_enabled});
         });
     });

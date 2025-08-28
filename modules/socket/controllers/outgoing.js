@@ -3,10 +3,8 @@ const TOOLS = require('../../../helpers/tools.js');
 module.exports ={
     outgoing: async (DATA, GROUP_ID, UUID, remote_ws) =>{
         const {module = "", type = "", payload = "", car_id = ""} = DATA;
-        // //console.log('GROUP_ID', GROUP_ID)
         var jsonObj = TOOLS.getRedisKeyValue("requests:" + GROUP_ID+ ":settings");
         let timezone = JSON.parse(jsonObj).timezone
-        // //console.log('timezone is: ',timezone)
         if(GROUP_ID){
             try{
                 switch (module.toLowerCase()) {
@@ -202,20 +200,18 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END CAR CALLS BY FLOORS **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "carcalls-time":
                                 try{										
-                                    //console.log("********** BEGIN CAR CALLS BY TIME **********");
+
                                     
                                     REPORTS_MODEL.carCallsTime(payload, (err, result) =>{
-                                        // //console.log('previous result',result)
                                         if(result && !err){
                                             // result.forEach(element => {
-                                            //     //console.log('type: ',typeof(element.date_created))
                                             //     element.date_created = moment(element.date_created).tz('America/Chicago').format('MM/DD/YYYY HH:mm:ss')
                                             // });
                                             if(remote_ws.readyState === 1){
@@ -295,14 +291,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END DOOR TIMES **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "faults-datatable":
                                 try{										
-                                    //console.log("********** BEGIN FAULTS / ALARMS DEFINITION **********");
+
                                     
                                     FAULTS_MODEL.all(payload, function(err, result){
                                         if(result && !err){
@@ -537,7 +533,7 @@ module.exports ={
                                 break;
                             case "hallcalls-floor":
                                 try{										
-                                    //console.log("********** BEGIN HALL CALLS BY FLOOR **********");
+
                                     
                                     REPORTS_MODEL.hallCallsFloor(payload, function(err, result){
                                         if(result && !err){
@@ -560,14 +556,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END HALL CALLS BY FLOOR **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "hallcalls-time":
                                 try{										
-                                    //console.log("********** BEGIN HALL CALLS BY TIME OF DAY **********");
+
                                     
                                     REPORTS_MODEL.hallCallsTime(payload, function(err, result){
                                         if(result && !err){
@@ -590,14 +586,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END HALL CALLS BY TIME OF DAY **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "out-of-service":
                                 try{										
-                                    //console.log("********** BEGIN OUT OF SERVICE **********");
+
                                     
                                     REPORTS_MODEL.outOfService(payload, function(err, result){
                                         if(result && !err){
@@ -624,14 +620,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END OUT OF SERVICE **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "in-service-overview":
                                 try{
-                                    //console.log("********** BEGIN IN SERVICE OVERVIEW **********");
+
                                     
                                     REPORTS_MODEL.inServiceOverview(payload, function(err, result){
                                         if(result && !err){
@@ -658,14 +654,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END IN SERVICE OVERVIEW **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "program-events":
                                 try{
-                                    //console.log("********** BEGIN PROGRAM EVENTS **********");
+
                                     
                                     REPORTS_MODEL.programEvents(payload, function(err, result){
                                         if(result && !err){
@@ -692,14 +688,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END PROGRAM EVENTS **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "wait-times/ave-floor":
                                 try{
-                                    //console.log("********** BEGIN WAIT TIMES - AVERAGE BY FLOOR **********");
+
                                     
                                     REPORTS_MODEL.waitTimeAveTimeFloor(payload, function(err, result){
                                         if(result && !err){
@@ -722,14 +718,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END WAIT TIMES - AVERAGE BY FLOOR **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "wait-times/ave-time":
                                 try{
-                                    //console.log("********** BEGIN WAIT TIMES - AVERAGE BY TIME OF DAY **********");
+
                                     
                                     REPORTS_MODEL.waitTimeAveTimeDay(payload, function(err, result){
                                         if(result && !err){
@@ -752,14 +748,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END WAIT TIMES - AVERAGE BY TIME OF DAY **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "wait-times/distribution-wait-time":
                                 try{
-                                    //console.log("********** BEGIN WAIT TIMES - DISTRIBUTION BY WAIT TIME **********");
+
                                     
                                     REPORTS_MODEL.waitTime(payload, function(err, result){
                                         if(result && !err){
@@ -782,14 +778,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END WAIT TIMES - DISTRIBUTION BY WAIT TIME **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "wait-times/longest":
                                 try{
-                                    //console.log("********** BEGIN WAIT TIMES - LONGEST **********");
+
                                     
                                     REPORTS_MODEL.waitTimesLongest(payload, function(err, result){
                                         if(result && !err){
@@ -817,7 +813,7 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END WAIT TIMES - LONGEST **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
@@ -830,7 +826,7 @@ module.exports ={
                         switch(type.toLowerCase()){
                             case "datatable":
                                 try{										
-                                    //console.log("********** BEGIN SCHEDULER DATATABLE **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
                                     
@@ -856,14 +852,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END SCHEDULER DATATABLE **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "create":
                                 try{										
-                                    //console.log("********** BEGIN CREATE SCHEDULE **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
                                     
@@ -891,14 +887,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END CREATE SCHEDULE **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "show":
                                 try{										
-                                    //console.log("********** BEGIN SHOW SCHEDULE **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
                                     
@@ -924,14 +920,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END SHOW SCHEDULE **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "update-secure-status":
                                 try{										
-                                    //console.log("********** BEGIN SHOW SCHEDULE **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
                                     const SECURITY_MODEL =  require('../../security/models/index.js');
@@ -945,9 +941,6 @@ module.exports ={
                                     }
                                     if(isSecure === 0 ) {
                                         SECURITY_MODEL.deleteByScheduleId(payload.id, function(err, result) {
-                                            if(err){
-                                                //console.log(err)
-                                            }
                                         })
                                     }
                                     SCHEDULER_MODEL.update(payload.id, defaults, (err, result) =>{
@@ -972,14 +965,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END SHOW SCHEDULE **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "get":
                                 try{										
-                                    //console.log("********** BEGIN GET SCHEDULE **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
 
@@ -1005,14 +998,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END GET SCHEDULE **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "update":
                                 try{										
-                                    //console.log("********** BEGIN UPDATE SCHEDULE **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
                                     
@@ -1040,14 +1033,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END UPDATE SCHEDULE **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "delete":
                                 try{										
-                                    //console.log("********** BEGIN DELETE SCHEDULE **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
                                     
@@ -1073,7 +1066,7 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END DELETE SCHEDULE **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
@@ -1084,7 +1077,7 @@ module.exports ={
                         switch(type.toLowerCase()){
                             case "datatable":
                                 try{										
-                                    //console.log("********** BEGIN SCHEDULER DATATABLE V2 **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
                                     
@@ -1110,14 +1103,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END SCHEDULER DATATABLE V2 **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "create":
                                 try{										
-                                    //console.log("********** BEGIN CREATE SCHEDULE V2 **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
                                     
@@ -1145,14 +1138,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END CREATE SCHEDULE V2 **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "show":
                                 try{										
-                                    //console.log("********** BEGIN SHOW SCHEDULE V2 **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
                                     
@@ -1178,14 +1171,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END SHOW SCHEDULE V2 **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "update-secure-status":
                                 try{										
-                                    //console.log("********** BEGIN UPDATE SECURE STATUS SCHEDULE V2 **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
                                     const SECURITY_MODEL =  require('../../security/models/index.js');
@@ -1199,9 +1192,6 @@ module.exports ={
                                     }
                                     if(isSecure === 0 ) {
                                         SECURITY_MODEL.deleteByScheduleId(payload.id, GROUP_ID, function(err, result) {
-                                            if(err){
-                                                //console.log(err)
-                                            }
                                         })
                                     }
                                     SCHEDULER_MODEL.update(payload.id, defaults, (err, result) =>{
@@ -1226,14 +1216,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END UPDATE SECURE STATUS SCHEDULE V2 **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "get":
                                 try{										
-                                    //console.log("********** BEGIN GET SCHEDULE V2 **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
 
@@ -1259,14 +1249,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END GET SCHEDULE V2 **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "update":
                                 try{										
-                                    //console.log("********** BEGIN UPDATE SCHEDULE V2 **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
                                     
@@ -1294,14 +1284,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END UPDATE SCHEDULE V2 **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "delete":
                                 try{										
-                                    //console.log("********** BEGIN DELETE SCHEDULE V2 **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
                                     
@@ -1327,14 +1317,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END DELETE SCHEDULE V2 **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "validate":
                                 try{										
-                                    //console.log("********** BEGIN VALIDATE SCHEDULE V2 **********");
+
                                     
                                     const SCHEDULER_MODEL =  require('../../schedules/models/index.js');
 
@@ -1392,7 +1382,7 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END VALIDATE SCHEDULE V2 **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
@@ -1403,7 +1393,7 @@ module.exports ={
                         switch (type) {
                             case "post".toUpperCase():
                                 try{										
-                                    //console.log("********** BEGIN CREATE SECURITY **********");
+
                                     
                                     const SECURITY_MODEL =  require('../../security/models/index.js');
                                     
@@ -1429,14 +1419,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END CREATE SECURITY **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "delete".toUpperCase():
                                 try{										
-                                    //console.log("********** BEGIN DELETE SECURITY **********");
+
                                     
                                     const SECURITY_MODEL =  require('../../security/models/index.js');
                                     
@@ -1462,14 +1452,14 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END DELETE SECURITY **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             case "security-schedules":
                                 try{										
-                                    //console.log("********** BEGIN SECURITY SCHEDULES **********");
+
                                     
                                     const SECURITY_MODEL =  require('../../security/models/index.js');
                                     
@@ -1495,13 +1485,13 @@ module.exports ={
                                             throw new Error(err);
                                         }
                                     });
-                                    //console.log("********** END SECURITY SCHEDULES **********");
+
                                 }catch(err){
                                     throw new Error(err.message);
                                 }
                                 break;
                             default:
-                                //console.log("Security method not recognized!");
+
                                 break;
                         }
                         break;
@@ -1509,7 +1499,7 @@ module.exports ={
                         switch(type){
                             case "GET".toLocaleUpperCase():
                                 try{										
-                                    //console.log("********** BEGIN GET CONTROL SETTINGS **********");
+
                                     
                                     const CONTROLS_MODEL =  require('../../controls/models/index.js');
 
@@ -1535,7 +1525,7 @@ module.exports ={
                                         }
                                     }
                                     
-                                    //console.log("********** END GET CONTROL SETTINGS **********");
+
                                     return;
 
                                 }catch(err){
@@ -1544,7 +1534,7 @@ module.exports ={
                             break;
                             case "UPDATE".toLocaleUpperCase():
                                 try{										
-                                    //console.log("********** BEGIN UPDATE CONTROL SETTINGS **********");
+
                                     
                                     const CONTROLS_MODEL =  require('../../controls/models/index.js');
                                     
@@ -1583,7 +1573,7 @@ module.exports ={
                                         }
                                     }
                                         
-                                    //console.log("********** END UPDATE CONTROL SETTINGS **********");
+
                                     return;
                                 }catch(err){
                                     throw new Error(err.message);
@@ -1592,14 +1582,14 @@ module.exports ={
                         }
                         break;
                     default:
-                        console.log("Module not recognized!");
+
                         break;
                 }
             }catch(err){
-                console.log("> CATCH ERROR ::: ", err.message);
+
             }
         }else{
-            console.log("Missing GROUP ID!");
+
         }
     }
 }

@@ -89,7 +89,7 @@ module.exports = {
             this.setRedisKeyValue("requests:" + groupID + ":arrayparameters", jsonObj2)
             this.updateLastUpdateLocal("arrayparameters", groupID)
         }).catch((err) => {
-            console.log(err)
+
             var default_response = '{"8:92":{"id":557,"type":"8","index":"92","page":"","name":"Number of FLRs","value1":"32","value2":"32","value3":"32","value4":"32","value5":"32","value6":"32","value7":"32","value8":"32","sw_name":"NumFloors"},"8:174":{"id":639,"type":"8","index":"174","page":"","name":"Group Landing Offset","value1":"0","value2":"0","value3":"0","value4":"0","value5":"0","value6":"0","value7":"0","value8":"0","sw_name":"GroupLandingOffset"},"32:0":{"id":2124,"type":"32","index":"0","page":"","name":"Front Opening Map 0","value1":"4294967295","value2":"4294967295","value3":"4294967295","value4":"4294967295","value5":"4294967295","value6":"4294967295","value7":"4294967295","value8":"4294967295","sw_name":"OpeningBitmapF_0"},"32:1":{"id":2125,"type":"32","index":"1","page":"","name":"Front Opening Map 1","value1":"0","value2":"0","value3":"0","value4":"0","value5":"0","value6":"0","value7":"0","value8":"0","sw_name":"OpeningBitmapF_1"},"32:2":{"id":2126,"type":"32","index":"2","page":"","name":"Front Opening Map 2","value1":"0","value2":"0","value3":"0","value4":"0","value5":"0","value6":"0","value7":"0","value8":"0","sw_name":"OpeningBitmapF_2"},"32:4":{"id":2128,"type":"32","index":"4","page":"","name":"Rear Opening Map 0","value1":"0","value2":"0","value3":"0","value4":"0","value5":"0","value6":"0","value7":"0","value8":"0","sw_name":"OpeningBitmapR_0"},"32:5":{"id":2129,"type":"32","index":"5","page":"","name":"Rear Opening Map 1","value1":"0","value2":"0","value3":"0","value4":"0","value5":"0","value6":"0","value7":"0","value8":"0","sw_name":"OpeningBitmapR_1"},"32:6":{"id":2130,"type":"32","index":"6","page":"","name":"Rear Opening Map 2","value1":"0","value2":"0","value3":"0","value4":"0","value5":"0","value6":"0","value7":"0","value8":"0","sw_name":"OpeningBitmapR_2"}}'
             this.setRedisKeyValue("requests:" + groupID + ":arrayparameters", JSON.stringify(default_response))
             this.setRedisKeyValue("requests:" + groupID + ":last_updated_local:arrayparameters", 0)
@@ -101,7 +101,7 @@ module.exports = {
             this.setRedisKeyValue("requests:" + groupID + ":cars_with_offset", JSON.stringify(jsonObj))
             this.updateLastUpdateLocal("cars_with_offset", groupID)
         }).catch((err) => {
-            console.log(err)
+
             var default_response = []
             for (var i=0; i<95; i++){
                 var obj = {"carIndex": i.toString(),"cars": []}
@@ -127,7 +127,7 @@ module.exports = {
             this.setRedisKeyValue("requests:" + groupID + ":settings", JSON.stringify(JSON.stringify(response.data)))
             this.updateLastUpdateLocal("settings", groupID)
         }).catch((err) => {
-            console.log(err)
+
             this.setRedisKeyValue("requests:" + groupID + ":settings", JSON.stringify(JSON.stringify({
                 "number_of_cars": "1",
                 "job_name": groupID,
@@ -152,7 +152,7 @@ module.exports = {
                     var jsonObj = response.data;
                     return jsonObj;
                 }).catch((err) => {
-                    console.log(err)
+
                     return {"Status":405, "Message":"RPI is not connected"};
                 })
             }
@@ -193,7 +193,7 @@ module.exports = {
     },
     datatableColumnName: function(query){
         var _cols = query['columns'];
-        console.log('_cols ',_cols);
+
 
         _cols.forEach(function(col,i){
             if(col.name == ''){
@@ -276,7 +276,7 @@ module.exports = {
                 exec('redis-cli -h redis_lm set scannedDevices ' + JSON.stringify(JSON.stringify(collection)), (err, stdout, stderr) => {})
                 resolve(collection)
             }).catch((err) => {
-                console.log('arp error:===>',err);
+
                 resolve([]) 
             })
         })
@@ -307,11 +307,9 @@ module.exports = {
                         // const week = module.exports.getCurrentWeekInMonth() === parseInt(param.week.split("")[0]) ? true : false;
                         const month = MOMENT().month(param.month).format("M");
                         const week = param.week ? parseInt(param.week.split("")[0]) : false;
-                        // console.log(param);
                         if(week && month > 0){
                             // return MOMENT().day(param.day).format("Y-M-D");
                             // return MOMENT(MOMENT().week(week).day(param.day).format("Y-M-D"), "Y-M-D").month(parseInt(month)-1).add(2, 'days').format("Y-M-D");
-                            // console.log(week, month);
                             // return MOMENT(MOMENT().week(week).day(param.day).add('2', 'days').format("Y-M-D"), "Y-M-D").month(parseInt(month)-1).format("Y-M-D");
                             if(MOMENT().isoWeekday(param.day).format("Y-M-D") === MOMENT().format("Y-M-D") && module.exports.getCurrentWeekInMonth() === week){
                                 return MOMENT().isoWeekday(param.day).format("Y-M-D");
@@ -333,7 +331,7 @@ module.exports = {
                 return false;
             }
         }catch(err){
-            console.log(err.message)
+
         }
     },
     getCurrentWeekInMonth: () =>{

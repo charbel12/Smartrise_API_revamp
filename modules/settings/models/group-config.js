@@ -57,7 +57,7 @@ module.exports = {
             }
           });
         } catch (err) {
-          console.log(err);
+
         }
       });
     });
@@ -105,11 +105,11 @@ module.exports = {
                 return;
               }
             } catch (parseErr) {
-              console.log("JSON parse error in file:", filename, parseErr);
+
             }
           });
         } catch (err) {
-          console.log(err);
+
         }
       });
     });
@@ -560,7 +560,7 @@ function readFile(_dir) {
   return new Promise((resolve) => {
     fs.readFile(_dir, "utf8", function (err, content) {
       if (err) {
-        console.log("File read failed:", err);
+
         return;
       }
 
@@ -599,23 +599,6 @@ const updateFile = async (data) => {
       const result = await updateGroupFile(data);
 
       if (result) {
-        // if(process.env.APP_ENV === "production"){
-        // 	const { exec } = require("child_process");
-
-        // 	exec(`sudo npm restart`, (error, stdout, stderr) =>{
-        // 		if (error) {
-        // 			console.log(`error: ${error.message}`);
-        // 			return;
-        // 		}
-        // 		if (stderr) {
-        // 			console.log(`stderr: ${stderr}`);
-        // 			return;
-        // 	    	}
-        // 	    console.log(`********************************`);
-        // 	    console.log(`> RESTARTING THE API: ${stdout}`);
-        // 	    console.log(`********************************`);
-        // 	  });
-        // }
         return true;
       }
     });

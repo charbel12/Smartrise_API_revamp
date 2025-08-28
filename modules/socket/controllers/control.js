@@ -19,14 +19,14 @@ module.exports = function(ws, req) {
     var _msg = JSON.parse(msg);
     var _group = parseInt(_msg['group']) - 1;
 
-    //console.log(msg);
+
 
     var ows = new WebSocket(`ws://` + PI[_group]['location'], {
       origin: ''
     });
     
     
-    //console.log(PI[_group]['location'],_msg,PI);
+
     ows.on('open', function open() {
      if(ows.readyState === 1){
        ows.send(JSON.stringify(_msg['data']));

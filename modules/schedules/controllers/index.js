@@ -24,7 +24,7 @@ ROUTER_MIDDLEWARE.USE_AUTHENTICATED(APP); //for secured/authenticated routes
 APP.post(`${VARS.base_route}/datatables`,(req,res)=>{
 	MODEL.datatables(req.body,function(err,result){
 		if(err) {
-			console.log(err);
+
 		}
 		res.json(result);
 	});
@@ -43,7 +43,7 @@ APP.post(`${VARS.base_route}/datatables`,(req,res)=>{
 APP.post(`${VARS.base_route}/v2/datatables`,(req,res)=>{
 	MODEL.datatablesV2(req.body,function(err,result){
 		if(err) {
-			console.log(err);
+
 		}
 		res.json(result);
 	});
@@ -253,7 +253,7 @@ APP.post(`${VARS.base_route}/:id/:groupId/:isSecure`, (req, res) => {
 	if(isSecure === 0 ) {
 		SECURITY_MODEL.deleteByScheduleId(id, opts.data.group_id, function(err, result) {
 			if(err){
-				console.log(err)
+
 			}
 		})
 	}
@@ -320,7 +320,7 @@ APP.post(`${VARS.base_route}/v2/validate`,(req,res)=>{
 
 		MODEL.validate(param, function(err,result){
 			if(err) {
-				console.log(err);
+
 			}
 			return res.json(result);
 		});

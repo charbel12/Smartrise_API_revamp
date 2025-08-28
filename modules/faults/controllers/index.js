@@ -234,7 +234,7 @@ APP.get(`${VARS.base_route}/:id/number`, (req, res) => {
 
 APP.get('/faults', async (req, res) => {
   try {
-    console.log(req.query);
+
 
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;

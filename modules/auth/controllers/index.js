@@ -5,7 +5,7 @@ const ROUTER = express.Router();
 
 // sign in
 ROUTER.post(`${VARS.base_route}/signin`, async(req, res, next) => {
-    console.log(req.body)
+
     MODEL.userSignin(req, res, function(error, status, result) {
         res.status(status).send(result)
     })

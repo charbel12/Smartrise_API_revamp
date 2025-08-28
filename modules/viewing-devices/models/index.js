@@ -88,7 +88,7 @@ module.exports = {
                         await module.exports.createDevice(args);
                         count = {...count, inserted: i++};
                     }catch(err){
-                        console.log(err);
+
                         count = {...count, failed: i++};
                     }
                 }

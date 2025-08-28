@@ -42,7 +42,7 @@ APP.get(`${VARS.base_route}/io/get-inputs`, async function (req, res) {
         all_inputs = data.data;
         res.json(all_inputs);    
     }).catch((err) => {
-        console.log(err)
+
     })
 })
 
@@ -55,7 +55,7 @@ APP.get(`${VARS.base_route}/io/get-outputs`, async function (req, res) {
         all_inputs = data.data;
         res.json(all_inputs);    
     }).catch((err) => {
-        console.log(err)
+
     })
 })
 

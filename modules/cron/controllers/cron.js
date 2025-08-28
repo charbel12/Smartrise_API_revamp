@@ -14,7 +14,7 @@ module.exports = {
         try{
             MODEL.getOneTime(function(err, result) {
                 if (err) {
-                    console.log(err)
+
                     return
                 }
                 /** Loop One time Value */
@@ -26,7 +26,7 @@ module.exports = {
                         } else {
                             MODEL_SECURITY.getByScheduleId(item.id, function(err, securityItems) {
                                 if (err) {
-                                    console.log(err)
+
                                     return
                                 }
                                 
@@ -45,7 +45,7 @@ module.exports = {
                             // stopBroadcastAll(item.group_id)
                             MODEL_SECURITY.getByScheduleId(item.id, function(err, securityItems) {
                                 if (err) {
-                                    console.log(err)
+
                                     return
                                 }
                                 stopBroadcast(securityItems)
@@ -56,7 +56,7 @@ module.exports = {
                 /** End of Loop */
             });
         }catch(err){
-            console.log("> GET ONE TIME ERROR ::: ",err.message);
+
         }
         /** End of One time process */
 
@@ -64,14 +64,12 @@ module.exports = {
         try{
             MODEL.getYearly(function(err, result) {
                 if (err) {
-                    console.log(err)
+
                     return
                 }
-                //console.log('result ====', result)
                 /** Loop Yearly Value */
                 result.forEach(function(item) {
                     const dayValueObject = JSON.parse(item.day_value)
-                    //console.log('test_value', isTodayDateWOYear(dayValueObject.date))
                     if (isTodayDateWOYear(dayValueObject.date) &&
                         isTodayStartTime(item.start_time) &&
                         isDateRange(item.start_date, item.end_date)) {
@@ -80,7 +78,7 @@ module.exports = {
                         } else {
                             MODEL_SECURITY.getByScheduleId(item.id, function(err, securityItems) {
                                 if (err) {
-                                    console.log(err)
+
                                     return
                                 }
                                 // stopBroadcastAll(item.group_id);
@@ -97,7 +95,7 @@ module.exports = {
                         } else {
                             MODEL_SECURITY.getByScheduleId(item.id, function(err, securityItems) {
                                 if (err) {
-                                    console.log(err)
+
                                     return
                                 }
                                 // stopBroadcastAll(item.group_id);
@@ -110,7 +108,7 @@ module.exports = {
                 /** End of  Loop Yearly Value */
             });
         }catch(err){
-            console.log("> GET YEARLY ERROR ::: ", err.message);
+
         }
         /** End of Yearly process */
 
@@ -118,7 +116,7 @@ module.exports = {
         try{
             MODEL.getOnceAYear(function(err, result) {
                 if (err) {
-                    console.log(err)
+
                     return
                 }
                 /** Loop Yearly Value */
@@ -130,7 +128,7 @@ module.exports = {
                         } else {
                             MODEL_SECURITY.getByScheduleId(item.id, function(err, securityItems) {
                                 if (err) {
-                                    console.log(err)
+
                                     return
                                 }
                                 // stopBroadcastAll(item.group_id);
@@ -142,13 +140,13 @@ module.exports = {
                     // if (testIfDateHasYear(getDayValue(dayValueObject.value)) && isTodayEndTime(item.end_time)){
                     if(durationDay({day: TOOLS.getDayValue(dayValueObject.value), ending_day: item.ending_day}) && isTodayEndTime(item.end_time)){
                         // && parseInt(MOMENT().format("d")) === parseInt(item.ending_day)) {
-                        console.log('> End once a year job')
+
                         if (item.secure_all === 1) {
                             stopBroadcastAll(item.group_id)
                         } else {
                             MODEL_SECURITY.getByScheduleId(item.id, function(err, securityItems) {
                                 if (err) {
-                                    console.log(err)
+
                                     return
                                 }
                                 // stopBroadcastAll(item.group_id);
@@ -161,7 +159,7 @@ module.exports = {
                 /** End of  Loop Yearly Value */
             });
         }catch(err){
-            console.log("> GET ONCE A YEAR ERROR ::: ", err.message)
+
         }
         /** End of Once a Year process */
 
@@ -169,20 +167,20 @@ module.exports = {
         try{
             MODEL.getDaysOfWeekInMonth(function(err, result) {
                 if (err) {
-                    console.log(err)
+
                     return
                 }
                 /** Loop Yearly Value */
                 result.forEach(function(item) {
                     const dayValueObject = JSON.parse(item.day_value)
                     if (testIfDateHasYear(TOOLS.getDayValue(dayValueObject.value)) && isTodayStartTime(item.start_time)) {
-                        console.log('> Start day of week in month job')
+
                         if (item.secure_all === 1) {
                             startBroadcastAll(item.group_id)
                         } else {
                             MODEL_SECURITY.getByScheduleId(item.id, function(err, securityItems) {
                                 if (err) {
-                                    console.log(err)
+
                                     return
                                 }
                                 // stopBroadcastAll(item.group_id);
@@ -194,13 +192,13 @@ module.exports = {
                     // if (testIfDateHasYear(getDayValue(dayValueObject.value)) && isTodayEndTime(item.end_time)
                     if(durationDay({day: TOOLS.getDayValue(dayValueObject.value), ending_day: item.ending_day}) && isTodayEndTime(item.end_time)){
                         // && parseInt(moment().format("d")) === parseInt(item.ending_day)) {
-                        console.log('> End day of week in month job')
+
                         if (item.secure_all === 1) {
                             stopBroadcastAll(item.group_id)
                         } else {
                             MODEL_SECURITY.getByScheduleId(item.id, function(err, securityItems) {
                                 if (err) {
-                                    console.log(err)
+
                                     return
                                 }
                                 // stopBroadcastAll(item.group_id);
@@ -213,58 +211,8 @@ module.exports = {
                 /** End of  Loop Yearly Value */
             });
         }catch(err){
-            console.log("> GET DAYS OF WEEK IN MONTH ERROR ::: ", err.message);
+
         }
-        /** End of Day of Week in Month process */
-
-        /** Same Date Each Year process */
-        // MODEL.getSameDateEachYear(function(err, result) {
-        //     if (err) {
-        //         console.log(err)
-        //         return
-        //     }
-        //     /** Loop Yearly Value */
-        //     result.forEach(function(item) {
-        //         const dayValueObject = JSON.parse(item.day_value)
-        //         if (testIfDateHasYear(TOOLS.getDayValue(dayValueObject.value)) && isTodayStartTime(item.start_time)) {
-        //             console.log('> Start same date each year job')
-        //             if (item.secure_all === 1) {
-        //                 startBroadcastAll(item.group_id)
-        //             } else {
-        //                 MODEL_SECURITY.getByScheduleId(item.id, function(err, securityItems) {
-        //                     if (err) {
-        //                         console.log(err)
-        //                         return
-		// 					}
-		// 					// stopBroadcastAll(item.group_id);
-        //                     startBroadcast(securityItems)
-        //                 })
-        //             }
-        //         }
-
-        //         // if (testIfDateHasYear(getDayValue(dayValueObject.value)) && isTodayEndTime(item.end_time)) {
-        //         if(durationDay({day: TOOLS.getDayValue(dayValueObject.value), ending_day: item.ending_day}) && isTodayEndTime(item.end_time)){
-        //             console.log('> End same date each year job')
-        //             if (item.secure_all === 1) {
-        //                 stopBroadcastAll(item.group_id)
-        //             } else {
-        //                 MODEL_SECURITY.getByScheduleId(item.id, function(err, securityItems) {
-        //                     if (err) {
-        //                         console.log(err)
-        //                         return
-		// 					}
-		// 					// stopBroadcastAll(item.group_id);
-        //                     stopBroadcast(securityItems)
-        //                 })
-        //             }
-
-        //         }
-        //     })
-        //     /** End of  Loop Yearly Value */
-        // })
-        /** End of Same Date Each Year process */
-
-        /** Days of Week */
         try{
             MODEL.getDaysofWeek(function(err, result) {
                 if (err) {
@@ -282,7 +230,7 @@ module.exports = {
                         } else {
                             MODEL_SECURITY.getByScheduleId(item.id, function(err, securityItems) {
                                 if (err) {
-                                    console.log(err)
+
                                     return
                                 }
                                 // stopBroadcastAll(item.group_id);
@@ -297,7 +245,7 @@ module.exports = {
                         } else {
                             MODEL_SECURITY.getByScheduleId(item.id, function(err, securityItems) {
                                 if (err) {
-                                    console.log(err)
+
                                     return
                                 }
                                 // stopBroadcastAll(item.group_id);
@@ -309,70 +257,8 @@ module.exports = {
                 /** End Loop Days of Week Value */
             });
         }catch(err){
-            console.log("> GET DAILY ERROR ::: ", err.message);
+
         }
-        /** End of Days of Week */
-
-        /** Occurence */
-        // MODEL.getOccurence(function(err, result) {
-        //     if (err) {
-        //         console.log(err)
-        //         return
-        //     }
-        //     /** Loop Occurence */
-        //     result.forEach(function(item) {
-        //         const dayValueObject = JSON.parse(item.day_value)
-        //         const {
-        //             day,
-        //             month,
-        //             occurence
-        //         } = dayValueObject
-        //         if (isSameDay(day) &&
-        //             isSameMonth(month) &&
-        //             isTodayStartTime(item.start_time) &&
-        //             parseInt(occurence) > 0 &&
-        //             isDateRange(item.start_date, item.end_date)) {
-        //             console.log('> Start occurence job')
-        //             if (item.secure_all === 1) {
-        //                 startBroadcastAll(item.group_id)
-        //             } else {
-        //                 MODEL_SECURITY.getByScheduleId(item.id, function(err, securityItems) {
-        //                     if (err) {
-        //                         console.log(err)
-        //                         return
-		// 					}
-		// 					// stopBroadcastAll(item.group_id);
-        //                     startBroadcast(securityItems)
-        //                 })
-        //             }
-        //             MODEL.reduceOccurence(item, function(err, result) {
-
-        //             })
-        //         }
-
-        //         if (isSameDay(day) &&
-        //             isSameMonth(month) &&
-        //             isTodayEndTime(item.end_time) &&
-        //             isDateRange(item.start_date, item.end_date)) {
-        //             console.log('> End occurence')
-        //             if (item.secure_all === 1) {
-        //                 stopBroadcastAll(item.group_id)
-        //             } else {
-        //                 MODEL_SECURITY.getByScheduleId(item.id, function(err, securityItems) {
-        //                     if (err) {
-        //                         console.log(err)
-        //                         return
-		// 					}
-		// 					// stopBroadcastAll(item.group_id);
-        //                     stopBroadcast(securityItems)
-        //                 })
-        //             }
-        //         }
-        //     })
-        //     /** End of Loop Occurence */
-        // })
-
-        /** End of Occurence */
     }
 }
 
@@ -528,17 +414,6 @@ let validated = [];
 let dataNew = {};
 function startBroadcast(items) {
 	const SOCKET_ENDPOINT = getWebsocketEndpoint()	
-	// const WS = new WebSocket(SOCKET_ENDPOINT+'/server');
-	
-	// WS.onopen = () =>{
-	// 	WS.onmessage = async (event) =>{
-	// 		if(WS.readyState === 1){
-	// 			await getData(event.data, items, WS);
-	// 			// const validated = await validateSecurity(event.data, items, WS);
-	// 		}
-	// 		// console.log(validated);
-	// 	}
-	// }
 	
     items.forEach(function(item) {
         const stringifyData = JSON.stringify({
@@ -562,7 +437,7 @@ function startBroadcast(items) {
 			// 	await validateSecurity(items);
 			// }
 			CONNECTION.send(unsecureallnew);
-            console.log('> Sending Broadcast ====>', stringifyData)
+
             setTimeout(() =>{
                 CONNECTION.send(stringifyData)
             }, 300)
@@ -575,18 +450,6 @@ function startBroadcast(items) {
 
 function stopBroadcast(items) {
 	const SOCKET_ENDPOINT = getWebsocketEndpoint()
-
-	// const WS = new WebSocket(SOCKET_ENDPOINT+'/server');
-
-	// WS.onopen = () =>{
-	// 	WS.onmessage = async (event) =>{
-	// 		if(WS.readyState === 1){
-	// 			await getData(event.data, items, WS);
-	// 			// const validated = await validateSecurity(event.data, items, WS);
-	// 		}
-	// 		// console.log(validated);
-	// 	}
-	// }
 
     items.forEach(function(item) {
         const stringifyData = JSON.stringify({
@@ -712,8 +575,6 @@ const getData = async (data, items, WS) => {
 const validateSecurity = async (data = null, items) =>{
 	data = data || null;
 	
-	// console.log("DATA_NEW ::: ",data);
-
 	if(data){
 		data = JSON.parse(data.data);
 		for(let item of items){
@@ -778,7 +639,6 @@ const validateFloor = async (data, item) =>{
 				isSecure = {...isSecure, "door": 1, "secure": false, "item": item};
 			}
 		}
-		// console.log(JSON.stringify(isSecure))
 		return JSON.stringify(isSecure);
 	// }
 }

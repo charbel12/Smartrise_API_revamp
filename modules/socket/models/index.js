@@ -23,7 +23,7 @@ module.exports = {
 			`;
 			mysql.pool(_query2, [id, alarm.which_car, group_id, alarm.alarm_number, alarm.alarm_position, alarm.alarms_command_speed_fpm, alarm.alarms_car_speed_fpm, alarm.alarm_position, alarm.alarm_floor_label,alarm.alarm_floor, alarm.alarm_name, alarm.alarm_description, alarm.alarm_solution, alarm_datetime], function (err, result) {
 				if(err) {
-					console.log('error in updateAlarmsTable: ',err)
+
 				}
 				callback(err, result);
 			})
@@ -46,7 +46,7 @@ module.exports = {
 			`;
 			mysql.pool(_query2, [id, alarm.which_car, group_id, alarm.alarm_number, alarm.alarm_position, alarm.alarms_command_speed_fpm, alarm.alarms_command_speed_fpm, alarm.alarm_position,alarm.alarm_floor_label, alarm.alarm_floor, alarm.alarm_name, alarm.alarm_description, alarm.alarm_solution, alarm_datetime], function (err, result) {
 				if(err) {
-					console.log('error in updateRptAlarmsTable: ',err)
+
 				}
 				if(result && result.affectedRows > 0){
 					that.updateAlarmsTable(group_id,[alarm],function(err,result2){
@@ -71,7 +71,7 @@ module.exports = {
 			`;
 			mysql.pool(_query2, [id, fault.which_car, group_id, fault.fault_number, fault.fault_position, fault.fault_command_speed_fpm, fault.fault_car_speed_fpm, fault.fault_position,fault.fault_floor_label , fault.fault_floor, fault.fault_name, fault.fault_description, fault.faults_solution, fault_datetime], function (err, result) {
 				if(err) {
-					console.log('error in updateFaultsTable: ',err)
+
 				}
 				callback(err, result);
 			})
@@ -95,7 +95,7 @@ module.exports = {
 			`;
 			mysql.pool(_query2, [id, fault.which_car, group_id, fault.fault_number, fault.fault_position, fault.fault_command_speed_fpm, fault.fault_command_speed_fpm, fault.fault_position, fault.fault_floor_label, fault.fault_floor, fault.fault_name, fault.fault_description, fault.faults_solution, fault_datetime], function (err, result) {
 				if(err) {
-					console.log('error in updateRptFaultsTable: ',err)
+
 				}
 				if(result && result.affectedRows > 0){
 					that.updateFaultsTable(group_id,[fault],function(err,result2){
@@ -127,7 +127,6 @@ module.exports = {
 				(?,?,?,UTC_TIMESTAMP())
 		`;
 		mysql.pool(_query, [group_id, messageType, message], function (err, result) {
-			//console.log(err)
 			//callback(err,result);
 		})
 	},
@@ -152,7 +151,7 @@ module.exports = {
 			var _res = (result && result[0] ? result[0]['fault_id'] : "x");
 
 
-			//console.log(err,_res,fault_id);
+
 			if (fault_id != 0) {
 
 				console.table({
@@ -236,7 +235,6 @@ module.exports = {
 		})
 	},
 	createHallCalls: function (group_id, floors_id, direction, callback = null) {
-		//console.log(group_id,floors_id,direction)
 		floors_id.forEach(function (val) {
 			var _query = `
 				INSERT
@@ -247,7 +245,7 @@ module.exports = {
 					(?,?,?,0,UTC_TIMESTAMP())
 			`;
 			mysql.pool(_query, [group_id, val, direction], function (err, result) {
-				//console.log("DBERR::",err);
+
 				callback(err, result);
 			})
 		})
@@ -257,7 +255,7 @@ module.exports = {
 		mysql.pool(`SELECT * from rpt_services where group_id = ? AND car_id = ? ORDER BY id DESC LIMIT 1`, [group_id,elevator_id], function (err1, result1) {
 
 			if (err1){
-				console.log(err1);
+
 			}else if(result1.length>0){
 				if(result1[0].class_of_operation == class_of_operation && result1[0].mode_of_operation == mode_of_operation){
 					mysql.pool('update rpt_services set date_next=UTC_TIMESTAMP() WHERE group_id=? AND car_id=? ORDER BY id DESC LIMIT 1', [group_id, elevator_id, floor_id], function (err, result) {})
@@ -270,7 +268,6 @@ module.exports = {
 				VALUES
 					(?,?,?,?,?,UTC_TIMESTAMP(),UTC_TIMESTAMP());`
 			mysql.pool(_query, [group_id, elevator_id, floor_id, mode_of_operation, class_of_operation], function (err, result) {
-				if (err) console.log(err);
 
 				callback(err, result);
 			})
@@ -286,7 +283,6 @@ module.exports = {
 					(?,?,?,?,?,UTC_TIMESTAMP(),UTC_TIMESTAMP())
 			`;
 			mysql.pool(_query, [group_id, elevator_id, floor_id, mode_of_operation, class_of_operation], function (err, result) {
-				if (err) console.log(err);
 
 				callback(err, result);
 			})
@@ -299,7 +295,6 @@ module.exports = {
 
 	updateServices: function (elevator_id, group_id, floor_id, callback = null) {
 		mysql.pool('update rpt_services set date_next=UTC_TIMESTAMP() WHERE group_id=? AND car_id=? ORDER BY id DESC LIMIT 1', [group_id, elevator_id, floor_id], function (err, result) {
-			if (err) console.log(err);
 			callback(err, result)
 		})
 	},
@@ -364,7 +359,6 @@ function sendNotification(type, id, elevator_group_id, elevator_id, position, sp
 			}).format(new Date()),
 		})
 		.then(res => {
-			// console.log(res.data)
 		})
 		.catch(error => {
 			// console.error(error)

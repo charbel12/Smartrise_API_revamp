@@ -124,7 +124,7 @@ APP.get(`${VARS.base_route}/:groupID/cars-with-offset`,(req,res)=>{
 					TOOLS.updateLastUpdateLocal("cars_with_offset", req.params.groupID)
 					res.json(jsonObj);
 				}).catch((err) => {
-					console.log(err)
+
 					var default_response = []
 					for (var i=0; i<95; i++){
 						var obj = {"carIndex": i.toString(),"cars": []}
@@ -162,7 +162,7 @@ APP.get(`${VARS.base_route}/parameters`,(req,res)=>{
 			TOOLS.updateLastUpdateLocal("parameters", req.params.groupID)
 			res.json(jsonObj);
 		}).catch((err) => {
-			console.log(err)
+
 			res.json({"Status":405, "Message":"DAD unit is not connected"});
 		})
 	}	
@@ -189,7 +189,7 @@ APP.get(`${VARS.base_route}/:groupID/get-parameters/:keys`,(req,res)=>{
 					TOOLS.updateLastUpdateLocal("arrayparameters", req.params.groupID)
 					res.json(jsonObj);
 				}).catch((err) => {
-					console.log(err)
+
 					var default_response = '{"8:92":{"id":557,"type":"8","index":"92","page":"","name":"Number of FLRs","value1":"32","value2":"32","value3":"32","value4":"32","value5":"32","value6":"32","value7":"32","value8":"32","sw_name":"NumFloors"},"8:174":{"id":639,"type":"8","index":"174","page":"","name":"Group Landing Offset","value1":"0","value2":"0","value3":"0","value4":"0","value5":"0","value6":"0","value7":"0","value8":"0","sw_name":"GroupLandingOffset"},"32:0":{"id":2124,"type":"32","index":"0","page":"","name":"Front Opening Map 0","value1":"4294967295","value2":"4294967295","value3":"4294967295","value4":"4294967295","value5":"4294967295","value6":"4294967295","value7":"4294967295","value8":"4294967295","sw_name":"OpeningBitmapF_0"},"32:1":{"id":2125,"type":"32","index":"1","page":"","name":"Front Opening Map 1","value1":"0","value2":"0","value3":"0","value4":"0","value5":"0","value6":"0","value7":"0","value8":"0","sw_name":"OpeningBitmapF_1"},"32:2":{"id":2126,"type":"32","index":"2","page":"","name":"Front Opening Map 2","value1":"0","value2":"0","value3":"0","value4":"0","value5":"0","value6":"0","value7":"0","value8":"0","sw_name":"OpeningBitmapF_2"},"32:4":{"id":2128,"type":"32","index":"4","page":"","name":"Rear Opening Map 0","value1":"0","value2":"0","value3":"0","value4":"0","value5":"0","value6":"0","value7":"0","value8":"0","sw_name":"OpeningBitmapR_0"},"32:5":{"id":2129,"type":"32","index":"5","page":"","name":"Rear Opening Map 1","value1":"0","value2":"0","value3":"0","value4":"0","value5":"0","value6":"0","value7":"0","value8":"0","sw_name":"OpeningBitmapR_1"},"32:6":{"id":2130,"type":"32","index":"6","page":"","name":"Rear Opening Map 2","value1":"0","value2":"0","value3":"0","value4":"0","value5":"0","value6":"0","value7":"0","value8":"0","sw_name":"OpeningBitmapR_2"}}'
 					TOOLS.setRedisKeyValue("requests:" + req.params.groupID + ":arrayparameters", JSON.stringify(default_response))
 					TOOLS.setRedisKeyValue("requests:" + req.params.groupID + ":last_updated_local:arrayparameters", 0)
@@ -218,7 +218,7 @@ APP.get(`${VARS.base_route}/:groupID/get-settings`,(req,res)=>{
 					TOOLS.updateLastUpdateLocal("settings", req.params.groupID)
 					res.json(jsonObj);
 				}).catch((err) => {
-					console.log(err)
+
 					TOOLS.setRedisKeyValue("requests:" + req.params.groupID + ":settings", JSON.stringify(JSON.stringify({
 						"number_of_cars": "1",
 						"job_name": req.params.groupID,
@@ -253,7 +253,7 @@ APP.get(`${VARS.base_route}/:groupID/get-parameter/:paramType/:paramIndex`,(req,
 				TOOLS.setRedisKeyValue("requests:lastparameter", jsonObj)
 				res.json(jsonObj);
 			}).catch((err) => {
-				console.log(err)
+
 				var jsonObj = TOOLS.getRedisKeyValue("requests:lastparameter");
 				if (jsonObj) {
 					res.json(jsonObj);

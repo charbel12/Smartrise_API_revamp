@@ -9,7 +9,7 @@ module.exports = function (ws, req) {
 
 	var groups = require('../../settings/models/group-config.js');
 	groups.getGroupConfigFiles(function (err, data) {
-		//console.log(data);
+
 		var _cont = {};
 		data.forEach(function (val) {
 			var _v = val['content'];
@@ -30,7 +30,7 @@ module.exports = function (ws, req) {
 								}
 							}
 							catch(err){
-								console.log('RISER BUFFER ERR',err);
+
 							}
 						},2000);
 					})
@@ -38,14 +38,14 @@ module.exports = function (ws, req) {
 			},300);
 		}
 		catch (err) {
-			console.log('server socket error');
+
 		}
 	});
 
 
 	ws.on('message', function (msg) {
 		//ws.send(msg);
-		//console.log(msg);
+
 		message = msg;
 		if(JSON.parse(msg).MessageType == "Risers"){
 			let _groupPi = JSON.parse(msg).pi_group;
@@ -59,7 +59,7 @@ module.exports = function (ws, req) {
 			}
 			catch (err) {
 				var _ret = (socket === ws) ? false : true
-				console.log(err);
+
 			}
 		});
 	});
@@ -67,7 +67,6 @@ module.exports = function (ws, req) {
 	ws.on('close', function open() {
 		connects = connects.filter(conn => {
 			var _ret = (conn === ws) ? false : true
-			//console.log(connects.length - 1)
 			return _ret;
 		});
 	});

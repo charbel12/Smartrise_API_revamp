@@ -63,7 +63,6 @@ var status = data.status ? ` AND users.status = ${data.status} ` : ``
 
         // Build an object of SQL statements
         var queries = queryBuilder.buildQuery(opts);
-        // console.log(queries.select)
         // Connect to the database
         var _params = {
             recordsTotal: function (cb) {
@@ -74,7 +73,7 @@ var status = data.status ? ` AND users.status = ${data.status} ` : ``
             },
             select: function (cb) {
                 mysql.pool(queries.select, [], function (error, results) {
-                    console.log(error)
+
                     cb(error, results);
                 });
             },
@@ -146,7 +145,6 @@ var status = data.status ? ` AND users.status = ${data.status} ` : ``
                     
                             // Build an object of SQL statements
                             var queries = queryBuilder.buildQuery(opts);
-                            // console.log(queries.select)
                             // Connect to the database
                             var _params = {
                                 recordsTotal: function (cb) {
@@ -221,7 +219,7 @@ var status = data.status ? ` AND users.status = ${data.status} ` : ``
                 users AS u
         `;
         mysql.pool(_query, [], function (err, result) {
-            //console.log("DBERR::",err);  
+
             callback(err, result);
         })
     },
@@ -289,7 +287,6 @@ var status = data.status ? ` AND users.status = ${data.status} ` : ``
 
         // Build an object of SQL statements
         var queries = queryBuilder.buildQuery(opts);
-        // console.log(queries.select)
         // Connect to the database
         var _params = {
             recordsTotal: function (cb) {
@@ -360,7 +357,6 @@ var status = data.status ? ` AND users.status = ${data.status} ` : ``
 
         // Build an object of SQL statements
         var queries = queryBuilder.buildQuery(opts);
-        // console.log(queries.select)
         // Connect to the database
         var _params = {
             recordsTotal: function (cb) {

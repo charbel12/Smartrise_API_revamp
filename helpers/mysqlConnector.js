@@ -20,14 +20,14 @@ function connect() {
     try {
         connection = mysql.createConnection(_connectionString);
     } catch (err) {
-        console.log("DB_INIT_ERR ::: ", err.message)
+
     }
-    //console.log(_connectionString);
+
 
     try {
         connection.on("error", (err) => { });
     } catch (err) {
-        console.log("DB_ERROR ::: ", err.message);
+
     }
 
     return connection;
@@ -44,9 +44,6 @@ try {
         if (err.code !== 'PROTOCOL_CONNECTION_LOST') {
             // throw err;
             // exec('sudo systemctl start mysql', (err, stdout, stderr) => {
-            //     console.log('sudo systemctl start mysql');
-            //     console.log(stderr);
-            //     console.log(stdout);
             // });
         }
 
@@ -54,7 +51,7 @@ try {
         con.connect();
     });
 } catch (err) {
-    console.log("DB_ERROR ::: ", err.message);
+
 }
 
 var pool = mysql.createPool({
@@ -68,16 +65,16 @@ var pool = mysql.createPool({
 });
 
 pool.on('connection', function (connection) {
-    //console.log('connection established');
+
     //connection.query('SET SESSION auto_increment_increment=1')
 });
 
 pool.on('enqueue', function () {
-    //console.log('Waiting for available connection slot');
+
 });
 
 pool.on('release', function (connection) {
-    //console.log('Connection %d released', connection.threadId);
+
 });
 
 module.exports = {
@@ -93,22 +90,18 @@ module.exports = {
     pool: function (qry, param = [], callback) {
         /*pool.getConnection(function(err, connection) {
             connection.query(qry, param, function (err, result) {
-                console.log(qry,param)
+
                 connection.release();
                 callback(err,result);
             });
         });*/
-        //console.log(qry,param)
         pool.query(qry, param, function (err, result) {
-            //console.log(qry,param)
             callback(err, result);
         });
 
 
 
         // pool.end(function (err) {
-        //     // all connections in the pool have ended
-        //     //console.log("POOL ERROR ===>",err);
         // });
 
     }

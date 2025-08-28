@@ -15,10 +15,6 @@ module.exports = {
                     var jsonObj = response.data[type];
                     var jsonContent = JSON.stringify(jsonObj);
                     fs.writeFile(`/files/Smartrise_Local_Monitor/PORTAL/database/data/${type}_data.json`, jsonContent, 'utf8', function (err) {
-                        if (err) {
-                            console.log("An error occured while writing JSON Object to File. " + type);
-                            return console.log(err);
-                        }
                     });
                     setTimeout(() => {
                         exec('php /files/Smartrise_Local_Monitor/PORTAL/artisan db:seed', (err, stdout, stderr) => {
@@ -26,14 +22,14 @@ module.exports = {
                         });
                     }, 3000);
                 }).catch((err) => {
-                    console.log(err)
+
                 })
             } else {
-                console.log('Unable to get the IP from configs/pi/pi.json')
+
             }
         } catch (err) {
-            console.log("Get pi IP from configs/pi/pi.json failed ::: ", err.message)
-            console.log('TYPE: ' + type)
+
+
         }
     }
 }

@@ -210,7 +210,7 @@ module.exports = {
 		/*var MOMENT = require('moment');
 		var _startDate = MOMENT.utc(MOMENT(_data.start_date + " " + _data.start_time).format()).format();
 		var _endDate = MOMENT.utc(MOMENT(_data.end_date + " " + _data.end_time).format()).format();
-		console.log(_startDate,_endDate)
+
 		
 		_data.start_date = MOMENT.utc(_startDate).format('YYYY-MM-DD');
 		_data.start_time = MOMENT.utc(_startDate).format('HH:mm');
@@ -233,7 +233,7 @@ module.exports = {
 		/*var MOMENT = require('moment');
 		var _startDate = MOMENT.utc(MOMENT(_data.start_date + " " + _data.start_time).format()).format();
 		var _endDate = MOMENT.utc(MOMENT(_data.end_date + " " + _data.end_time).format()).format();
-		console.log(_startDate,_endDate)
+
 		
 		_data.start_date = MOMENT.utc(_startDate).format('YYYY-MM-DD');
 		_data.start_time = MOMENT.utc(_startDate).format('HH:mm');

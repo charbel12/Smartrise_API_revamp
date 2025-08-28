@@ -17,7 +17,7 @@ ROUTER_MIDDLEWARE.USE_STANDARD(APP); //for non authenticated routes
 
 APP.post(`${VARS.base_route}/:reportType`,(req,res)=>{
 	var payload = req.body
-	console.log(payload);
+
 	var reportType = req.params.reportType
 	var func = ""
 	switch (reportType) {

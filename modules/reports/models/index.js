@@ -125,8 +125,8 @@ module.exports = {
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
-        console.log("DBERR::", err);
-        console.log("Result:", result);
+
+
         
         callback(err, result);
       }
@@ -163,11 +163,11 @@ module.exports = {
       raw: false,            
       logging: console.log,      
 });
-console.log(callback);
-console.log(results);
+
+
 
       if (callback) {
-        console.log(results);
+
         return callback(null, results); // old style
         
       } else {
@@ -291,7 +291,6 @@ console.log(results);
     opts = TOOLS.datatableColumnName(opts);
     // Build an object of SQL statements
     var queries = queryBuilder.buildQuery(opts);
-    // console.log(queries.select)
     // Connect to the database
     var _params = {
       recordsTotal: function (cb) {
@@ -508,8 +507,8 @@ console.log(results);
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
-        console.log("DBERR::",err);
-        console.log('Result ',result);
+
+
         callback(err, result);
       }
     );
@@ -544,8 +543,8 @@ console.log(results);
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
-        console.log("DBERR::",err);
-        console.log("Result: ",result);
+
+
         callback(err, result);
       }
     );
@@ -587,7 +586,7 @@ console.log(results);
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
-        console.log("Result ", result);
+
         callback(err, result);
       }
     );
@@ -782,8 +781,8 @@ console.log(results);
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
-        console.log("DBERR::",err);
-        console.log('Result ',result);
+
+
         callback(err, result);
       }
     );
@@ -816,8 +815,8 @@ console.log(results);
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
-        console.log("DBERR::",err);
-        console.log("Result:",result);
+
+
 
         callback(err, result);
       }
@@ -843,7 +842,7 @@ console.log(results);
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
-        //console.log("DBERR::",err);
+
         callback(err, result);
       }
     );
@@ -894,24 +893,23 @@ console.log(results);
     };
 
     var opts = TOOLS.extendDefaults(requestQuery, data);
-    console.log('OPTS ',opts);
+
     opts = TOOLS.datatableColumnName(opts);
     // Build an object of SQL statements
     var queries = queryBuilder.buildQuery(opts);
-    // console.log(queries.select)
     // Connect to the database
     var _params = {
       recordsTotal: function (cb) {
         mysql.pool(queries.recordsTotal, [], function (error, results) {
-          console.log('Result ',results);
-          console.log('Error ',error);
+
+
           cb(error, results);
         });
       },
       select: function (cb) {
         mysql.pool(queries.select, [], function (error, results) {
-              console.log('Result1 ',results);
-          console.log('Error1 ',error);
+
+
           cb(error, results);
         });
       },
@@ -926,14 +924,14 @@ console.log(results);
     }
 
     async.parallel(_params, function (err, results) {
-      console.log('Final result ',results);
+
       callback(err, queryBuilder.parseResponse(results));
     });
   },
 
   waitTimesDistributionUp: function (data, callback = null) {
     data = alterData(data);
-    console.log('The data is ',data);
+
     const date = data.date_from
       ? `AND date_created between '${data.date_from}' and '${data.date_to}' `
       : "";
@@ -951,14 +949,14 @@ console.log(results);
     ;
         `;
     mysql.pool(_query, [], function (err, result) {
-      console.log('Result ',result);
+
       callback(err, result);
     });
   },
 
   waitTimesDistributionDown: function (data, callback = null) {
     data = alterData(data);
-    console.log('The data is ',data);
+
     const date = data.date_from
       ? `AND date_created between'${data.date_from}' and '${data.date_to}' `
       : "";
@@ -975,7 +973,7 @@ console.log(results);
     ;
         `;
     mysql.pool(_query, [], function (err, result) {
-      console.log('Down Result ',result);
+
       callback(err, result);
     });
   },
@@ -995,7 +993,7 @@ console.log(results);
     ;
         `;
     mysql.pool(_query, [], function (err, result) {
-      console.log('Resut ',result)
+
       callback(err, result);
     });
   },
@@ -1003,7 +1001,7 @@ console.log(results);
   floorToFloor: function (data, callback = null) {
     data = alterData(data);
     var async = require("async");
-console.log('floor_id',data.floor_id)
+
     var _params = {
       fromFloor: function (cb) {
         var _query = `  
@@ -1035,8 +1033,8 @@ console.log('floor_id',data.floor_id)
           _query,
           [data.group_id, data.floor_id, data.date_from, data.date_to],
           function (err, result) {
-            console.log('ERR1 ',err);
-            console.log('Result 1 ',result);
+
+
             cb(err, result);
           }
         );
@@ -1071,8 +1069,8 @@ console.log('floor_id',data.floor_id)
           _query,
           [data.group_id, data.floor_id, data.date_from, data.date_to],
           function (err, result) {
-            console.log('Result 2 ',result);
-            console.log("ERR 2:",err);
+
+
             cb(err, result);
           }
         );
@@ -1080,8 +1078,8 @@ console.log('floor_id',data.floor_id)
     };
 
     async.parallel(_params, function (err, results) {
-        console.log('ERR2 ',err)
-      console.log('WHat this Results ',results);
+
+
       callback(err, results);
     });
   },
@@ -1109,7 +1107,7 @@ console.log('floor_id',data.floor_id)
       //sWhereAndSql: `wait_time >= 50 and date_created >= '${data.date_from}' and date_created <= '${data.date_to}' and group_id= ${data.group_id}`,
       aSearchColumns: ["data", "new_date_created", "date_created"],
     };
-console.log("[programEvents] tableDefinition:", tableDefinition);
+
 
     var queryBuilder = new QueryBuilder(tableDefinition);
 
@@ -1122,7 +1120,7 @@ console.log("[programEvents] tableDefinition:", tableDefinition);
         regex: false,
       },
     };
-console.log("[programEvents] RequestQuerr:", requestQuery);
+
 
     var opts = TOOLS.extendDefaults(requestQuery, data);
     opts = TOOLS.datatableColumnName(opts);
@@ -1133,13 +1131,13 @@ console.log("[programEvents] RequestQuerr:", requestQuery);
     var _params = {
       recordsTotal: function (cb) {
         mysql.pool(queries.recordsTotal, [], function (error, results) {
-            console.log("[DB RESULT] recordsTotal:", results, "error:", error);
+
           cb(error, results);
         });
       },
       select: function (cb) {
         mysql.pool(queries.select, [], function (error, results) {
-               console.log("[DB RESULT] select:", results, "error:", error);
+
           cb(error, results);
         });
       },
@@ -1154,7 +1152,7 @@ console.log("[programEvents] RequestQuerr:", requestQuery);
     }
 
     async.parallel(_params, function (err, results) {
-      console.log('[RESULT] ',results);
+
       callback(err, queryBuilder.parseResponse(results));
     });
   },
@@ -1214,6 +1212,6 @@ function alterData(data) {
     }
     return data;
   } catch (err) {
-    console.log(err);
+
   }
 }

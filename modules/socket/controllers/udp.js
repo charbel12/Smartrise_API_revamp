@@ -38,7 +38,7 @@ module.exports = function(ws, req) {
 			}
 			catch(err){
 				var _ret = (socket === ws) ? false : true
-				//console.log(err);
+
 			}
 	    });
 	});
@@ -54,7 +54,7 @@ module.exports = function(ws, req) {
 			}
 			catch(err){
 				var _ret = (socket === ws) ? false : true
-				//console.log(err);
+
 			}
 	    });
 		
