@@ -4,17 +4,18 @@ var mysql = require("../../../helpers/mysqlConnector.js");
 const TABLE_NAME = VARS.table_name;
 const TOOLS = require("../../../helpers/tools.js");
 
-const { RptFaults,SystemFaults } = require('../../../models');
-const { Op, fn, col } = require("sequelize");
-const { sequelize, Sequelize } = require('../../../models'); 
+const { RptFaults, SystemFaults ,RptAlarms,SystemAlarms,RptWait, ProgramEvents,RptServices,RefCategory,RefClass} = require("../../../models");
+const { Op, fn, col,literal } = require("sequelize");
+const { sequelize, Sequelize } = require("../../../models");
+const system_faults = require("../../../models/system_faults.js");
+
 
 module.exports = {
   carUse: function (data, callback = null) {
     data = alterData(data);
     var async = require("async");
-
     let car_id = data.car_id ? ` AND car_id = ${data.car_id}` : "";
-
+console.log("car_id ",car_id)
     var _params = {
       carCalls: function (cb) {
         var _query = `
@@ -43,6 +44,7 @@ module.exports = {
           _query,
           [data.group_id, data.date_from, data.date_to],
           function (err, result) {
+            console.log("The result is ", result);
             // for(var i=0; i< result.length; i++){
             //     result[i]['date_created'] = MOMENT(result[i]['date_created']).format("YYYY-MM-DDTHH:mm:ss").toString()+".000Z";
             // }
@@ -125,51 +127,67 @@ module.exports = {
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
-
-
-        
         callback(err, result);
       }
     );
   },
 
-
   faultHistory: async function (data, callback = null) {
     data = alterData(data);
-
+const where = {
+  date_created: { [Op.between]: [data.date_from, data.date_to] },
+  ...(data.group_id ? { elevator_group_id: Number(data.group_id) } : {}),
+  ...(data.car_id ? { elevator_id: Number(data.car_id) } : {}),
+  ...(data.floor_pi
+      ? { floor_index: `${data.floor_pi}` }
+      : {}),
+};
     try {
-     const results = await RptFaults.findAll({
-  attributes: [
-    'elevator_id',
-    'elevator_group_id',
-    ['date_created', 'fault_date'],
-    [sequelize.literal("DATE_FORMAT(`date_created`, '%Y-%m-%d %H:%i:%S')"), 'new_date'],
-    'fault_speed', 'fault_position', 'car_speed', 'car_position',
-    ['floor_pi', 'floor_pi'],
-  ],
-  include: [{
-    model: SystemFaults,
-    as: 'system_fault',
-    attributes: ['id','number','tag','construction','clear_type','clear_ccs','priority','name','definition']
-  }],
-  where: {
-    date_created: { [Op.between]: [data.date_from, data.date_to] },
-    elevator_group_id:1,
-    elevator_id: 1,
-    floor_index:`1`,
-    
-  },
-  order: [['date_created', 'ASC']],
-      raw: false,            
-      logging: console.log,      
-});
+      const results = await RptFaults.findAll({
+        attributes: [
+          "id",
+          "elevator_id",
+          "elevator_group_id",
+          ["date_created", "fault_date"],
+          [
+            sequelize.literal(
+              "DATE_FORMAT(`date_created`, '%Y-%m-%d %H:%i:%S')"
+            ),
+            "new_date",
+          ],
+          "fault_speed",
+          "fault_position",
+          "car_speed",
+          "car_position",
+          ["floor_index", "floor_index"],
 
-
+        ],
+        include: [
+          {
+            model: SystemFaults,
+            required: false,
+            as: "system_fault",
+            attributes: [
+              "id",
+              "number",
+              "tag",
+              "construction",
+              "clear_type",
+              "clear_ccs",
+              "priority",
+              "name",
+              "definition",
+            ],
+          },
+        ],
+        where,
+        order: [["date_created", "ASC"]],
+        raw: true,
+        logging: console.log,
+      });
 
       if (callback) {
-
         return callback(null, results); // old style
-        
       } else {
         return results; // promise style
       }
@@ -182,7 +200,6 @@ module.exports = {
         throw err; // let promise reject
       }
     }
-
 
     /*var tableDefinition = {
       sSelectSql: "*",
@@ -226,12 +243,73 @@ module.exports = {
             ) as sqlQuery`,
       aSearchColumns: ["number", "name", "definition", "solution", "tag"],
     };*/
-
-    
   },
-  alarmHistory: function (data, callback = null) {
+  alarmHistory:async function (data, callback = null) {
     data = alterData(data);
-    var async = require("async"),
+    const where= {
+      date_created: { [Op.between]: [data.date_from, data.date_to] },
+      elevator_group_id: data.group_id,
+      ...(data.car_id ? { elevator_id: data.car_id } : {}),
+      ...(data.floor_pi ? { floor_index: data.floor_pi } : {}),
+    };
+try{
+  const results = await RptAlarms.findAll({
+    attributes: [
+      "id",
+      "elevator_id",
+      "elevator_group_id",
+      ["date_created", "alarm_date"],
+      [
+        sequelize.literal("DATE_FORMAT(`RptAlarms`.`date_created`, '%Y-%m-%d %H:%i:%S')"),
+        "new_date",
+      ],
+      "alarm_speed",
+      "alarm_position",
+      "car_speed",
+      "car_position",
+      ["floor_index", "floor_index"],
+    ],
+    include: [
+      {
+        model: SystemAlarms,
+        as: "system_alarms", 
+        required: false,
+        attributes: [ "id",
+              "number",
+              "name",
+              "solution",
+              "category",
+              "definition",],
+      },
+    ],
+    where,
+    order: [["date_created", "ASC"]],
+    raw: true,
+    logging: console.log,
+  });
+
+
+  if (callback) {
+        return callback(null, results); // old style
+      } else {
+        return results; // promise style
+      }
+    } catch (err) {
+      console.error("Error fetching faults:", err);
+
+      if (callback) {
+        return callback(err); // pass error to callback
+      } else {
+        throw err; // let promise reject
+      }
+    }
+
+
+
+
+
+
+    /*var async = require("async"),
       QueryBuilder = require("datatable");
 
     var tableDefinition = {
@@ -366,7 +444,7 @@ module.exports = {
 
     async.parallel(_params, function (err, results) {
       callback(err, queryBuilder.parseResponse(results));
-    });
+    });*/
   },
   alarmsDefinition: function (data, callback = null) {
     var async = require("async"),
@@ -477,6 +555,7 @@ module.exports = {
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
+        console.log('results',result)
         callback(err, result);
       }
     );
@@ -507,8 +586,6 @@ module.exports = {
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
-
-
         callback(err, result);
       }
     );
@@ -543,7 +620,7 @@ module.exports = {
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
-
+        console.log('result',result);
 
         callback(err, result);
       }
@@ -586,22 +663,123 @@ module.exports = {
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
-
         callback(err, result);
       }
     );
   },
-  outOfService: function (data, callback = null) {
-    data = alterData(data);
-    var async = require("async"),
-      QueryBuilder = require("datatable");
-    var date = data.date_from
+  outOfService:async function (data, callback = null) {
+ data = alterData(data);
+
+   const where = {
+    [Op.and]: [
+      sequelize.where(
+        fn(
+          "CONCAT",
+          col("RptServices.mode_of_operation"),
+          col("RptServices.class_of_operation")
+        ),
+        { [Op.ne]: "23" }
+      ),
+    ],
+    group_id: data.group_id, 
+    ...(data.date_from && data.date_to
+      ? { date_created: { [Op.between]: [data.date_from, data.date_to] } }
+      : {}),
+    ...(data.car_id ? { car_id: data.car_id } : {}),
+  };
+try{
+const results = await RptServices.findAll({
+  attributes: [
+    
+    "id",
+    "group_id",
+    "car_id",
+    "floor_id",
+    "mode_of_operation",
+    "class_of_operation",
+
+    [
+      fn(
+        "CONCAT",
+        col("refClassCategory->refClass.name"),
+        literal(" ' / ' "),
+        col("refClassCategory.name")
+      ),
+      "mode_of",
+    ],
+    [
+      literal(
+        "CONCAT(" +
+          "FLOOR(TIMESTAMPDIFF(SECOND, `RptServices`.`date_created`, `RptServices`.`date_next`) / 86400), 'd ', " +
+          "FLOOR(MOD(TIMESTAMPDIFF(SECOND, `RptServices`.`date_created`, `RptServices`.`date_next`), 86400) / 3600), 'h ', " +
+          "FLOOR(MOD(TIMESTAMPDIFF(SECOND, `RptServices`.`date_created`, `RptServices`.`date_next`), 3600) / 60), 'm'" +
+        ")"
+      ),
+      "DURATION",
+    ],
+    [
+      literal(
+        "DATE_FORMAT(`RptServices`.`date_created`, '%d/%m/%Y %H:%i:%s')"
+      ),
+      "Date & Time",
+    ],
+  ],
+
+  include: [
+    {
+      model: RefCategory,
+      as: "refClassCategory",
+      attributes: [],
+      required: true,
+      constraints: false,
+      on: {
+        ref_cat_id: { [Op.eq]: col("RptServices.mode_of_operation") },
+        ref_class_id: { [Op.eq]: col("RptServices.class_of_operation") },
+      },
+      include: [
+        {
+          model: RefClass,
+          as: "refClass",
+          attributes: [],
+          required: true,
+          constraints: false,
+          on: {
+            class_id: { [Op.eq]: col("refClassCategory.ref_class_id") },
+          },
+        },
+      ],
+    },
+  ],
+
+  where,
+  order: [["date_created", "ASC"]],
+  raw: true,
+});
+      if (callback) {
+        console.log('results ',results);
+        return callback(null, results);
+      } else {
+        return results;
+      }
+    } catch (err) {
+      console.error('Error fetching services:', err);
+      if (callback) {
+        return callback(err);
+      } else {
+        throw err;
+      }
+    }
+  },
+
+
+
+
+   /* var date = data.date_from
       ? `AND date_created BETWEEN '${data.date_from}' AND '${data.date_to}'`
       : "";
-    var cID = data.car_id ? `AND car_id = ${data.car_id}` : "";
-    var tableDefinition = {
-      sSelectSql: "*",
-      sFromSql: `(
+    var cID = data.car_id ? `AND car_id = ${data.car_id}` : "";*/
+     
+    /*  sFromSql: `(
                 
                 SELECT 
                     rpt_services.*,
@@ -625,67 +803,8 @@ module.exports = {
                         ${cID}
                         group by mode_of
                     
-                ) as sqQ`,
-      aSearchColumns: ["car_id", "mode_of"],
-      //sTableName: 'rpt_services',
-      //sWhereAndSql: `(class_of_operation != 3 and mode_of_operation != 2) and date_created >= '${data.date_from}' and date_created <= '${data.date_to}' and group_id= ${data.group_id} ${_cID}`,
-      //aSearchColumns: ['car_id','mode_of_operation']
-    };
-
-    var queryBuilder = new QueryBuilder(tableDefinition);
-
-    // requestQuery is normally provided by the DataTables AJAX call
-    var requestQuery = {
-      start: 0,
-      length: 10,
-      search: {
-        value: "",
-        regex: false,
-      },
-    };
-
-    var opts = TOOLS.extendDefaults(requestQuery, data);
-    opts = TOOLS.datatableColumnName(opts);
-    // Build an object of SQL statements
-    var queries = queryBuilder.buildQuery(opts);
-
-    // Connect to the database
-    var _params = {
-      recordsTotal: function (cb) {
-        mysql.pool(queries.recordsTotal, [], function (error, results) {
-          cb(error, results);
-        });
-      },
-      select: function (cb) {
-        mysql.pool(queries.select, [], function (error, results) {
-          cb(error, results);
-        });
-      },
-    };
-
-    if (opts.search.value != "") {
-      _params["recordsFiltered"] = function (cb) {
-        mysql.pool(queries.recordsTotal, [], function (error, results) {
-          cb(error, results);
-        });
-      };
-    }
-
-    async.parallel(_params, function (err, results) {
-      var res = queryBuilder.parseResponse(results);
-      for (let index = 0; index < res.data.length; index++) {
-        const element = res.data[index];
-        duration = element.DURATION;
-        days = parseInt(duration / (60 * 60 * 24));
-        duration = duration - days * (60 * 60 * 24);
-        hours = parseInt(duration / (60 * 60));
-        duration = duration - hours * (60 * 60);
-        minutes = parseInt(duration / 60);
-        res.data[index].DURATION = days + "d " + hours + "h " + minutes + "m";
-      }
-      callback(err, res);
-    });
-  },
+                ) as sqQ`,*/
+     
 
   inServiceOverview: function (data, callback = null) {
     let dateInput;
@@ -748,7 +867,7 @@ module.exports = {
 
         return callback(err, null);
       }
-        console.error('Result: ',result);
+      console.error("Result: ", result);
 
       callback(null, result);
     });
@@ -781,8 +900,7 @@ module.exports = {
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
-
-
+        console.log('result ',result);
         callback(err, result);
       }
     );
@@ -815,9 +933,7 @@ module.exports = {
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
-
-
-
+        console.log('result ',result );
         callback(err, result);
       }
     );
@@ -842,17 +958,56 @@ module.exports = {
       _query,
       [data.group_id, data.date_from, data.date_to],
       function (err, result) {
-
         callback(err, result);
       }
     );
   },
-  waitTimesLongest: function (data, callback) {
+  waitTimesLongest:  async function (data, callback = null)  {
     data = alterData(data);
-    var async = require("async"),
-      QueryBuilder = require("datatable");
+ try{
+const results = await RptWait.findAll({
+  attributes: [
+    "id",
+    "group_id",
+    "floor_id",
+    [
+      Sequelize.literal("CONCAT('Floor', ' ', `RptWait`.`floor_id`)"),
+      "floor_name",
+    ],
+    "direction",
+    "date_created",
+    "wait_time",
+  ],
+  where: {
+    wait_time: {
+      [Op.gte]: 50,
+    },
+    date_created: {
+      [Op.gte]: data.date_from,
+      [Op.lte]: data.date_to,
+    },
+    group_id: data.group_id,
+  },
+  order: [["date_created", "ASC"]],
+});
 
-    var tableDefinition = {
+   if (callback) {
+    console.log(results);
+        return callback(null, results); 
+      } else {
+        return results; 
+      }
+    } catch (err) {
+      console.error("Error fetching faults:", err);
+
+      if (callback) {
+        return callback(err); 
+      } else {
+        throw err; 
+      }
+    }
+
+    /*
       //sTableName: 'rpt_wait',
       sSelectSql: "*",
       sFromSql: `
@@ -875,58 +1030,8 @@ module.exports = {
                 AND 
                     group_id= ${data.group_id}
             )as sqQ
-            `,
-      //sWhereAndSql: `wait_time >= 50 and date_created >= '${data.date_from}' and date_created <= '${data.date_to}' and group_id= ${data.group_id}`,
-      aSearchColumns: ["floor_name", "direction", "wait_time", "date_created"],
-    };
-
-    var queryBuilder = new QueryBuilder(tableDefinition);
-
-    // requestQuery is normally provided by the DataTables AJAX call
-    var requestQuery = {
-      start: 0,
-      length: 10,
-      search: {
-        value: "",
-        regex: false,
-      },
-    };
-
-    var opts = TOOLS.extendDefaults(requestQuery, data);
-
-    opts = TOOLS.datatableColumnName(opts);
-    // Build an object of SQL statements
-    var queries = queryBuilder.buildQuery(opts);
-    // Connect to the database
-    var _params = {
-      recordsTotal: function (cb) {
-        mysql.pool(queries.recordsTotal, [], function (error, results) {
-
-
-          cb(error, results);
-        });
-      },
-      select: function (cb) {
-        mysql.pool(queries.select, [], function (error, results) {
-
-
-          cb(error, results);
-        });
-      },
-    };
-
-    if (opts.search.value != "") {
-      _params["recordsFiltered"] = function (cb) {
-        mysql.pool(queries.recordsTotal, [], function (error, results) {
-          cb(error, results);
-        });
-      };
-    }
-
-    async.parallel(_params, function (err, results) {
-
-      callback(err, queryBuilder.parseResponse(results));
-    });
+            `,*/
+     
   },
 
   waitTimesDistributionUp: function (data, callback = null) {
@@ -949,7 +1054,7 @@ module.exports = {
     ;
         `;
     mysql.pool(_query, [], function (err, result) {
-
+      console.log('result ',result);
       callback(err, result);
     });
   },
@@ -973,7 +1078,6 @@ module.exports = {
     ;
         `;
     mysql.pool(_query, [], function (err, result) {
-
       callback(err, result);
     });
   },
@@ -993,7 +1097,6 @@ module.exports = {
     ;
         `;
     mysql.pool(_query, [], function (err, result) {
-
       callback(err, result);
     });
   },
@@ -1033,8 +1136,6 @@ module.exports = {
           _query,
           [data.group_id, data.floor_id, data.date_from, data.date_to],
           function (err, result) {
-
-
             cb(err, result);
           }
         );
@@ -1069,8 +1170,6 @@ module.exports = {
           _query,
           [data.group_id, data.floor_id, data.date_from, data.date_to],
           function (err, result) {
-
-
             cb(err, result);
           }
         );
@@ -1078,20 +1177,53 @@ module.exports = {
     };
 
     async.parallel(_params, function (err, results) {
-
-
       callback(err, results);
     });
   },
-  programEvents: function (data, callback = null) {
-    data = alterData(data);
+  programEvents:async function (data, callback = null) {
 
-    var async = require("async"),
-      QueryBuilder = require("datatable");
+    data = alterData(data);
 
     const type = data.type ? `AND type = '${data.type}'` : "";
 
-    var tableDefinition = {
+const where = {
+  date_created: { [Op.between]: [data.date_from, data.date_to] },
+  ...(data.type
+    ? Array.isArray(data.type)
+      ? { type: { [Op.in]: data.type } }
+      : { type: data.type }
+    : {}),
+};
+try{
+const results = await ProgramEvents.findAll({
+  attributes: [
+    'id',
+    [fn('DATE_FORMAT', col('date_created'), '%d/%m/%Y %H:%i:%s'), 'date_created'],
+    [fn('CONCAT', col('type'), ' : ', col('description')), 'type & description'],
+  ],
+  where: {
+    date_created: { [Op.between]: [data.date_from, data.date_to] },
+    ...(data.type ? { type: data.type } : {}),
+  },
+  order: [['date_created', 'ASC']],
+  raw: true,
+});
+ if (callback) {
+    console.log(results);
+        return callback(null, results); 
+      } else {
+        return results; 
+      }
+    } catch (err) {
+      console.error("Error fetching faults:", err);
+
+      if (callback) {
+        return callback(err); 
+      } else {
+        throw err; 
+      }
+    }
+    /*var tableDefinition = {
       sSelectSql: "*",
       sFromSql: `
                 (SELECT CONCAT(rpt_program_events.type,": ",rpt_program_events.description) as data,
@@ -1103,58 +1235,8 @@ module.exports = {
                 date_created between  '${data.date_from}' and '${data.date_to}'
                 ${type}
                             )as sqQ
-            `,
-      //sWhereAndSql: `wait_time >= 50 and date_created >= '${data.date_from}' and date_created <= '${data.date_to}' and group_id= ${data.group_id}`,
-      aSearchColumns: ["data", "new_date_created", "date_created"],
-    };
-
-
-    var queryBuilder = new QueryBuilder(tableDefinition);
-
-    // requestQuery is normally provided by the DataTables AJAX call
-    var requestQuery = {
-      start: 0,
-      length: 10,
-      search: {
-        value: "",
-        regex: false,
-      },
-    };
-
-
-    var opts = TOOLS.extendDefaults(requestQuery, data);
-    opts = TOOLS.datatableColumnName(opts);
-    // Build an object of SQL statements
-    var queries = queryBuilder.buildQuery(opts);
-
-    // Connect to the database
-    var _params = {
-      recordsTotal: function (cb) {
-        mysql.pool(queries.recordsTotal, [], function (error, results) {
-
-          cb(error, results);
-        });
-      },
-      select: function (cb) {
-        mysql.pool(queries.select, [], function (error, results) {
-
-          cb(error, results);
-        });
-      },
-    };
-
-    if (opts.search.value != "") {
-      _params["recordsFiltered"] = function (cb) {
-        mysql.pool(queries.recordsTotal, [], function (error, results) {
-          cb(error, results);
-        });
-      };
-    }
-
-    async.parallel(_params, function (err, results) {
-
-      callback(err, queryBuilder.parseResponse(results));
-    });
+            `,*/
+      
   },
 };
 
@@ -1211,7 +1293,5 @@ function alterData(data) {
       }
     }
     return data;
-  } catch (err) {
-
-  }
+  } catch (err) {}
 }
