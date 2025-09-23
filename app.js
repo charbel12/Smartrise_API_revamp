@@ -125,12 +125,12 @@ APP.all('/groups', GROUPS);
 // APP.all('/installation', INSTALLATION);
 
 // //WEBSOCKET FOR REALTIME COMMS
-// const SOCKET_SERVER = require('./modules/socket/controllers/server.js');
-// APP.ws(`/socket/server`, SOCKET_SERVER);
+const SOCKET_SERVER = require('./modules/socket/controllers/server.js');
+APP.ws(`/socket/server`, SOCKET_SERVER);
 
 // //WEBSOCKET FOR REALTIME COMMS
-// const SOCKET_CONTROL = require('./modules/socket/controllers/control.js');
-// APP.ws(`/socket/control`, SOCKET_CONTROL);
+const SOCKET_CONTROL = require('./modules/socket/controllers/control.js');
+APP.ws(`/socket/control`, SOCKET_CONTROL);
 
 // const CRON = require('./helpers/cron.js');
 // CRON.start()

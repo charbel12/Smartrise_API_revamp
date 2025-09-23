@@ -1,1 +1,225 @@
-{"MessageType":"GroupConfig","JobName":"Henry Avenue","JobNumber":"","JobID":5263,"SiteID":0,"ContractSpeed":200,"NumberOfFloors":192,"NumberOfCars":4,"Cars":[{"Id":1,"Label":"14","TotalHeight":0,"NumberOfFloors":12,"FloorArray":[{"GroupFloorID":0,"DoorSide":1,"Pi":"B"},{"GroupFloorID":1,"DoorSide":1,"Pi":"G"},{"GroupFloorID":2,"DoorSide":1,"Pi":"1"},{"GroupFloorID":3,"DoorSide":1,"Pi":"2"},{"GroupFloorID":4,"DoorSide":1,"Pi":"3"},{"GroupFloorID":5,"DoorSide":1,"Pi":"4"},{"GroupFloorID":6,"DoorSide":1,"Pi":"5"},{"GroupFloorID":7,"DoorSide":1,"Pi":"6"},{"GroupFloorID":8,"DoorSide":1,"Pi":"7"},{"GroupFloorID":9,"DoorSide":1,"Pi":"8"},{"GroupFloorID":10,"DoorSide":1,"Pi":"9"},{"GroupFloorID":11,"DoorSide":1,"Pi":"10"}],"NumDoors":"0","GroupLandingOffset":"0"},{"Id":2,"Label":"15","TotalHeight":0,"NumberOfFloors":12,"FloorArray":[{"GroupFloorID":0,"DoorSide":1,"Pi":"B"},{"GroupFloorID":1,"DoorSide":1,"Pi":"G"},{"GroupFloorID":2,"DoorSide":1,"Pi":"1"},{"GroupFloorID":3,"DoorSide":1,"Pi":"2"},{"GroupFloorID":4,"DoorSide":1,"Pi":"3"},{"GroupFloorID":5,"DoorSide":1,"Pi":"4"},{"GroupFloorID":6,"DoorSide":1,"Pi":"5"},{"GroupFloorID":7,"DoorSide":1,"Pi":"6"},{"GroupFloorID":8,"DoorSide":1,"Pi":"7"},{"GroupFloorID":9,"DoorSide":1,"Pi":"8"},{"GroupFloorID":10,"DoorSide":1,"Pi":"9"},{"GroupFloorID":11,"DoorSide":1,"Pi":"10"}],"NumDoors":"0","GroupLandingOffset":"0"},{"Id":3,"Label":"16","TotalHeight":0,"NumberOfFloors":12,"FloorArray":[{"GroupFloorID":0,"DoorSide":1,"Pi":"B"},{"GroupFloorID":1,"DoorSide":1,"Pi":"G"},{"GroupFloorID":2,"DoorSide":1,"Pi":"1"},{"GroupFloorID":3,"DoorSide":1,"Pi":"2"},{"GroupFloorID":4,"DoorSide":1,"Pi":"3"},{"GroupFloorID":5,"DoorSide":1,"Pi":"4"},{"GroupFloorID":6,"DoorSide":1,"Pi":"5"},{"GroupFloorID":7,"DoorSide":1,"Pi":"6"},{"GroupFloorID":8,"DoorSide":1,"Pi":"7"},{"GroupFloorID":9,"DoorSide":1,"Pi":"8"},{"GroupFloorID":10,"DoorSide":1,"Pi":"9"},{"GroupFloorID":11,"DoorSide":1,"Pi":"10"}],"NumDoors":"0","GroupLandingOffset":"0"}],"GroupID":"1","location":"192.168.4.1:9100","FileName":"config_all_Henry Avenue_Group 1.h"}
+{
+    "MessageType": "GroupConfig",
+    "JobName": "Henry Avenue",
+    "JobNumber": "",
+    "JobID": 5263,
+    "SiteID": 0,
+    "ContractSpeed": 200,
+    "NumberOfFloors": 192,
+    "NumberOfCars": 4,
+    "Cars": [
+        {
+            "Id": 1,
+            "Label": "14",
+            "TotalHeight": 0,
+            "NumberOfFloors": 12,
+            "FloorArray": [
+                {
+                    "GroupFloorID": 0,
+                    "DoorSide": 2,
+                    "Pi": "B"
+                },
+                {
+                    "GroupFloorID": 1,
+                    "DoorSide": 2,
+                    "Pi": "G"
+                },
+                {
+                    "GroupFloorID": 2,
+                    "DoorSide": 2,
+                    "Pi": "1"
+                },
+                {
+                    "GroupFloorID": 3,
+                    "DoorSide": 2,
+                    "Pi": "2"
+                },
+                {
+                    "GroupFloorID": 4,
+                    "DoorSide": 1,
+                    "Pi": "3"
+                },
+                {
+                    "GroupFloorID": 5,
+                    "DoorSide": 1,
+                    "Pi": "4"
+                },
+                {
+                    "GroupFloorID": 6,
+                    "DoorSide": 1,
+                    "Pi": "5"
+                },
+                {
+                    "GroupFloorID": 7,
+                    "DoorSide": 1,
+                    "Pi": "6"
+                },
+                {
+                    "GroupFloorID": 8,
+                    "DoorSide": 1,
+                    "Pi": "7"
+                },
+                {
+                    "GroupFloorID": 9,
+                    "DoorSide": 1,
+                    "Pi": "8"
+                },
+                {
+                    "GroupFloorID": 10,
+                    "DoorSide": 1,
+                    "Pi": "9"
+                },
+                {
+                    "GroupFloorID": 11,
+                    "DoorSide": 1,
+                    "Pi": "10"
+                }
+            ],
+            "NumDoors": "0",
+            "GroupLandingOffset": "0"
+        },
+        {
+            "Id": 2,
+            "Label": "15",
+            "TotalHeight": 0,
+            "NumberOfFloors": 12,
+            "FloorArray": [
+                {
+                    "GroupFloorID": 0,
+                    "DoorSide": 1,
+                    "Pi": "B"
+                },
+                {
+                    "GroupFloorID": 1,
+                    "DoorSide": 1,
+                    "Pi": "G"
+                },
+                {
+                    "GroupFloorID": 2,
+                    "DoorSide": 1,
+                    "Pi": "1"
+                },
+                {
+                    "GroupFloorID": 3,
+                    "DoorSide": 1,
+                    "Pi": "2"
+                },
+                {
+                    "GroupFloorID": 4,
+                    "DoorSide": 1,
+                    "Pi": "3"
+                },
+                {
+                    "GroupFloorID": 5,
+                    "DoorSide": 1,
+                    "Pi": "4"
+                },
+                {
+                    "GroupFloorID": 6,
+                    "DoorSide": 1,
+                    "Pi": "5"
+                },
+                {
+                    "GroupFloorID": 7,
+                    "DoorSide": 1,
+                    "Pi": "6"
+                },
+                {
+                    "GroupFloorID": 8,
+                    "DoorSide": 1,
+                    "Pi": "7"
+                },
+                {
+                    "GroupFloorID": 9,
+                    "DoorSide": 1,
+                    "Pi": "8"
+                },
+                {
+                    "GroupFloorID": 10,
+                    "DoorSide": 1,
+                    "Pi": "9"
+                },
+                {
+                    "GroupFloorID": 11,
+                    "DoorSide": 1,
+                    "Pi": "10"
+                }
+            ],
+            "NumDoors": "0",
+            "GroupLandingOffset": "0"
+        },
+        {
+            "Id": 3,
+            "Label": "16",
+            "TotalHeight": 0,
+            "NumberOfFloors": 12,
+            "FloorArray": [
+                {
+                    "GroupFloorID": 0,
+                    "DoorSide": 1,
+                    "Pi": "B"
+                },
+                {
+                    "GroupFloorID": 1,
+                    "DoorSide": 1,
+                    "Pi": "G"
+                },
+                {
+                    "GroupFloorID": 2,
+                    "DoorSide": 1,
+                    "Pi": "1"
+                },
+                {
+                    "GroupFloorID": 3,
+                    "DoorSide": 1,
+                    "Pi": "2"
+                },
+                {
+                    "GroupFloorID": 4,
+                    "DoorSide": 1,
+                    "Pi": "3"
+                },
+                {
+                    "GroupFloorID": 5,
+                    "DoorSide": 1,
+                    "Pi": "4"
+                },
+                {
+                    "GroupFloorID": 6,
+                    "DoorSide": 1,
+                    "Pi": "5"
+                },
+                {
+                    "GroupFloorID": 7,
+                    "DoorSide": 1,
+                    "Pi": "6"
+                },
+                {
+                    "GroupFloorID": 8,
+                    "DoorSide": 1,
+                    "Pi": "7"
+                },
+                {
+                    "GroupFloorID": 9,
+                    "DoorSide": 1,
+                    "Pi": "8"
+                },
+                {
+                    "GroupFloorID": 10,
+                    "DoorSide": 1,
+                    "Pi": "9"
+                },
+                {
+                    "GroupFloorID": 11,
+                    "DoorSide": 1,
+                    "Pi": "10"
+                }
+            ],
+            "NumDoors": "0",
+            "GroupLandingOffset": "0"
+        }
+    ],
+    "GroupID": "1",
+    "location": "192.168.4.1:9100",
+    "FileName": "config_all_Henry Avenue_Group 1.h"
+}
