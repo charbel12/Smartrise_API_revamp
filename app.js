@@ -82,35 +82,35 @@ APP.all('/groups', GROUPS);
 // APP.all('/manage/*', MANAGE);
 // APP.all('/manage', MANAGE);
 
-// const SETTINGS_LOGS = require('./modules/settings/controllers/logs.js');
-// APP.all('/settings/logs/*', SETTINGS_LOGS);
-// APP.all('/settings/logs', SETTINGS_LOGS);
+const SETTINGS_LOGS = require('./modules/settings/controllers/logs.js');
+APP.all('/settings/logs/*', SETTINGS_LOGS);
+APP.all('/settings/logs', SETTINGS_LOGS);
 
-// const SETTINGS_RTC = require('./modules/settings/controllers/rtc.js');
-// APP.all('/settings/rtc/*', SETTINGS_RTC);
-// APP.all('/settings/rtc', SETTINGS_RTC);
+const SETTINGS_RTC = require('./modules/settings/controllers/rtc.js');
+APP.all('/settings/rtc/*', SETTINGS_RTC);
+APP.all('/settings/rtc', SETTINGS_RTC);
 
-// const SETTINGS_IO = require('./modules/settings/controllers/io.js');
-// APP.all('/settings/io/*', SETTINGS_IO);
-// APP.all('/settings/io', SETTINGS_IO);
+const SETTINGS_IO = require('./modules/settings/controllers/io.js');
+APP.all('/settings/io/*', SETTINGS_IO);
+APP.all('/settings/io', SETTINGS_IO);
 
-// const SETTINGS_GROUPCONFIG = require('./modules/settings/controllers/group-config.js');
-// APP.all('/settings/reset-default/*', SETTINGS_GROUPCONFIG);
-// APP.all('/settings/reset-default', SETTINGS_GROUPCONFIG);
+const SETTINGS_GROUPCONFIG = require('./modules/settings/controllers/group-config.js');
+APP.all('/settings/reset-default/*', SETTINGS_GROUPCONFIG);
+APP.all('/settings/reset-default', SETTINGS_GROUPCONFIG);
 
-// APP.all('/settings/group-config/*', SETTINGS_GROUPCONFIG);
-// APP.all('/settings/group-config', SETTINGS_GROUPCONFIG);
+APP.all('/settings/group-config/*', SETTINGS_GROUPCONFIG);
+APP.all('/settings/group-config', SETTINGS_GROUPCONFIG);
 
-// APP.all('/settings/pi-config/*', SETTINGS_GROUPCONFIG);
-// APP.all('/settings/pi-config', SETTINGS_GROUPCONFIG);
+APP.all('/settings/pi-config/*', SETTINGS_GROUPCONFIG);
+APP.all('/settings/pi-config', SETTINGS_GROUPCONFIG);
 
-// APP.all('/settings/other-config/*', SETTINGS_GROUPCONFIG);
-// APP.all('/settings/other-config', SETTINGS_GROUPCONFIG);
+APP.all('/settings/other-config/*', SETTINGS_GROUPCONFIG);
+APP.all('/settings/other-config', SETTINGS_GROUPCONFIG);
 
-// APP.all('/settings/network-config/*', SETTINGS_GROUPCONFIG);
-// APP.all('/settings/network-config', SETTINGS_GROUPCONFIG);
+APP.all('/settings/network-config/*', SETTINGS_GROUPCONFIG);
+APP.all('/settings/network-config', SETTINGS_GROUPCONFIG);
 
-// APP.all('/settings/special-feature', SETTINGS_GROUPCONFIG);
+APP.all('/settings/special-feature', SETTINGS_GROUPCONFIG);
 
 // const SCHEDULES = require('./modules/schedules/controllers/index.js');
 // APP.all('/schedules/*', SCHEDULES);
