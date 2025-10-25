@@ -217,14 +217,14 @@ module.exports = {
 
 		_data.end_date = MOMENT.utc(_endDate).format('YYYY-MM-DD');
 		_data.end_time = MOMENT.utc(_endDate).format('HH:mm');*/
-		mysql.pool(`insert into ${tableName} set ?,created_at=utc_timestamp(),updated_at=utc_timestamp()`,[_data],function(err,result){
+		mysql.pool(`insert into ${tableName} set ?,createdAt=utc_timestamp(),updatedAt=utc_timestamp()`,[_data],function(err,result){
 			callback(err,result);
 		})
 	},
 	createV2: function(data, callback = null){
 		const params = data.data;
 		
-		mysql.pool(`INSERT INTO ${tableName} SET ?,created_at=utc_timestamp()`,[params],function(err,result){
+		mysql.pool(`INSERT INTO ${tableName} SET ?,createdAt=utc_timestamp()`,[params],function(err,result){
 			callback(err,result);
 		});
 	},
@@ -240,14 +240,14 @@ module.exports = {
 
 		_data.end_date = MOMENT.utc(_endDate).format('YYYY-MM-DD');
 		_data.end_time = MOMENT.utc(_endDate).format('HH:mm');*/
-		mysql.pool(`update ${tableName} set ?,updated_at=utc_timestamp() where id=?`,[_data,id],function(err,result){
+		mysql.pool(`update ${tableName} set ?,updatedAt=utc_timestamp() where id=?`,[_data,id],function(err,result){
 			callback(err,result);
 		})
 	},
 	updateV2: function(id,data,callback = null){
 		data.data = {...data.data, start_date: null};
 		const param = data.data
-		mysql.pool(`UPDATE ${tableName} SET ?,updated_at=utc_timestamp() WHERE id=?`,[param,id],function(err,result){
+		mysql.pool(`UPDATE ${tableName} SET ?,updatedAt=utc_timestamp() WHERE id=?`,[param,id],function(err,result){
 			callback(err,result);
 		})
 	},

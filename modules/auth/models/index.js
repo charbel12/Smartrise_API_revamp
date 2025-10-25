@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { User, Role, Permission } = require('../../../models');
+const { User, Role, Permission } = require('../../../database/models');
 const _key = process.env.TOKEN_KEY;
 
 module.exports = {

@@ -6,6 +6,13 @@
             "JobName": "Henry Avenue",
             "location": "192.168.1.103:9100",
             "FileName": "config_all_Henry Avenue_Group 1.h"
+        },
+        {
+            "GroupID": "2",
+            "JobID": 4423,
+            "JobName": "Charbel Henry Avenue",
+            "location": "192.168.64.123:9100",
+            "FileName": "config_all_Henry Avenue_Group 1.h"
         }
     ]
 }

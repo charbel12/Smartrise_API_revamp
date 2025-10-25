@@ -1,4 +1,4 @@
-const { Role, Permission, RolesPermissions, sequelize } = require('../../../models');
+const { Role, Permission, RolesPermissions, sequelize } = require('../../../database/models');
 
 async function fetchRolePermissions(req, res, callback = null) {
     try {
@@ -25,8 +25,8 @@ async function fetchRolePermissions(req, res, callback = null) {
             date_modified: role.date_modified,
             display_admin: role.display_admin,
             display_customer: role.display_customer,
-            created_at: role.created_at,
-            updated_at: role.updated_at,
+            createdAt: role.createdAt,
+            updatedAt: role.updatedAt,
 
             // Permissions assigned to the role
             Permissions: role.Permissions.map(p => ({
@@ -118,8 +118,8 @@ module.exports = {
                 date_modified: role.date_modified,
                 display_admin: role.display_admin,
                 display_customer: role.display_customer,
-                created_at: role.created_at,
-                updated_at: role.updated_at,
+                createdAt: role.createdAt,
+                updatedAt: role.updatedAt,
                 permissions: permissions.map(p => ({
                     id: p.id,
                     name: p.name,

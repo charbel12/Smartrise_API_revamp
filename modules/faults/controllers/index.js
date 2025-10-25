@@ -12,7 +12,7 @@ const fs = require("fs");
 
 var group = require('../../../helpers/group.js')
 
-const { Faults } = require('../../../models');
+const { Faults } = require('../../../database/models');
 /**
  * @route GET /faults
  * @Faults - Faults definition

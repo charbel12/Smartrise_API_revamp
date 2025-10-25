@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { User, UserRole, Role } = require('../../../models');
+const { User, UserRole, Role } = require('../../../database/models');
 const salt = 10;
 
 module.exports = {

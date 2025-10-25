@@ -4,10 +4,8 @@ var mysql = require("../../../helpers/mysqlConnector.js");
 const TABLE_NAME = VARS.table_name;
 const TOOLS = require("../../../helpers/tools.js");
 
-const { RptFaults, SystemFaults ,RptAlarms,SystemAlarms,RptWait, ProgramEvents,RptServices,RefCategory,RefClass} = require("../../../models");
 const { Op, fn, col,literal } = require("sequelize");
-const { sequelize, Sequelize } = require("../../../models");
-const system_faults = require("../../../models/system_faults.js");
+const { sequelize, Sequelize, RptFaults, SystemFaults ,RptAlarms,SystemAlarms,RptWait, ProgramEvents,RptServices,RefCategory,RefClass } = require('../../../database/models');
 
 
 module.exports = {
@@ -15,7 +13,7 @@ module.exports = {
     data = alterData(data);
     var async = require("async");
     let car_id = data.car_id ? ` AND car_id = ${data.car_id}` : "";
-console.log("car_id ",car_id)
+
     var _params = {
       carCalls: function (cb) {
         var _query = `

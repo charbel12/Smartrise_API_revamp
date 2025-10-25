@@ -213,6 +213,16 @@
                     "GroupFloorID": 11,
                     "DoorSide": 1,
                     "Pi": "10"
+                },
+                {
+                    "GroupFloorID": 12,
+                    "DoorSide": 1,
+                    "Pi": "11"
+                },
+                {
+                    "GroupFloorID": 12,
+                    "DoorSide": 1,
+                    "Pi": "12"
                 }
             ],
             "NumDoors": "0",
