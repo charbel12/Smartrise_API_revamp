@@ -14304,7 +14304,7 @@ module.exports = {
     "definition": "Schindler COP Heartbeat Loss unexpectedly",
     "solution": "Check wiring of communcation lines. Check for stalled HB LEDs."
   }
-].map(r => ({...r, createdAt: r.createdAt ?? now, updatedAt: r.updatedAt ?? now}));
+].map(r => ({...r}));
     await queryInterface.bulkInsert('system_faults', data, {});
   },
 

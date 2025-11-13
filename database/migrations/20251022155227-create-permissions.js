@@ -53,37 +53,13 @@ module.exports = {
     },
     display_admin: {
       type: Sequelize.TINYINT,
-      allowNull: false,
+      allowNull: true,
       defaultValue: '1'
     },
     display_customer: {
       type: Sequelize.TINYINT,
-      allowNull: false,
+      allowNull: true,
       defaultValue: '0'
-    },
-    class_id: {
-      type: Sequelize.INTEGER,
-      allowNull: false
-    },
-    ref_cat_id: {
-      type: Sequelize.INTEGER,
-      allowNull: false
-    },
-    ref_class_id: {
-      type: Sequelize.INTEGER,
-      allowNull: false
-    },
-    group_id: {
-      type: Sequelize.INTEGER,
-      allowNull: false
-    },
-    messagetype: {
-      type: Sequelize.TEXT,
-      allowNull: false
-    },
-    message: {
-      type: Sequelize.TEXT,
-      allowNull: false
     }
     }, { engine: "InnoDB", charset: "utf8mb4", collate: "utf8mb4_unicode_ci" });
   },

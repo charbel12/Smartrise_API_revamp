@@ -39,7 +39,7 @@ module.exports = {
     "display_admin": 1,
     "display_customer": 0
   }
-].map(r => ({...r, createdAt: r.createdAt ?? now, updatedAt: r.updatedAt ?? now}));
+].map(r => ({ ...r, date_created: r.date_created ?? now, date_modified: r.date_modified ?? now }));
     await queryInterface.bulkInsert('roles', data, {});
   },
 

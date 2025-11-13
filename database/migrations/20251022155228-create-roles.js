@@ -16,7 +16,30 @@ module.exports = {
     description: {
       type: Sequelize.TEXT,
       allowNull: true
-    }
+    },
+    status: {
+      type: Sequelize.TINYINT,
+      allowNull: false,
+      defaultValue: '1'
+    },
+    display_admin: {
+      type: Sequelize.TINYINT,
+      allowNull: false,
+      defaultValue: '1'
+    },
+    display_customer: {
+      type: Sequelize.TINYINT,
+      allowNull: false,
+      defaultValue: '0'
+    },
+    date_created: {
+      type: Sequelize.DATE,
+      allowNull: false
+    },
+    date_modified: {
+      type: Sequelize.DATE,
+      allowNull: false
+    },
     }, { engine: "InnoDB", charset: "utf8mb4", collate: "utf8mb4_unicode_ci" });
     //await queryInterface.addIndex("roles", ["id"], { name: "rpt_alarms_id_unique", unique: true });
   },

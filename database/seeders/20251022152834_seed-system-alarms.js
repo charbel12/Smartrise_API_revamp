@@ -13891,7 +13891,7 @@ module.exports = {
     "category": 0,
     "solution": "Check Phase fault input"
   }
-].map(r => ({...r, createdAt: r.createdAt ?? now, updatedAt: r.updatedAt ?? now}));
+].map(r => ({...r}));
     await queryInterface.bulkInsert('system_alarms', data, {});
   },
 

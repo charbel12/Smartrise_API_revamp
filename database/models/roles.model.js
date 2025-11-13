@@ -8,8 +8,8 @@ module.exports = (sequelize, DataTypes) => {
     date_modified: { type: DataTypes.DATE, allowNull: false },
     display_admin: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     display_customer: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    createdAt: { type: DataTypes.DATE, allowNull: true },
-    updatedAt: { type: DataTypes.DATE, allowNull: true },
+    date_created: { type: DataTypes.DATE, allowNull: true },
+    date_modified: { type: DataTypes.DATE, allowNull: true },
   }, {
     tableName: 'roles',
     timestamps: false,

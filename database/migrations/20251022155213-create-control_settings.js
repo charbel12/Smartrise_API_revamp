@@ -41,18 +41,6 @@ module.exports = {
     date_modified: {
       type: Sequelize.DATE,
       allowNull: true
-    },
-    mac_address: {
-      type: Sequelize.STRING(255),
-      allowNull: false
-    },
-    ip_address: {
-      type: Sequelize.STRING(255),
-      allowNull: true
-    },
-    modified_by: {
-      type: Sequelize.STRING(255),
-      allowNull: true
     }
     }, { engine: "InnoDB", charset: "utf8mb4", collate: "utf8mb4_unicode_ci" });
   },

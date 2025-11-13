@@ -14,11 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     start_time: { type: DataTypes.TIME, allowNull: true },
     end_date: { type: DataTypes.DATEONLY, allowNull: true },
     end_time: { type: DataTypes.TIME, allowNull: true },
-    createdAt: { type: DataTypes.DATE, allowNull: true },
-    updatedAt: { type: DataTypes.DATE, allowNull: true },
+    date_created: { type: DataTypes.DATE, allowNull: true },
+    date_modified: { type: DataTypes.DATE, allowNull: true },
   }, {
     tableName: 'schedules',
-    timestamps: false, // has createdAt/updatedAt but we won't auto-manage
+    timestamps: false, // has date_created/date_modified but we won't auto-manage
   });
   return Schedule;
 };

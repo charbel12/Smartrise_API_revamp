@@ -959,7 +959,7 @@ module.exports = {
     "role_id": 1,
     "permission_id": 92
   }
-].map(r => ({...r, createdAt: r.createdAt ?? now, updatedAt: r.updatedAt ?? now}));
+].map(r => ({ ...r, date_created: r.date_created ?? now, date_modified: r.date_modified ?? now }));
     await queryInterface.bulkInsert('roles_permissions', data, {});
   },
 

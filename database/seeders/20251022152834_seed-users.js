@@ -18,8 +18,8 @@ module.exports = {
     "email": "admin@smartrise.com",
     "image": "",
     "remember_token": "",
-    "createdAt": "2019-08-05 18:00:00",
-    "updatedAt": "2019-08-05 18:00:00"
+    "date_created": "2019-08-05 18:00:00",
+    "date_modified": "2019-08-05 18:00:00"
   },
   {
     "id": "2",
@@ -35,8 +35,8 @@ module.exports = {
     "email": "test@smartrise.com",
     "image": "",
     "remember_token": "",
-    "createdAt": "2019-08-05 18:00:00",
-    "updatedAt": "2019-08-05 18:00:00"
+    "date_created": "2019-08-05 18:00:00",
+    "date_modified": "2019-08-05 18:00:00"
   },
   {
     "id": "3",
@@ -52,8 +52,8 @@ module.exports = {
     "email": "test@smartrise.com",
     "image": "",
     "remember_token": "",
-    "createdAt": "2019-08-05 18:00:00",
-    "updatedAt": "2019-08-05 18:00:00"
+    "date_created": "2019-08-05 18:00:00",
+    "date_modified": "2019-08-05 18:00:00"
   },
   {
     "id": "4",
@@ -69,8 +69,8 @@ module.exports = {
     "email": "test@smartrise.com",
     "image": "",
     "remember_token": "",
-    "createdAt": "2019-08-05 18:00:00",
-    "updatedAt": "2019-08-05 18:00:00"
+    "date_created": "2019-08-05 18:00:00",
+    "date_modified": "2019-08-05 18:00:00"
   },
   {
     "id": "5",
@@ -86,8 +86,8 @@ module.exports = {
     "email": "test@smartrise.com",
     "image": "",
     "remember_token": "",
-    "createdAt": "2019-08-05 18:00:00",
-    "updatedAt": "2019-08-05 18:00:00"
+    "date_created": "2019-08-05 18:00:00",
+    "date_modified": "2019-08-05 18:00:00"
   },
   {
     "id": "6",
@@ -103,8 +103,8 @@ module.exports = {
     "email": "test@smartrise.com",
     "image": "",
     "remember_token": "",
-    "createdAt": "2019-08-05 18:00:00",
-    "updatedAt": "2019-08-05 18:00:00"
+    "date_created": "2019-08-05 18:00:00",
+    "date_modified": "2019-08-05 18:00:00"
   },
   {
     "id": "7",
@@ -120,8 +120,8 @@ module.exports = {
     "email": "test@smartrise.com",
     "image": "",
     "remember_token": "",
-    "createdAt": "2019-08-05 18:00:00",
-    "updatedAt": "2019-08-05 18:00:00"
+    "date_created": "2019-08-05 18:00:00",
+    "date_modified": "2019-08-05 18:00:00"
   },
   {
     "id": "8",
@@ -137,8 +137,8 @@ module.exports = {
     "email": "test@smartrise.com",
     "image": "",
     "remember_token": "",
-    "createdAt": "2019-08-05 18:00:00",
-    "updatedAt": "2019-08-05 18:00:00"
+    "date_created": "2019-08-05 18:00:00",
+    "date_modified": "2019-08-05 18:00:00"
   },
   {
     "id": "9",
@@ -154,8 +154,8 @@ module.exports = {
     "email": "test@smartrise.com",
     "image": "",
     "remember_token": "",
-    "createdAt": "2019-08-05 18:00:00",
-    "updatedAt": "2019-08-05 18:00:00"
+    "date_created": "2019-08-05 18:00:00",
+    "date_modified": "2019-08-05 18:00:00"
   },
   {
     "id": "10",
@@ -171,8 +171,8 @@ module.exports = {
     "email": "test@smartrise.com",
     "image": "",
     "remember_token": "",
-    "createdAt": "2019-08-05 18:00:00",
-    "updatedAt": "2019-08-05 18:00:00"
+    "date_created": "2019-08-05 18:00:00",
+    "date_modified": "2019-08-05 18:00:00"
   },
   {
     "id": "11",
@@ -188,10 +188,10 @@ module.exports = {
     "email": "test@smartrise.com",
     "image": "",
     "remember_token": "",
-    "createdAt": "2019-08-05 18:00:00",
-    "updatedAt": "2019-08-05 18:00:00"
+    "date_created": "2019-08-05 18:00:00",
+    "date_modified": "2019-08-05 18:00:00"
   }
-].map(r => ({...r, createdAt: r.createdAt ?? now, updatedAt: r.updatedAt ?? now}));
+].map(r => ({...r, date_created: r.date_created ?? now, date_modified: r.date_modified ?? now}));
     await queryInterface.bulkInsert('users', data, {});
   },
 
