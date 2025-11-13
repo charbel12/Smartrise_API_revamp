@@ -25,8 +25,8 @@ async function fetchRolePermissions(req, res, callback = null) {
             date_modified: role.date_modified,
             display_admin: role.display_admin,
             display_customer: role.display_customer,
-            createdAt: role.createdAt,
-            updatedAt: role.updatedAt,
+            date_created: role.date_created,
+            date_modified: role.date_modified,
 
             // Permissions assigned to the role
             Permissions: role.Permissions.map(p => ({
@@ -118,8 +118,8 @@ module.exports = {
                 date_modified: role.date_modified,
                 display_admin: role.display_admin,
                 display_customer: role.display_customer,
-                createdAt: role.createdAt,
-                updatedAt: role.updatedAt,
+                date_created: role.date_created,
+                date_modified: role.date_modified,
                 permissions: permissions.map(p => ({
                     id: p.id,
                     name: p.name,
