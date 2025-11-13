@@ -9,7 +9,6 @@ module.exports = {
         try {
             const { username, password } = req.body;
 
-            // Find user and eager-load roles and permissions
             const user = await User.findOne({
                 where: { username },
                 include: {
@@ -29,17 +28,21 @@ module.exports = {
 
             let codes = [];
             let urls = [];
-
-            user.Roles.forEach(role => {
-                role.Permissions.forEach(perm => {
-                    codes.push(perm.code);
-                    urls.push(perm.url);
+            if (user.Roles && Array.isArray(user.Roles)) {
+                user.Roles.forEach(role => {
+                  if (role.Permissions && Array.isArray(role.Permissions)) {
+                    role.Permissions.forEach(perm => {
+                      codes.push(perm.code);
+                      urls.push(perm.url);
+                    });
+                  }
                 });
-            });
-
-            // Remove duplicates
+              }
+              
             codes = [...new Set(codes)];
             urls = [...new Set(urls)];
+
+            console.log(codes)
 
             const token = jwt.sign({
                 userId: user.id,
@@ -49,8 +52,8 @@ module.exports = {
                 permissions: codes
             }, _key, { expiresIn: '7d' });
 
-            const status = user.force_change_password ? 403 : 200;
-
+            const status = user.force_change_password ? 200 : 403;
+            
             callback(false, status, {
                 msg: 'Logged in!',
                 userId: user.id,
