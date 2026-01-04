@@ -75,7 +75,6 @@ module.exports = {
 
 	},
 	getAll: function(callback = null){
-		PI = JSON.parse(fs.readFileSync(process.env.SETTINGS_PI_LOCATION, 'utf-8'))['data'];
 		/*mysql.query(`select * from ${TABLE_NAME} where status=1`,[],function(err,result){
 			callback(err,result);
 		})*/
@@ -84,23 +83,16 @@ module.exports = {
 		PI.forEach(function(p,i){
 			if(p){
 				try{
-					var jsonObj = TOOLS.getRedisKeyValue("requests:" + (i+1) + ":settings");
-					if (jsonObj) {
-						_result.push({
-							id: p['GroupID'],
-							name: JSON.parse(jsonObj)["job_name"] + " (" + (i +1) + ")" 
-						});
-					} else {
-						_result.push({
-							id: p['GroupID'],
-							name: p['GroupID']
-						});
-					}
+
+				_result.push({
+					'data: ': p
+				});
+					
 				} catch(e) {
 
 					_result.push({
 						id: p['GroupID'],
-						name: p['GroupID']
+						name: p['JobName']
 					});
 				}
 			}
