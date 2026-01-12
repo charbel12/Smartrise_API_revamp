@@ -28,6 +28,7 @@ module.exports = {
     var carcall_specialFeature = process.env.SPECIAL_FEATURE_CARCALL;
     var hallcall_specialFeature = process.env.SPECIAL_FEATURE_HALLCALL;
     var dirname = process.env.SETTINGS_GROUP_LOCATION + "/";
+    console.log('dirname:', dirname)
     fs.readdir(dirname, function (err, filenames) {
       if (err) {
         //onError(err);

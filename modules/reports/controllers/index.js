@@ -2,16 +2,8 @@ const VARS = require('../vars.js');
 
 const EXPRESS = require('express');
 const APP = EXPRESS();
-const TOOLS = require('../../../helpers/tools.js');
 const ROUTER_MIDDLEWARE = require('../../../middlewares/router.js');
 const MODEL = require('../models/index.js');
-const AUTH = require('../../../helpers/authentication.js');
-const SOCKET = require('../../socket/models/index.js');
-
-const { exec } = require("child_process");
-
-const fs = require('fs');
-const axios = require('axios');
 
 ROUTER_MIDDLEWARE.USE_STANDARD(APP); //for non authenticated routes
 

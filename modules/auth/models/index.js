@@ -66,6 +66,7 @@ module.exports = {
             });
 
         } catch (err) {
+            console.error("UserSignin Error:", err);
             callback(err, 500, { message: "Internal server error." });
         }
     },

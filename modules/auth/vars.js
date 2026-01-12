@@ -1,5 +1,5 @@
 module.exports = {
 	module_name: "auth",
-	base_route: "/auth",
+	base_route: "",
 	table_name: "users",
 }

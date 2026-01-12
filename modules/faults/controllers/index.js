@@ -152,7 +152,7 @@ APP.delete(`${VARS.base_route}/:groupID/cars/:carID`, (req, res) => {
  * @returns {AuthResponseFailed.model} 401 - Access is denied.
  * @security JWT
  */
-APP.get(`${VARS.base_route}/:id([0-9]+)`, (req, res) => {
+APP.get(`${VARS.base_route}/:id`, (req, res) => {
     MODEL.get(req.params.id, function(err, result) {
         res.json({
             "successful": (err ? false : true),
@@ -232,7 +232,7 @@ APP.get(`${VARS.base_route}/:id/number`, (req, res) => {
 });
 
 
-APP.get('/faults', async (req, res) => {
+APP.get('', async (req, res) => {
   try {
 
 

@@ -2,12 +2,12 @@ const { Sequelize, DataTypes } = require("sequelize");
 
 // Create Sequelize instance
 const sequelize = new Sequelize(
-  process.env.DB_DATABASE,
-  process.env.DB_USERNAME,
-  process.env.DB_PASSWORD,
+  process.env.DB_DATABASE || 'pre_smartriselocal',
+  process.env.DB_USERNAME || 'root',
+  process.env.DB_PASSWORD || 'root',
   {
-    host: process.env.DB_HOST,
-    dialect: process.env.DB_CONNECTION,
+    host: process.env.DB_HOST || 'mysql_lm',
+    dialect: process.env.DB_CONNECTION || 'mysql',
     logging: false,
   }
 );

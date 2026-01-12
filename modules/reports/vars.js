@@ -1,6 +1,6 @@
 module.exports = {
 	module_name: "reports",
-	base_route: "/reports",
+	base_route: "",
 	table_name: "reports",
 	inServiceType: {
 		NORMAL_SERVICE: 'normal_service',

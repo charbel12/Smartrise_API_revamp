@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "root",
-    "password": "root",
+    "username": "pre_nucsmartrise",
+    "password": "pre_QyppBa@9nD>zaqKm",
     "database": "pre_smartriselocal",
-    "host": "127.0.0.1",
+    "host": "mysql_lm",
     "dialect": "mysql"
   }
 }

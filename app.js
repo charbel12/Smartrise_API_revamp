@@ -2,11 +2,12 @@ require('dotenv').config({});
 
 const EXPRESS = require('express');
 const APP = EXPRESS();
-const PORT = process.env.APP_PORT;
-var expressWs = require('express-ws')(APP);
-var cors = require('cors')
-const fs = require('fs')
+const PORT = process.env.APP_PORT || 9300;
+const expressWs = require('express-ws')(APP);
+const cors = require('cors');
+const fs = require('fs');
 
+// ----------------- CORS Setup -----------------
 const corsOptions = {
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -17,126 +18,77 @@ APP.use(cors(corsOptions));
 APP.use(EXPRESS.json());
 APP.use(EXPRESS.urlencoded({ extended: true }));
 
-
-APP.use(cors({
-    origin: '*'
-}));
-
+// ----------------- App Version -----------------
 fs.readFile('./appversion.txt', 'utf8', (err, data) => {
     if (err) {
-        console.error(err)
-        return
+        console.error(err);
+        return;
     }
-    process.env.APP_VERSION = data.replace(/\n$/, "")
-})
-
-// UPDATE_FAULTS_OR_ALARMS.update_file_from_pi('faults');
-// UPDATE_FAULTS_OR_ALARMS.update_file_from_pi('alarms');
-
-
-APP.get("/", function(req, res) {
-    res.send("Smartrise API Version: " + process.env.APP_VERSION);
+    process.env.APP_VERSION = data.replace(/\n$/, "") || '1.0.0';
 });
 
-const CONTROLS = require('./modules/controls/controllers/index.js');
-APP.all('/controls/*', CONTROLS);
+// ----------------- Root Route -----------------
+APP.get("/", (req, res) => {
+    res.send("Smartrise API Version: " + process.env.APP_VERSION || '1.0.0');
+});
 
-const FAULT = require('./modules/faults/controllers/index.js');
-APP.all('/faults/*', FAULT);
-APP.all('/faults', FAULT);
+// ----------------- ROUTES -----------------
 
-const AUTH = require('./modules/auth/controllers/index.js');
-APP.all('/auth/*', AUTH);
-APP.all('/auth', AUTH);
+// Helper function to load controllers using Express Router
+const loadController = (path) => {
+    const router = require(path);
+    return router;
+};
 
-const USERS = require('./modules/users/controllers/index.js');
-APP.all('/users/*', USERS);
-APP.all('/users', USERS);
+// CONTROLS
+APP.use('/controls', loadController('./modules/controls/controllers/index.js'));
 
-const ROLES = require('./modules/roles/controllers/index');
-APP.all('/roles/*', ROLES);
-APP.all('/roles', ROLES);
-APP.all('/permissions', ROLES);
+// FAULTS
+APP.use('/faults', loadController('./modules/faults/controllers/index.js'));
 
-const ALARMS = require('./modules/alarms/controllers/index.js');
-APP.all('/alarms/*', ALARMS);
-APP.all('/alarms', ALARMS);
+// AUTH
+APP.use('/auth', loadController('./modules/auth/controllers/index.js'));
 
-// const SECURITY = require('./modules/security/controllers/index.js');
-// APP.all('/security/*', SECURITY);
-// APP.all('/security', SECURITY);
+// USERS
+APP.use('/users', loadController('./modules/users/controllers/index.js'));
 
-// const DYNAMIC_SECURITY = require('./modules/dynamic-security/controllers/index.js');
-// APP.all('/dynamic-security/*', DYNAMIC_SECURITY);
-// APP.all('/dynamic-security', DYNAMIC_SECURITY);
+// ROLES
+APP.use('/roles', loadController('./modules/roles/controllers/index.js'));
+APP.use('/permissions', loadController('./modules/roles/controllers/index.js'));
 
-const REPORTS = require('./modules/reports/controllers/index.js');
- APP.all('/reports/*', REPORTS);
- APP.all('/reports', REPORTS);
+// ALARMS
+APP.use('/alarms', loadController('./modules/alarms/controllers/index.js'));
 
-const GROUPS = require('./modules/groups/controllers/index.js');
-APP.all('/groups/*', GROUPS);
-APP.all('/groups', GROUPS);
+// REPORTS
+APP.use('/reports', loadController('./modules/reports/controllers/index.js'));
 
-// const MANAGE = require('./modules/manage/controllers/index.js');
-// APP.all('/manage/*', MANAGE);
-// APP.all('/manage', MANAGE);
+// GROUPS
+APP.use('/groups', loadController('./modules/groups/controllers/index.js'));
 
-const SETTINGS_LOGS = require('./modules/settings/controllers/logs.js');
-APP.all('/settings/logs/*', SETTINGS_LOGS);
-APP.all('/settings/logs', SETTINGS_LOGS);
+// SETTINGS LOGS
+APP.use('/settings/logs', loadController('./modules/settings/controllers/logs.js'));
 
-const SETTINGS_RTC = require('./modules/settings/controllers/rtc.js');
-APP.all('/settings/rtc/*', SETTINGS_RTC);
-APP.all('/settings/rtc', SETTINGS_RTC);
+// SETTINGS RTC
+APP.use('/settings/rtc', loadController('./modules/settings/controllers/rtc.js'));
 
-const SETTINGS_IO = require('./modules/settings/controllers/io.js');
-APP.all('/settings/io/*', SETTINGS_IO);
-APP.all('/settings/io', SETTINGS_IO);
+// SETTINGS IO
+APP.use('/settings/io', loadController('./modules/settings/controllers/io.js'));
 
-const SETTINGS_GROUPCONFIG = require('./modules/settings/controllers/group-config.js');
-APP.all('/settings/reset-default/*', SETTINGS_GROUPCONFIG);
-APP.all('/settings/reset-default', SETTINGS_GROUPCONFIG);
+// SETTINGS GROUP CONFIG
+const SETTINGS_GROUPCONFIG = loadController('./modules/settings/controllers/group-config.js');
+APP.use('/settings/reset-default', SETTINGS_GROUPCONFIG);
+APP.use('/settings/group-config', SETTINGS_GROUPCONFIG);
+APP.use('/settings/pi-config', SETTINGS_GROUPCONFIG);
+APP.use('/settings/other-config', SETTINGS_GROUPCONFIG);
+APP.use('/settings/network-config', SETTINGS_GROUPCONFIG);
+APP.use('/settings/special-feature', SETTINGS_GROUPCONFIG);
 
-APP.all('/settings/group-config/*', SETTINGS_GROUPCONFIG);
-APP.all('/settings/group-config', SETTINGS_GROUPCONFIG);
-
-APP.all('/settings/pi-config/*', SETTINGS_GROUPCONFIG);
-APP.all('/settings/pi-config', SETTINGS_GROUPCONFIG);
-
-APP.all('/settings/other-config/*', SETTINGS_GROUPCONFIG);
-APP.all('/settings/other-config', SETTINGS_GROUPCONFIG);
-
-APP.all('/settings/network-config/*', SETTINGS_GROUPCONFIG);
-APP.all('/settings/network-config', SETTINGS_GROUPCONFIG);
-
-APP.all('/settings/special-feature', SETTINGS_GROUPCONFIG);
-
-// const SCHEDULES = require('./modules/schedules/controllers/index.js');
-// APP.all('/schedules/*', SCHEDULES);
-// APP.all('/schedules', SCHEDULES);
-
-// const DEVICES = require('./modules/viewing-devices/controllers/index.js');
-// APP.all('/viewing-devices/*', DEVICES);
-// APP.all('/viewing-devices', DEVICES);
-// APP.all('/users/viewing-devices/users', DEVICES);
-
-// const INSTALLATION = require('./modules/installation/controllers/index.js');
-// APP.all('/installation', INSTALLATION);
-
-// //WEBSOCKET FOR REALTIME COMMS
+// ----------------- WEBSOCKETS -----------------
 const SOCKET_SERVER = require('./modules/socket/controllers/server.js');
-APP.ws(`/socket/server`, SOCKET_SERVER);
+APP.ws('/socket/server', SOCKET_SERVER);
 
-// //WEBSOCKET FOR REALTIME COMMS
 const SOCKET_CONTROL = require('./modules/socket/controllers/control.js');
-APP.ws(`/socket/control`, SOCKET_CONTROL);
+APP.ws('/socket/control', SOCKET_CONTROL);
 
-// const CRON = require('./helpers/cron.js');
-// CRON.start()
-
-// require('./modules/socket/controllers/listener.js')();
-
-// require('./documentation/swagger.js')(APP); //swagger endpoint. remove for productions
-
+// ----------------- START SERVER -----------------
 APP.listen(PORT, () => console.log(`app listening on port ${PORT}!`));

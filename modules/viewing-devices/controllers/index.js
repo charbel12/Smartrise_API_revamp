@@ -188,7 +188,7 @@ APP.post(`${VARS.base_route}/elevator-view`, async (req, res) =>{
 * @returns 401 - Access is denied.
 * @security JWT
 */
-APP.get(`${VARS.base_route}/:device_id([0-9]+)`, async (req, res) =>{
+APP.get(`${VARS.base_route}/:device_id`, async (req, res) =>{
     try{
         let {device_id = ""} = req.params;
         if(device_id){
@@ -224,7 +224,7 @@ APP.get(`${VARS.base_route}/:device_id([0-9]+)`, async (req, res) =>{
 * @returns 401 - Access is denied.
 * @security JWT
 */
-APP.put(`${VARS.base_route}/:device_id([0-9]+)`, async (req, res) =>{
+APP.put(`${VARS.base_route}/:device_id`, async (req, res) =>{
     try{
         let modified_by = req.user.username ? req.user.username : '';
         let device_id = req.params.device_id;
