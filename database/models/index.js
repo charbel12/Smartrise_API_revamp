@@ -30,6 +30,7 @@ function init(sequelize) {
   models.SystemFaults = require("./system_faults.model")(sequelize, DataTypes);
   models.RptAlarms = require("./rpt_alarms.model")(sequelize, DataTypes);
   models.SystemAlarms = require("./system_alarms.model")(sequelize, DataTypes);
+  models.Parameters = require("./parameters_parameter")(sequelize, DataTypes);
 
   // Pivot tables
   models.UserRole = sequelize.define("UserRole", {}, { tableName: "user_roles", timestamps: false });

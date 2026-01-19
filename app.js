@@ -7,6 +7,25 @@ const expressWs = require('express-ws')(APP);
 const cors = require('cors');
 const fs = require('fs');
 
+const migrate = require("./database/migrate");
+const seed = require("./database/seed");
+
+(async () => {
+  try {
+    if (process.env.RUN_MIGRATIONS === "true") {
+      await migrate();
+    }
+
+    if (process.env.RUN_SEEDS === "true") {
+      await seed();
+    }
+
+  } catch (err) {
+    console.error("DB setup failed", err);
+    process.exit(1);
+  }
+})();
+
 // ----------------- CORS Setup -----------------
 const corsOptions = {
     origin: '*',

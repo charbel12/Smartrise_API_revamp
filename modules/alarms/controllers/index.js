@@ -14,7 +14,7 @@ ROUTER_MIDDLEWARE.USE_AUTHENTICATED(APP); //for secured/authenticated routes
 
 var fs = require("fs");
 const SOCKET_MODEL = require('../../socket/models/index.js')
-const {default: axios} = require("axios")
+const { default: axios } = require("axios")
 
 var group = require('../../../helpers/group.js')
 
@@ -28,8 +28,8 @@ var group = require('../../../helpers/group.js')
 * @returns {AuthResponseFailed.model} 401 - Access is denied.
 * @security JWT
 */
-APP.post(`${VARS.base_route}/datatables`, (req,res)=>{
-	MODEL.all(req.body,function(err,result){
+APP.post(`${VARS.base_route}/datatables`, (req, res) => {
+	MODEL.all(req.body, function (err, result) {
 		res.json(result);
 	});
 });
@@ -50,32 +50,32 @@ APP.post(`${VARS.base_route}/datatables`, (req,res)=>{
 */
 
 var allGroupPiLabel = ""
-group.getAllGroupPiLabels(function(array1){
+group.getAllGroupPiLabels(function (array1) {
 	allGroupPiLabel = array1
 })
 
 var allGroupCarLabel = ""
-group.getAllGroupCarLabels(function(array1){
+group.getAllGroupCarLabels(function (array1) {
 	allGroupCarLabel = array1
 })
 
 const pi_json = JSON.parse(fs.readFileSync('configs/pi/pi.json', 'utf-8'))['data'];
 
-APP.post(`${VARS.base_route}/:groupID/cars/:carID/datatables`,async(req,res)=>{
-    pi_json.forEach(pi => {
-        if (pi.GroupID == req.params.groupID) {
-            pi_ip = pi.location.split(':')[0];
-        }
-    })
+APP.post(`${VARS.base_route}/:groupID/cars/:carID/datatables`, async (req, res) => {
+	pi_json.forEach(pi => {
+		if (pi.GroupID == req.params.groupID) {
+			pi_ip = pi.location.split(':')[0];
+		}
+	})
 
 
 	req.body.zone = req.headers.zone ? req.headers.zone : "+00:00";
-	MODEL.datatables(req.params.groupID,req.params.carID,req.body,function(err,result){
-		if(result.data){
-			result.data = result.data.map(x =>{
-				return {...x, timezone: TOOLS.getServerTimezone()};
+	MODEL.datatables(req.params.groupID, req.params.carID, req.body, function (err, result) {
+		if (result.data) {
+			result.data = result.data.map(x => {
+				return { ...x, timezone: TOOLS.getServerTimezone() };
 			});
-		}else{
+		} else {
 			var data = []
 			result.data = data
 		}
@@ -95,7 +95,7 @@ APP.post(`${VARS.base_route}/:groupID/cars/:carID/datatables`,async(req,res)=>{
 		// 	}
 
 		// 	setTimeout(() => {
-				res.json(result);
+		res.json(result);
 		// 	}, 500);
 		// }, 1000); 
 	});
@@ -113,12 +113,12 @@ APP.post(`${VARS.base_route}/:groupID/cars/:carID/datatables`,async(req,res)=>{
 * @returns {AuthResponseFailed.model} 401 - Access is denied.
 * @security JWT
 */
-APP.delete(`${VARS.base_route}/:groupID/cars/:carID`,(req,res)=>{
-	MODEL.delete(req.params.groupID,req.params.carID,function(err,result){
+APP.delete(`${VARS.base_route}/:groupID/cars/:carID`, (req, res) => {
+	MODEL.delete(req.params.groupID, req.params.carID, function (err, result) {
 		res.json({
-			"successful":(err ? false : true),
-			"err":err,
-			"data":result
+			"successful": (err ? false : true),
+			"err": err,
+			"data": result
 		});
 	});
 });
@@ -133,12 +133,12 @@ APP.delete(`${VARS.base_route}/:groupID/cars/:carID`,(req,res)=>{
 * @returns {AuthResponseFailed.model} 401 - Access is denied.
 * @security JWT
 */
-APP.delete(`${VARS.base_route}`,(req,res)=>{
-	MODEL.clearAll(req.body.groupId, function(err,result){
+APP.delete(`${VARS.base_route}`, (req, res) => {
+	MODEL.clearAll(req.body.groupId, function (err, result) {
 		res.json({
-			"successful":(err ? false : true),
-			"err":err,
-			"data":result
+			"successful": (err ? false : true),
+			"err": err,
+			"data": result
 		});
 	});
 });
@@ -152,12 +152,12 @@ APP.delete(`${VARS.base_route}`,(req,res)=>{
 * @returns {AuthResponseFailed.model} 401 - Access is denied.
 * @security JWT
 */
-APP.get(`${VARS.base_route}/:id`, (req,res)=>{
-	MODEL.get(req.params.id,function(err,result){
+APP.get(`${VARS.base_route}/:id`, (req, res) => {
+	MODEL.get(req.params.id, function (err, result) {
 		res.json({
-			"successful":(err ? false : true),
-			"err":err,
-			"data":result[0]
+			"successful": (err ? false : true),
+			"err": err,
+			"data": result[0]
 		});
 	});
 });
@@ -172,52 +172,52 @@ APP.get(`${VARS.base_route}/:id`, (req,res)=>{
 * @returns {AuthResponseFailed.model} 401 - Access is denied.
 * @security JWT
 */
-APP.get(`${VARS.base_route}/:id/car`, (req,res)=>{
+APP.get(`${VARS.base_route}/:id/car`, (req, res) => {
 	req.body.zone = req.headers.zone ? req.headers.zone : "+00:00";
-	MODEL.getCarAlarm(req.params.id, req.body,function(err,result){
-		result = result.map(x =>{
-			return {...x, timezone: TOOLS.getServerTimezone()};
+	MODEL.getCarAlarm(req.params.id, req.body, function (err, result) {
+		result = result.map(x => {
+			return { ...x, timezone: TOOLS.getServerTimezone() };
 		});
 		res.json({
-			"successful":(err ? false : true),
-			"err":err,
-			"data":result
+			"successful": (err ? false : true),
+			"err": err,
+			"data": result
 		});
 	});
 });
 
 
-APP.get('/alarms', async (req, res) => {
-  try {
+APP.get('', async (req, res) => {
+	try {
 
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const elevator_id = req.query.elevator_id;
+		const page = parseInt(req.query.page) || 1;
+		const limit = parseInt(req.query.limit) || 10;
+		const elevator_id = req.query.elevator_id;
 
-    const offset = (page - 1) * limit;
+		const offset = (page - 1) * limit;
 
-    const whereClause = {};
-    if (elevator_id) {
-      whereClause.elevator_id = elevator_id;
-    }
+		const whereClause = {};
+		if (elevator_id) {
+			whereClause.which_car = elevator_id;
+		}
 
-    const faults = await Alarms.findAndCountAll({
-      where: whereClause,
-      limit: limit,
-      offset: offset,
-    });
+		const faults = await Alarms.findAndCountAll({
+			where: whereClause,
+			limit: limit,
+			offset: offset,
+		});
 
-    res.json({
-      total: faults.count,
-      page,
-      limit,
-      data: faults.rows,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
-  }
+		res.json({
+			total: faults.count,
+			page,
+			limit,
+			data: faults.rows,
+		});
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ message: 'Server error' });
+	}
 });
 
 

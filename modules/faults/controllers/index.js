@@ -235,7 +235,6 @@ APP.get(`${VARS.base_route}/:id/number`, (req, res) => {
 APP.get('', async (req, res) => {
   try {
 
-
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const elevator_id = req.query.elevator_id;
@@ -244,7 +243,7 @@ APP.get('', async (req, res) => {
 
     const whereClause = {};
     if (elevator_id) {
-      whereClause.elevator_id = elevator_id;
+      whereClause.which_car = elevator_id;
     }
 
     const faults = await Faults.findAndCountAll({

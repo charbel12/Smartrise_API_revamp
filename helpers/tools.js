@@ -4,9 +4,18 @@ const MOMENT_RANGE = require('moment-range')
 const MOMENT = MOMENT_RANGE.extendMoment(moment)
 const axios = require('axios');
 const fs = require('fs');
-const { exec } = require('child_process');
-
+const redis = require('redis');
 const { execSync } = require("child_process");
+
+const client = redis.createClient({
+    url: 'redis://redis_lm:6379'
+});
+client.on('error', err => console.error('Redis Client Error', err));
+
+(async () => {
+    await client.connect();
+})();
+
 
 Array.prototype.unique = function() {
     var a = this.concat();
@@ -21,12 +30,13 @@ Array.prototype.unique = function() {
 
 module.exports = {
 
-    getRedisKeyValue : function (key) {
-        var res = execSync('redis-cli -h redis_lm get ' + key).toString().slice(0, -1);
-        if (res) {
-            return res
-        } else {
-            return null
+    getRedisKeyValue: async function(key) {
+        try {
+            const value = await client.get(key);
+            return value;
+        } catch (err) {
+            console.error("Error fetching from Redis:", err);
+            return null;
         }
     },
     setRedisKeyValue: function (key, value) {
