@@ -17,11 +17,11 @@ client.on('error', err => console.error('Redis Client Error', err));
 })();
 
 
-Array.prototype.unique = function() {
+Array.prototype.unique = function () {
     var a = this.concat();
-    for(var i=0; i<a.length; ++i) {
-        for(var j=i+1; j<a.length; ++j) {
-            if(a[i] === a[j])
+    for (var i = 0; i < a.length; ++i) {
+        for (var j = i + 1; j < a.length; ++j) {
+            if (a[i] === a[j])
                 a.splice(j--, 1);
         }
     }
@@ -30,7 +30,7 @@ Array.prototype.unique = function() {
 
 module.exports = {
 
-    getRedisKeyValue: async function(key) {
+    getRedisKeyValue: async function (key) {
         try {
             const value = await client.get(key);
             return value;
@@ -39,19 +39,28 @@ module.exports = {
             return null;
         }
     },
-    setRedisKeyValue: function (key, value) {
-        var res = execSync('redis-cli -h redis_lm set ' + key + ' ' + value);
-        var res = execSync('redis-cli -h redis_lm SAVE');
+    setRedisKeyValue: async function (key, value) {
+        try {
+            await client.set(key, String(value));
+            // await client.save(); // Save might be too heavy for every set, but keep if parity required. Check if SAVE is supported in this client mode.
+            // Using standard background save usually better, or client.save() if strictly needed.
+            // Original code did `redis-cli SAVE` which is blocking.
+            // client.save() in node-redis might be checking BG status or similar. 
+            // V4 client.save() sends SAVE command.
+            client.save();
+        } catch (err) {
+            console.error("Redis Set Error", err);
+        }
         return 0
     },
-    requestsRequired: function(type1, group_id) {
-        var last_update_local = this.getRedisKeyValue("requests:" + group_id + ":last_updated_local:"+type1);
+    requestsRequired: function (type1, group_id) {
+        var last_update_local = this.getRedisKeyValue("requests:" + group_id + ":last_updated_local:" + type1);
         var last_update_remote = this.getRedisKeyValue("requests:" + group_id + ":last_updated_remote");
-        if (! last_update_local) {
-            this.setRedisKeyValue("requests:" + group_id + ":last_updated_local:"+type1, 0)
+        if (!last_update_local) {
+            this.setRedisKeyValue("requests:" + group_id + ":last_updated_local:" + type1, 0)
             last_update_local = 0
         }
-        if (! last_update_remote) {
+        if (!last_update_remote) {
             this.setRedisKeyValue("requests:" + group_id + ":last_updated_remote", 0)
             last_update_remote = 0
         }
@@ -64,13 +73,13 @@ module.exports = {
             return false
         }
     },
-    updateLastUpdateLocal: function(type1, group_id) {
+    updateLastUpdateLocal: function (type1, group_id) {
         var last_update_remote = this.getRedisKeyValue("requests:" + group_id + ":last_updated_remote");
-        if (! last_update_remote) {
+        if (!last_update_remote) {
             this.setRedisKeyValue("requests:" + group_id + ":last_updated_remote", 0)
             last_update_remote = 0
         }
-        this.setRedisKeyValue("requests:" + group_id + ":last_updated_local:"+type1, last_update_remote)
+        this.setRedisKeyValue("requests:" + group_id + ":last_updated_local:" + type1, last_update_remote)
     },
     extendDefaults: function (source, properties) {
         var property;
@@ -82,13 +91,13 @@ module.exports = {
         return source;
     },
 
-    updateParametersInRedis: function(groupID, pi_ip) {
-        var default_keys = ["8:112","8:92", "8:174", "32:0", "32:1", "32:2", "32:4", "32:5", "32:6"]
-        var keys=[]
-		keys = default_keys.concat(keys).unique();
-		keys = JSON.stringify(keys)
-		keys = keys.replace(/"/g, "%22")
-        axios.get(`http://`+ pi_ip + `/api/arrayparameter?list=`+keys, {timeout: 3000}).then((response) => {
+    updateParametersInRedis: function (groupID, pi_ip) {
+        var default_keys = ["8:112", "8:92", "8:174", "32:0", "32:1", "32:2", "32:4", "32:5", "32:6"]
+        var keys = []
+        keys = default_keys.concat(keys).unique();
+        keys = JSON.stringify(keys)
+        keys = keys.replace(/"/g, "%22")
+        axios.get(`http://` + pi_ip + `/api/arrayparameter?list=` + keys, { timeout: 3000 }).then((response) => {
             var jsonObj = {};
             for (let index = 0; index < Object.keys(response.data).length; index++) {
                 const key = Object.keys(response.data)[index];
@@ -105,22 +114,22 @@ module.exports = {
             this.setRedisKeyValue("requests:" + groupID + ":last_updated_local:arrayparameters", 0)
         })
     },
-    updateCarWithOffsetInRedis: function(groupID, pi_ip) {
-        axios.get(`http://`+ pi_ip + `/ajax/get_pi_labels/`, {timeout: 3000}).then((response) => {
+    updateCarWithOffsetInRedis: function (groupID, pi_ip) {
+        axios.get(`http://` + pi_ip + `/ajax/get_pi_labels/`, { timeout: 3000 }).then((response) => {
             var jsonObj = response.data;
             this.setRedisKeyValue("requests:" + groupID + ":cars_with_offset", JSON.stringify(jsonObj))
             this.updateLastUpdateLocal("cars_with_offset", groupID)
         }).catch((err) => {
 
             var default_response = []
-            for (var i=0; i<95; i++){
-                var obj = {"carIndex": i.toString(),"cars": []}
+            for (var i = 0; i < 95; i++) {
+                var obj = { "carIndex": i.toString(), "cars": [] }
                 if (i != 0) {
-                    var obj2 ={"value": i.toString()}
+                    var obj2 = { "value": i.toString() }
                 } else {
-                    var obj2 ={"value": "GF"}
+                    var obj2 = { "value": "GF" }
                 }
-                for (var j=0; j<8;j++){
+                for (var j = 0; j < 8; j++) {
                     obj["cars"].push(obj2)
                 }
                 default_response.push(obj)
@@ -130,10 +139,10 @@ module.exports = {
             this.setRedisKeyValue("requests:" + groupID + ":last_updated_local:cars_with_offset", 0)
         })
     },
-    updateSettingsInRedis: function(groupID, pi_ip) {
-        axios.get(`http://`+ pi_ip + `/api/system/settings`, {timeout: 2000}).then((response) => {
-            var jsonObj = {} 
-            jsonObj[groupID] = response.data; 
+    updateSettingsInRedis: function (groupID, pi_ip) {
+        axios.get(`http://` + pi_ip + `/api/system/settings`, { timeout: 2000 }).then((response) => {
+            var jsonObj = {}
+            jsonObj[groupID] = response.data;
             this.setRedisKeyValue("requests:" + groupID + ":settings", JSON.stringify(JSON.stringify(response.data)))
             this.updateLastUpdateLocal("settings", groupID)
         }).catch((err) => {
@@ -147,40 +156,40 @@ module.exports = {
         })
     },
 
-    updateAllDataInRedis: function(groupID, pi_ip) {
+    updateAllDataInRedis: function (groupID, pi_ip) {
         this.updateParametersInRedis(groupID, pi_ip);
         this.updateCarWithOffsetInRedis(groupID, pi_ip);
         this.updateSettingsInRedis(groupID, pi_ip);
     },
 
-    getRPITimeZone: function(groupID) {
+    getRPITimeZone: function (groupID) {
         var pi_json = JSON.parse(fs.readFileSync('configs/pi/pi.json', 'utf-8'))['data'];
         pi_json.forEach(pi => {
             if (pi.GroupID == groupID) {
                 var pi_ip = pi.location.split(':')[0];
-                axios.get(`http://`+ pi_ip + `3000/api/get_timezone/`, {timeout: 2000}).then((response) => {
+                axios.get(`http://` + pi_ip + `3000/api/get_timezone/`, { timeout: 2000 }).then((response) => {
                     var jsonObj = response.data;
                     return jsonObj;
                 }).catch((err) => {
 
-                    return {"Status":405, "Message":"RPI is not connected"};
+                    return { "Status": 405, "Message": "RPI is not connected" };
                 })
             }
         })
     },
-    convertTZ: function(date, tzString) {
-        return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {timeZone: tzString}));   
+    convertTZ: function (date, tzString) {
+        return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", { timeZone: tzString }));
     },
-    getUtcTimestamp: function(){
-    	var now = new Date;
-		var utc_timestamp = Date.UTC(now.getUTCFullYear(),now.getUTCMonth(), now.getUTCDate() , 
-      	now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
-      	return utc_timestamp;
+    getUtcTimestamp: function () {
+        var now = new Date;
+        var utc_timestamp = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
+            now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
+        return utc_timestamp;
     },
-    getCurrentTimestamp: function(){
-    	var date = new Date();
-		var timestamp = date.getTime();
-		return timestamp;
+    getCurrentTimestamp: function () {
+        var date = new Date();
+        var timestamp = date.getTime();
+        return timestamp;
     },
     dateTimeUTC: async function (value, format) {
         return new Promise((resolve, reject) => {
@@ -191,9 +200,9 @@ module.exports = {
             }
         })
     },
-    timeUTC: function(value, format) {
+    timeUTC: function (value, format) {
         return new Promise((resolve, reject) => {
-            try { 
+            try {
                 resolve(moment(value, format).format(format))
             }
             catch (err) {
@@ -201,54 +210,52 @@ module.exports = {
             }
         })
     },
-    datatableColumnName: function(query){
+    datatableColumnName: function (query) {
         var _cols = query['columns'];
 
 
-        _cols.forEach(function(col,i){
-            if(col.name == ''){
+        _cols.forEach(function (col, i) {
+            if (col.name == '') {
                 query['columns'][i]['name'] = col.data;
             }
         });
         return query;
     },
-    hexToString: function(hex){
+    hexToString: function (hex) {
         const convert = (from, to) => str => Buffer.from(str, from).toString(to);
         const hexToUtf8 = convert('hex', 'utf8');
 
         return hexToUtf8(hex);
     },
-    formatIP: (ip) =>{
+    formatIP: (ip) => {
         let rgx = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
         let test = rgx.test(ip);
         return test;
     },
-    formatMAC: (mac) =>{
+    formatMAC: (mac) => {
         let rgx = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
         let test = rgx.test(mac);
         return test;
     },
-    getScanned: async (ip="", mode=2) =>{
-        const { execSync } = require('child_process');
-        stdout = execSync('redis-cli -h redis_lm get scannedDevices').toString()
-        stdout = stdout.replace(/\r?\n|\r/g, "");
-        if (stdout) {
-            devices = JSON.parse(stdout)
-            return new Promise((resolve, reject)=>{
-                resolve(devices)
-            })
-        } else {
-            return new Promise((resolve, reject)=>{
-                resolve([])
-            })
+    getScanned: async (ip = "", mode = 2) => {
+        try {
+            let stdout = await client.get('scannedDevices');
+            if (stdout) {
+                let devices = JSON.parse(stdout);
+                return devices;
+            } else {
+                return [];
+            }
+        } catch (err) {
+            return [];
         }
     },
-    scan: async (ip="", mode=2) =>{
+    scan: async (ip = "", mode = 2) => {
         const { exec } = require('child_process');
         var ssh_exec = require('node-ssh-exec')
-        
-        return new Promise((resolve, reject)=>{
-            axios.get(`http://`+ "172.17.0.1" + `:3000/api/system/devices`, {timeout: 3000}).then((stdout) => {
+
+        return new Promise((resolve, reject) => {
+            axios.get(`http://` + "172.17.0.1" + `:3000/api/system/devices`, { timeout: 3000 }).then((stdout) => {
                 // the *entire* stdout and stderr (buffered)
                 var _line = stdout.data
                 var _connectedUsers = {};
@@ -261,20 +268,20 @@ module.exports = {
                         var _mac = "";
                         _v.forEach(function (_i) {
                             if (_i != "") {
-                                switch(itemIndex){
+                                switch (itemIndex) {
                                     case 0:
                                         _ip = _i;
                                         break;
                                     case 2:
                                         // if ( ! _ip.startsWith("172.")) {
-                                            _mac = _i;
-                                            if(ip && mode === 1){
-                                                if(ip === _ip){
-                                                    collection = [...collection, {ipv4: _ip, mac: _mac}];
-                                                }
-                                            }else{
-                                                collection = [...collection, {ipv4: _ip, mac: _mac}];
+                                        _mac = _i;
+                                        if (ip && mode === 1) {
+                                            if (ip === _ip) {
+                                                collection = [...collection, { ipv4: _ip, mac: _mac }];
                                             }
+                                        } else {
+                                            collection = [...collection, { ipv4: _ip, mac: _mac }];
+                                        }
                                         // }
                                         break;
                                 }
@@ -283,77 +290,77 @@ module.exports = {
                         })
                     }
                 });
-                exec('redis-cli -h redis_lm set scannedDevices ' + JSON.stringify(JSON.stringify(collection)), (err, stdout, stderr) => {})
+                client.set('scannedDevices', JSON.stringify(JSON.stringify(collection))).catch(e => console.error(e));
                 resolve(collection)
             }).catch((err) => {
 
-                resolve([]) 
+                resolve([])
             })
         })
     },
     getDayValue: (param) => {
-        try{
-            
-            if(Array.isArray(param)){
-                if(param.length){
+        try {
+
+            if (Array.isArray(param)) {
+                if (param.length) {
                     return param;
                 }
                 return false;
-            }else if (param instanceof Object && typeof param === "object"){
-                if(typeof param.day !== 'undefined' && typeof param.month !== "undefined" && typeof param.year !== "undefined"){
+            } else if (param instanceof Object && typeof param === "object") {
+                if (typeof param.day !== 'undefined' && typeof param.month !== "undefined" && typeof param.year !== "undefined") {
                     let date = param.year + "-" + MOMENT().month(param.month).format("MM") + "-" + param.day;
                     date = MOMENT(date, ["YYYY-MM-DD"]).format("Y-M-D");
                     return date;
                 }
-                if(typeof param.week !== "undefined"){
-                    if(param.week && typeof param.day === "undefined"){
+                if (typeof param.week !== "undefined") {
+                    if (param.week && typeof param.day === "undefined") {
                         const week = module.exports.getCurrentWeekInMonth() === parseInt(param.week.split("")[0]) ? true : false;
-        
-                        if(week){
+
+                        if (week) {
                             return MOMENT().format("Y-M-D");
                         }
                     }
-                    if(param.week && typeof param.day !== "undefined" && param.month !== "undefined"){
+                    if (param.week && typeof param.day !== "undefined" && param.month !== "undefined") {
                         // const week = module.exports.getCurrentWeekInMonth() === parseInt(param.week.split("")[0]) ? true : false;
                         const month = MOMENT().month(param.month).format("M");
                         const week = param.week ? parseInt(param.week.split("")[0]) : false;
-                        if(week && month > 0){
+                        if (week && month > 0) {
                             // return MOMENT().day(param.day).format("Y-M-D");
                             // return MOMENT(MOMENT().week(week).day(param.day).format("Y-M-D"), "Y-M-D").month(parseInt(month)-1).add(2, 'days').format("Y-M-D");
                             // return MOMENT(MOMENT().week(week).day(param.day).add('2', 'days').format("Y-M-D"), "Y-M-D").month(parseInt(month)-1).format("Y-M-D");
-                            if(MOMENT().isoWeekday(param.day).format("Y-M-D") === MOMENT().format("Y-M-D") && module.exports.getCurrentWeekInMonth() === week){
+                            if (MOMENT().isoWeekday(param.day).format("Y-M-D") === MOMENT().format("Y-M-D") && module.exports.getCurrentWeekInMonth() === week) {
                                 return MOMENT().isoWeekday(param.day).format("Y-M-D");
-                            }else{
-                                return MOMENT().isoWeekday(param.day).week(week).month(parseInt(month)-1).format("Y-M-D")
+                            } else {
+                                return MOMENT().isoWeekday(param.day).week(week).month(parseInt(month) - 1).format("Y-M-D")
                             }
                         }
                     }
                     return false;
                 }
-                if(typeof param.year === "undefined"){
-                    if(param.day !== "undefined" && param.month !== "undefined"){
+                if (typeof param.year === "undefined") {
+                    if (param.day !== "undefined" && param.month !== "undefined") {
                         const date = MOMENT().format("Y") + "-" + MOMENT().month(param.month).format("MM") + "-" + param.day;
                         return MOMENT(date, ["YYYY-MM-DD"]).format("Y-M-D");
                     }
                     return false;
                 }
-            } else{
+            } else {
                 return false;
             }
-        }catch(err){
+        } catch (err) {
 
         }
     },
-    getCurrentWeekInMonth: () =>{
+    getCurrentWeekInMonth: () => {
         const now = MOMENT();
         const week = Math.ceil(now.date() / 7);
-    
+
         return week;
     },
-    isDayToday: (dateArray) =>{
+    isDayToday: (dateArray) => {
         return dateArray.includes(MOMENT().format('ddd'))
     },
-    getServerTimezone: () =>{
+    getServerTimezone: () => {
         return MOMENT().format("Z");
     }
 };

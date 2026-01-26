@@ -42,8 +42,6 @@ module.exports = {
             codes = [...new Set(codes)];
             urls = [...new Set(urls)];
 
-            console.log(codes)
-
             const token = jwt.sign({
                 userId: user.id,
                 username: user.username,

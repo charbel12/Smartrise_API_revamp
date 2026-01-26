@@ -168,7 +168,6 @@ module.exports = {
 
 			const cars = await TOOLS.getRedisKeyValue('car_labels');
 			const carObject = JSON.parse(cars);
-			console.log('cars: ',carObject);
 			const numberOfCars = carObject.length;
 			const allParameters = await Parameters.findAll({
 				where: {

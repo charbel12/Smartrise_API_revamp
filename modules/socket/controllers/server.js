@@ -3,7 +3,21 @@ var connects = [];
 var message;
 
 var riserBuffer = {};
-module.exports = function (ws, req) {
+
+const broadcast = (data) => {
+	connects.forEach(socket => {
+		try {
+			if (socket.readyState === 1) {
+				socket.send(typeof data === 'string' ? data : JSON.stringify(data));
+			}
+		}
+		catch (err) {
+
+		}
+	});
+};
+
+const handleConnection = function (ws, req) {
 	connects.push(ws);
 	var _ws_open = false;
 
@@ -18,24 +32,24 @@ module.exports = function (ws, req) {
 		});
 
 		try {
-			setTimeout(function(){
-				if(ws.readyState === 1){
+			setTimeout(function () {
+				if (ws.readyState === 1) {
 					ws.send(JSON.stringify({ MessageType: 'GroupConfig', data: _cont }));
 					let _g = Object.keys(riserBuffer);
-					_g.forEach(function(v){
-						setTimeout(function(){
-							try{
-								if(ws.readyState === 1){
+					_g.forEach(function (v) {
+						setTimeout(function () {
+							try {
+								if (ws.readyState === 1) {
 									ws.send(riserBuffer[v]);
 								}
 							}
-							catch(err){
+							catch (err) {
 
 							}
-						},2000);
+						}, 2000);
 					})
 				}
-			},300);
+			}, 300);
 		}
 		catch (err) {
 
@@ -44,16 +58,14 @@ module.exports = function (ws, req) {
 
 
 	ws.on('message', function (msg) {
-		//ws.send(msg);
-
 		message = msg;
-		if(JSON.parse(msg).MessageType == "Risers"){
+		if (JSON.parse(msg).MessageType == "Risers") {
 			let _groupPi = JSON.parse(msg).pi_group;
 			riserBuffer[_groupPi] = msg;
 		}
 		connects.forEach(socket => {
 			try {
-				if(socket.readyState === 1){
+				if (socket.readyState === 1) {
 					socket.send(message);
 				}
 			}
@@ -77,3 +89,6 @@ module.exports = function (ws, req) {
 	});
 
 };
+
+module.exports = handleConnection;
+module.exports.broadcast = broadcast;

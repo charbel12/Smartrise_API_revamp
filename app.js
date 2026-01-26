@@ -28,9 +28,9 @@ const seed = require("./database/seed");
 
 // ----------------- CORS Setup -----------------
 const corsOptions = {
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
 APP.use(cors(corsOptions));
@@ -39,24 +39,24 @@ APP.use(EXPRESS.urlencoded({ extended: true }));
 
 // ----------------- App Version -----------------
 fs.readFile('./appversion.txt', 'utf8', (err, data) => {
-    if (err) {
-        console.error(err);
-        return;
-    }
-    process.env.APP_VERSION = data.replace(/\n$/, "") || '1.0.0';
+  if (err) {
+    console.error(err);
+    return;
+  }
+  process.env.APP_VERSION = data.replace(/\n$/, "") || '1.0.0';
 });
 
 // ----------------- Root Route -----------------
 APP.get("/", (req, res) => {
-    res.send("Smartrise API Version: " + process.env.APP_VERSION || '1.0.0');
+  res.send("Smartrise API Version: " + process.env.APP_VERSION || '1.0.0');
 });
 
 // ----------------- ROUTES -----------------
 
 // Helper function to load controllers using Express Router
 const loadController = (path) => {
-    const router = require(path);
-    return router;
+  const router = require(path);
+  return router;
 };
 
 // CONTROLS
@@ -84,6 +84,10 @@ APP.use('/reports', loadController('./modules/reports/controllers/index.js'));
 // GROUPS
 APP.use('/groups', loadController('./modules/groups/controllers/index.js'));
 
+// TECHNICIAN
+APP.use('/technician', loadController('./modules/technician/controllers/index.js'));
+APP.use('/params', loadController('./modules/technician/controllers/index.js'));
+
 // SETTINGS LOGS
 APP.use('/settings/logs', loadController('./modules/settings/controllers/logs.js'));
 
@@ -94,13 +98,11 @@ APP.use('/settings/rtc', loadController('./modules/settings/controllers/rtc.js')
 APP.use('/settings/io', loadController('./modules/settings/controllers/io.js'));
 
 // SETTINGS GROUP CONFIG
-const SETTINGS_GROUPCONFIG = loadController('./modules/settings/controllers/group-config.js');
-APP.use('/settings/reset-default', SETTINGS_GROUPCONFIG);
-APP.use('/settings/group-config', SETTINGS_GROUPCONFIG);
-APP.use('/settings/pi-config', SETTINGS_GROUPCONFIG);
-APP.use('/settings/other-config', SETTINGS_GROUPCONFIG);
-APP.use('/settings/network-config', SETTINGS_GROUPCONFIG);
-APP.use('/settings/special-feature', SETTINGS_GROUPCONFIG);
+const SETTINGS_ROUTER = loadController('./modules/settings/controllers/group-config.js');
+APP.use('/settings', SETTINGS_ROUTER);
+
+// UPDATES
+APP.use('/updates', loadController('./modules/updates/controllers/index.js'));
 
 // ----------------- WEBSOCKETS -----------------
 const SOCKET_SERVER = require('./modules/socket/controllers/server.js');
@@ -108,6 +110,14 @@ APP.ws('/socket/server', SOCKET_SERVER);
 
 const SOCKET_CONTROL = require('./modules/socket/controllers/control.js');
 APP.ws('/socket/control', SOCKET_CONTROL);
+
+// Initialize Socket Manager
+try {
+  const PiManager = require('./modules/socket/managers/PiManager.js');
+  PiManager.init();
+} catch (err) {
+  console.error("Failed to initialize PiManager:", err);
+}
 
 // ----------------- START SERVER -----------------
 APP.listen(PORT, () => console.log(`app listening on port ${PORT}!`));

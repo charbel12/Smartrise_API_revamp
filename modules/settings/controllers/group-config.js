@@ -157,7 +157,7 @@ APP.get(`${VARS.base_route}/reset-default`, function (req, res) {
 * @returns {AuthResponseFailed.model} 401 - Access is denied.
 * @security JWT
 */
-APP.get(`${VARS.base_route}/pi-config`, async function (req, res, next) {
+APP.get(`/pi-config`, async function (req, res, next) {
    try{
         const result = await MODEL.getPiConfig();
 
