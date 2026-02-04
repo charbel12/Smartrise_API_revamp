@@ -10,7 +10,7 @@ const bp = require('body-parser');
 
 APP.use(bp.urlencoded({ extended: true }));
 
-ROUTER_MIDDLEWARE.USE_AUTHENTICATED(APP); //for secured/authenticated routes
+ROUTER_MIDDLEWARE.USE_AUTHENTICATED(APP);
 
 APP.post(`${VARS.base_route}`, async(req, res, next) => {
     MODEL.createRole(req, res, function(err, result) {
@@ -42,12 +42,6 @@ APP.put(`${VARS.base_route}/:id`, async(req, res, next) => {
         return result
     })
 })
-
-APP.get(`/permissions`, async(req, res, next) => {
-    MODEL.getPermissions(req, res, function(err, result) {
-        return result
-    })
-});
 
 
 APP.delete(`${VARS.base_route}/:id/delete`, async(req, res, next) => {

@@ -316,7 +316,7 @@ module.exports = {
 		var _query = `
 		INSERT
 		INTO
-			rpt_floortfloor
+			rpt_floortofloor
 			(group_id,car_id,floor_from,floor_to,direction,wait_time,date_created)
 		VALUES
 			(?,?,?,?,?,?,UTC_TIMESTAMP())

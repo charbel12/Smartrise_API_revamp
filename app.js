@@ -73,7 +73,7 @@ APP.use('/users', loadController('./modules/users/controllers/index.js'));
 
 // ROLES
 APP.use('/roles', loadController('./modules/roles/controllers/index.js'));
-APP.use('/permissions', loadController('./modules/roles/controllers/index.js'));
+APP.use('/permissions', loadController('./modules/permissions/controllers/index.js'));
 
 // ALARMS
 APP.use('/alarms', loadController('./modules/alarms/controllers/index.js'));
@@ -103,6 +103,9 @@ APP.use('/settings', SETTINGS_ROUTER);
 
 // UPDATES
 APP.use('/updates', loadController('./modules/updates/controllers/index.js'));
+
+// MONITORING
+APP.use('/', loadController('./modules/monitoring/routes.js'));
 
 // ----------------- WEBSOCKETS -----------------
 const SOCKET_SERVER = require('./modules/socket/controllers/server.js');

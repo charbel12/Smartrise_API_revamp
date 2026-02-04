@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     date_created: { type: DataTypes.DATE, allowNull: false },
     wait_time: { type: DataTypes.INTEGER, allowNull: true },
   }, {
-    tableName: 'rpt_floortfloor',
+    tableName: 'rpt_floortofloor',
     timestamps: false,
   });
   return RptFloorTFloor;

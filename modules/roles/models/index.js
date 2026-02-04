@@ -153,23 +153,7 @@ module.exports = {
             }));
         }
     },
-
-    getPermissions: async function(req, res, callback = null) {
-        try {
-            const permissions = await Permission.findAll();
-            return callback(null, res.status(200).json({
-                successful: true,
-                err: null,
-                data: permissions
-            }));
-        } catch (err) {
-            return callback(null, res.status(400).json({
-                successful: false,
-                err
-            }));
-        }
-    },
-
+    
     deleteRole: async function(req, res, callback = null) {
         const t = await sequelize.transaction();
         try {

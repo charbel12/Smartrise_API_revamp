@@ -1114,7 +1114,7 @@ const results = await RptWait.findAll({
                         direction,
                         ROUND(AVG(wait_time), 1) as average
                     FROM 
-                        rpt_floortfloor
+                        rpt_floortofloor
                     WHERE
                         group_id = '${data.group_id}'
                     AND
@@ -1148,7 +1148,7 @@ const results = await RptWait.findAll({
                         direction,
                         ROUND(AVG(wait_time),1) as average
                     FROM 
-                        rpt_floortfloor
+                        rpt_floortofloor
                     WHERE
                     group_id = '${data.group_id}'
                     AND

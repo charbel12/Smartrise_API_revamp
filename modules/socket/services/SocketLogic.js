@@ -95,8 +95,8 @@ class SocketLogic {
         const hcWaitUp = arrDiff(this.newHallCalls[pi_group]["up"], this.prevHallCalls[pi_group]["up"]);
         const hcWaitDown = arrDiff(this.newHallCalls[pi_group]["down"], this.prevHallCalls[pi_group]["down"]);
 
-        if (hcWaitUp.length > 0) waitTimes(pi_group, hcWaitUp, "up", this.list_waited_floors);
-        if (hcWaitDown.length > 0) waitTimes(pi_group, hcWaitDown, "down", this.list_waited_floors);
+        if (hcWaitUp.length > 0) waitTimes(pi_group, hcWaitUp, "up", this.list_waited_floors, this.GROUP_FILES);
+        if (hcWaitDown.length > 0) waitTimes(pi_group, hcWaitDown, "down", this.list_waited_floors, this.GROUP_FILES);
 
         const hallCallDiffUp = arrDiff(this.prevHallCalls[pi_group]["up"], this.newHallCalls[pi_group]["up"]);
         const hallCallDiffDown = arrDiff(this.prevHallCalls[pi_group]["down"], this.newHallCalls[pi_group]["down"]);
@@ -145,14 +145,14 @@ class SocketLogic {
             this.is_modified_dad_parameter = false;
         }
 
-        if (first_car && this.is_modified_dad_parameter) {
-            TOOLS.setRedisKeyValue(
-                "requests:" + pi_group + ":last_updated_remote",
-                parseInt(first_car.LastUpdateParameter)
-            );
-            TOOLS.updateAllDataInRedis(pi_group, pi_ip);
-            this.is_modified_dad_parameter = false;
-        }
+        // if (first_car && this.is_modified_dad_parameter) {
+        //     TOOLS.setRedisKeyValue(
+        //         "requests:" + pi_group + ":last_updated_remote",
+        //         parseInt(first_car.LastUpdateParameter)
+        //     );
+        //     TOOLS.updateAllDataInRedis(pi_group, pi_ip);
+        //     this.is_modified_dad_parameter = false;
+        // }
 
         Object.keys(_cars).forEach((e) => {
             this.currentFloors[_cars[e].CarID] = {

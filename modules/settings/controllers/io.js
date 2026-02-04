@@ -17,7 +17,6 @@ APP.get(`${VARS.base_route}/io/get-selected`, function (req, res) {
     var inputs = TOOLS.getRedisKeyValue("display_inputs")
     if (inputs == null) {
         inputs = "[]"
-        // TOOLS.setRedisKeyValue("display_inputs", JSON.stringify(inputs))
         exec("redis-cli -h redis_lm set display_inputs " + JSON.stringify(inputs), (err, stdout, stderr) => {
             exec("redis-cli -h redis_lm SAVE", (err, stdout, stderr) => {});
         });
@@ -25,7 +24,6 @@ APP.get(`${VARS.base_route}/io/get-selected`, function (req, res) {
     var outputs = TOOLS.getRedisKeyValue("display_outputs")
     if (outputs == null) {
         outputs = "[]"
-        // TOOLS.setRedisKeyValue("display_outputs", JSON.stringify(outputs))
         exec("redis-cli -h redis_lm set display_outputs " + JSON.stringify(outputs), (err, stdout, stderr) => {
             exec("redis-cli -h redis_lm SAVE", (err, stdout, stderr) => {});
         });

@@ -19,13 +19,12 @@ class PiClient {
 
     connect() {
         this.ws = new WebSocket(this.location, { origin: "" });
-        console.log('connecting to ws:', this.location)
         this.ws.on("open", () => {
-            // LOGGER_MODEL.createProgramEvent(
-            //   "Connection",
-            //   "RaspberryPi Connected. Location: " + this.location,
-            //   () => {}
-            // );
+            LOGGER_MODEL.createProgramEvent(
+              "Connection",
+              "RaspberryPi Connected. Location: " + this.location,
+              () => {}
+            );
 
             // Extract IP for Redis
             let pi_ip = this.location.replace("ws://", "").replace(":9100", "").trim();
@@ -51,11 +50,11 @@ class PiClient {
         this.ws.on("close", () => {
             if (this._inServiceTimer) clearInterval(this._inServiceTimer);
 
-            // LOGGER_MODEL.createProgramEvent(
-            //   "Connection",
-            //   "RaspberryPi Disconnected. Location: " + this.location,
-            //   () => {}
-            // );
+            LOGGER_MODEL.createProgramEvent(
+              "Connection",
+              "RaspberryPi Disconnected. Location: " + this.location,
+              () => {}
+            );
 
             SocketLogic.resetServiceForGroup(this.pi_group);
 

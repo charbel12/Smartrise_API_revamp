@@ -1,3 +1,7 @@
+const LOGGER_MODEL = require("../models/index.js");
+
+var wTimes = {};
+var _inService = {};
 
 function getCarCalls(carfloor, data) {
   var floorsSelected = [];
@@ -411,7 +415,7 @@ function startWait(pi_group, floors, direction) {
   });
 }
 
-function waitTimes(pi_group, floors, direction, list_waited_floors) {
+function waitTimes(pi_group, floors, direction, list_waited_floors, GROUP_FILES) {
   var register_waitTime = true;
   max_floors = 0;
   GROUP_FILES[pi_group]["Cars"].forEach((car) => {
@@ -574,5 +578,6 @@ module.exports ={
     startWait,
     waitTimes,
     inServiceLoop,
-    getDoorModeOperation
+    getDoorModeOperation,
+    _inService
 }

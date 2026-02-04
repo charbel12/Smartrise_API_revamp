@@ -4,6 +4,14 @@ const { sequelize } = require('./models'); // your Sequelize instance
 const migrator = new Umzug({
   migrations: {
     glob: 'database/migrations/*.js', // path to your migration files
+    resolve: ({ name, path, context }) => {
+      const migration = require(path);
+      return {
+        name,
+        up: async () => migration.up(context, sequelize.constructor),
+        down: async () => migration.down(context, sequelize.constructor),
+      };
+    },
   },
   context: sequelize.getQueryInterface(),
   storage: new SequelizeStorage({ sequelize }),
