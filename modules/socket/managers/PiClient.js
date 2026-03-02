@@ -99,6 +99,16 @@ class PiClient {
             data: data
         }));
     }
+
+    send(data) {
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+            this.ws.send(typeof data === 'string' ? data : JSON.stringify(data));
+            return true;
+        } else {
+            console.warn(`[PiClient] Cannot send message, socket not open for group ${this.pi_group}`);
+            return false;
+        }
+    }
 }
 
 module.exports = PiClient;

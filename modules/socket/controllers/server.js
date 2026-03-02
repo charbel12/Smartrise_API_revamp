@@ -31,29 +31,6 @@ const handleConnection = function (ws, req) {
 			//ws.send(JSON.stringify({pi_group: (_v.GroupID),MessageType:'GroupConfig', data: _v}));
 		});
 
-		try {
-			setTimeout(function () {
-				if (ws.readyState === 1) {
-					ws.send(JSON.stringify({ MessageType: 'GroupConfig', data: _cont }));
-					let _g = Object.keys(riserBuffer);
-					_g.forEach(function (v) {
-						setTimeout(function () {
-							try {
-								if (ws.readyState === 1) {
-									ws.send(riserBuffer[v]);
-								}
-							}
-							catch (err) {
-
-							}
-						}, 2000);
-					})
-				}
-			}, 300);
-		}
-		catch (err) {
-
-		}
 	});
 
 

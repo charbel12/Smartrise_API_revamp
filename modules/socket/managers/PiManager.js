@@ -33,6 +33,9 @@ class PiManager {
             console.error("Error initializing PiManager:", err);
         }
     }
+    getClient(groupId) {
+        return this.clients.find(c => c.pi_group == groupId);
+    }
 }
 
 module.exports = new PiManager();
