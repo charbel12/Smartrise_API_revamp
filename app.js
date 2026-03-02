@@ -9,7 +9,7 @@ const fs = require('fs');
 
 // Logger and Metrics
 const Logger = require('./helpers/logger');
-const { httpMetricsMiddleware, errorMetricsMiddleware, requestLoggingMiddleware } = require('./middlewares/metrics');
+const { httpMetricsMiddleware, errorMetricsMiddleware } = require('./middlewares/metrics');
 const appLogger = new Logger('APP');
 
 const migrate = require("./database/migrate");
@@ -46,10 +46,7 @@ APP.use(cors(corsOptions));
 APP.use(EXPRESS.json());
 APP.use(EXPRESS.urlencoded({ extended: true }));
 
-// ----------------- Logging & Metrics Middleware -----------------
-APP.use(requestLoggingMiddleware);  // Log incoming requests
-APP.use(httpMetricsMiddleware);     // Track HTTP metrics
-// Error handling middleware is added at the end of the file
+APP.use(httpMetricsMiddleware);
 
 // App Version
 fs.readFile('./appversion.txt', 'utf8', (err, data) => {
