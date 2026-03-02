@@ -1,0 +1,60 @@
+[2026-03-02T16:37:02.236Z] [INFO] [APP] PiManager initialized successfully
+[2026-03-02T16:37:02.243Z] [INFO] [APP] Smartrise API v1.0.0 listening on port 9300!
+[2026-03-02T16:37:02.243Z] [INFO] [APP] Environment: development
+[2026-03-02T16:37:02.243Z] [INFO] [APP] Metrics endpoint: http://localhost:9300/metrics
+[2026-03-02T16:37:02.264Z] [INFO] [APP] App version loaded: 5.3.1
+[2026-03-02T18:42:52.642Z] [INFO] [APP] PiManager initialized successfully
+[2026-03-02T18:42:52.646Z] [INFO] [APP] Smartrise API v1.0.0 listening on port 9300!
+[2026-03-02T18:42:52.647Z] [INFO] [APP] Environment: development
+[2026-03-02T18:42:52.647Z] [INFO] [APP] Metrics endpoint: http://localhost:9300/metrics
+[2026-03-02T18:42:52.685Z] [INFO] [APP] App version loaded: 5.3.1
+[2026-03-02T18:43:18.040Z] [INFO] [APP] PiManager initialized successfully
+[2026-03-02T18:43:18.048Z] [INFO] [APP] Smartrise API v1.0.0 listening on port 9300!
+[2026-03-02T18:43:18.049Z] [INFO] [APP] Environment: development
+[2026-03-02T18:43:18.049Z] [INFO] [APP] Metrics endpoint: http://localhost:9300/metrics
+[2026-03-02T18:43:18.087Z] [INFO] [APP] App version loaded: 5.3.1
+[2026-03-02T18:43:24.853Z] [INFO] [APP] PiManager initialized successfully
+[2026-03-02T18:43:24.857Z] [INFO] [APP] Smartrise API v1.0.0 listening on port 9300!
+[2026-03-02T18:43:24.858Z] [INFO] [APP] Environment: development
+[2026-03-02T18:43:24.858Z] [INFO] [APP] Metrics endpoint: http://localhost:9300/metrics
+[2026-03-02T18:43:24.881Z] [INFO] [APP] App version loaded: 5.3.1
+[2026-03-02T18:47:07.955Z] [INFO] [APP] PiManager initialized successfully
+[2026-03-02T18:47:07.960Z] [INFO] [APP] Smartrise API v1.0.0 listening on port 9300!
+[2026-03-02T18:47:07.961Z] [INFO] [APP] Environment: development
+[2026-03-02T18:47:07.961Z] [INFO] [APP] Metrics endpoint: http://localhost:9300/metrics
+[2026-03-02T18:47:07.985Z] [INFO] [APP] App version loaded: 5.3.1
+[2026-03-02T18:47:20.926Z] [INFO] [APP] PiManager initialized successfully
+[2026-03-02T18:47:20.930Z] [INFO] [APP] Smartrise API v1.0.0 listening on port 9300!
+[2026-03-02T18:47:20.930Z] [INFO] [APP] Environment: development
+[2026-03-02T18:47:20.931Z] [INFO] [APP] Metrics endpoint: http://localhost:9300/metrics
+[2026-03-02T18:47:20.952Z] [INFO] [APP] App version loaded: 5.3.1
+[2026-03-02T18:47:48.418Z] [INFO] [APP] PiManager initialized successfully
+[2026-03-02T18:47:48.422Z] [INFO] [APP] Smartrise API v1.0.0 listening on port 9300!
+[2026-03-02T18:47:48.423Z] [INFO] [APP] Environment: development
+[2026-03-02T18:47:48.423Z] [INFO] [APP] Metrics endpoint: http://localhost:9300/metrics
+[2026-03-02T18:47:48.462Z] [INFO] [APP] App version loaded: 5.3.1
+[2026-03-02T18:47:56.315Z] [INFO] [APP] PiManager initialized successfully
+[2026-03-02T18:47:56.319Z] [INFO] [APP] Smartrise API v1.0.0 listening on port 9300!
+[2026-03-02T18:47:56.319Z] [INFO] [APP] Environment: development
+[2026-03-02T18:47:56.319Z] [INFO] [APP] Metrics endpoint: http://localhost:9300/metrics
+[2026-03-02T18:47:56.343Z] [INFO] [APP] App version loaded: 5.3.1
+[2026-03-02T18:48:03.515Z] [INFO] [APP] PiManager initialized successfully
+[2026-03-02T18:48:03.519Z] [INFO] [APP] Smartrise API v1.0.0 listening on port 9300!
+[2026-03-02T18:48:03.520Z] [INFO] [APP] Environment: development
+[2026-03-02T18:48:03.520Z] [INFO] [APP] Metrics endpoint: http://localhost:9300/metrics
+[2026-03-02T18:48:03.557Z] [INFO] [APP] App version loaded: 5.3.1
+[2026-03-02T18:49:14.515Z] [INFO] [APP] PiManager initialized successfully
+[2026-03-02T18:49:14.524Z] [INFO] [APP] Smartrise API v1.0.0 listening on port 9300!
+[2026-03-02T18:49:14.524Z] [INFO] [APP] Environment: development
+[2026-03-02T18:49:14.525Z] [INFO] [APP] Metrics endpoint: http://localhost:9300/metrics
+[2026-03-02T18:49:14.548Z] [INFO] [APP] App version loaded: 5.3.1
+[2026-03-02T18:49:18.463Z] [INFO] [APP] PiManager initialized successfully
+[2026-03-02T18:49:18.469Z] [INFO] [APP] Smartrise API v1.0.0 listening on port 9300!
+[2026-03-02T18:49:18.469Z] [INFO] [APP] Environment: development
+[2026-03-02T18:49:18.469Z] [INFO] [APP] Metrics endpoint: http://localhost:9300/metrics
+[2026-03-02T18:49:18.507Z] [INFO] [APP] App version loaded: 5.3.1
+[2026-03-02T22:01:28.499Z] [INFO] [APP] PiManager initialized successfully
+[2026-03-02T22:01:28.505Z] [INFO] [APP] Smartrise API v1.0.0 listening on port 9300!
+[2026-03-02T22:01:28.505Z] [INFO] [APP] Environment: development
+[2026-03-02T22:01:28.505Z] [INFO] [APP] Metrics endpoint: http://localhost:9300/metrics
+[2026-03-02T22:01:28.534Z] [INFO] [APP] App version loaded: 5.3.1
