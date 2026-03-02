@@ -1,21 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const {fetchParameterByIndexByCar} = require('../models'); 
+const {validateCarId} = require('../helpers');
 
-router.get('/', async (req, res) => {
+router.get('/parameter-edit', async (req, res) => {
   try {
     const { carId, bits, index } = req.query;
     
-    if (carId === undefined || index === undefined) {
-        return res.status(400).json({ error: 'Missing required query parameters: carId, index' });
-    }
-    
-    const carNum = parseInt(carId) + 1;
-    
-    if (carNum < 1 || carNum > 8) {
-        return res.status(400).json({ error: 'Invalid carId. Must be between 0 and 7.' });
-    }
-    
+    const carNum = validateCarId(carId);
 
     const targetValueColumn = `value${carNum}`;
     const targetChangedColumn = `is_changed_car${carNum}`;
