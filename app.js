@@ -7,6 +7,8 @@ const expressWs = require('express-ws')(APP);
 const cors = require('cors');
 const fs = require('fs');
 
+const groupProxy = require('./middlewares/groupProxy');
+
 // Logger and Metrics
 const Logger = require('./helpers/logger');
 const { httpMetricsMiddleware, errorMetricsMiddleware } = require('./middlewares/metrics');
@@ -39,7 +41,7 @@ const seed = require("./database/seed");
 const corsOptions = {
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-group-id'],
 };
 
 APP.use(cors(corsOptions));
@@ -47,6 +49,9 @@ APP.use(EXPRESS.json());
 APP.use(EXPRESS.urlencoded({ extended: true }));
 
 APP.use(httpMetricsMiddleware);
+
+// Proxy middleware for handling remote group requests
+APP.use(groupProxy);
 
 // App Version
 fs.readFile('./appversion.txt', 'utf8', (err, data) => {
@@ -145,32 +150,13 @@ try {
 // Error handling middleware (must be after all other middleware and routes)
 APP.use(errorMetricsMiddleware);
 
-// Global error handler
-APP.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const errorMessage = err.message || 'Internal Server Error';
-  
-  appLogger.error(`Global error handler: ${errorMessage}`, {
-    statusCode,
-    path: req.path,
-    method: req.method,
-    stack: err.stack
-  });
+const { notFoundHandler, globalErrorHandler } = require('./middlewares/errorHandler');
 
-  res.status(statusCode).json({
-    error: errorMessage,
-    status: statusCode
-  });
-});
+// Global error handler
+APP.use(globalErrorHandler);
 
 // 404 handler
-APP.use((req, res) => {
-  appLogger.warn(`Route not found: ${req.method} ${req.path}`);
-  res.status(404).json({
-    error: 'Route not found',
-    status: 404
-  });
-});
+APP.use(notFoundHandler);
 
 // ----------------- START SERVER -----------------
 APP.listen(PORT, () => {

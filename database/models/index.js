@@ -23,6 +23,10 @@ function init(sequelize) {
   models.Alarms = require("./elevator_alarms.model")(sequelize, DataTypes);
   models.RptWait = require("./rpt_wait.model")(sequelize, DataTypes);
   models.RptProgramEvents = require("./rpt_program_events.model")(sequelize, DataTypes);
+  models.RptCarCalls = require("./rpt_carcalls.model")(sequelize, DataTypes);
+  models.RptHallCalls = require("./rpt_hallcalls.model")(sequelize, DataTypes);
+  models.RptDoors = require("./rpt_doors.model")(sequelize, DataTypes);
+  models.RptFloorToFloor = require("./rpt_floortofloor.model")(sequelize, DataTypes);
   models.RptServices = require("./rpt_services.model")(sequelize, DataTypes);
   models.RefCategory = require("./ref_class_category.model")(sequelize, DataTypes);
   models.RefClass = require("./ref_class.model")(sequelize, DataTypes);
