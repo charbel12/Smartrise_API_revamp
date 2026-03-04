@@ -82,8 +82,8 @@ APP.post(`${VARS.base_route}/:reportType`,(req,res)=>{
 			successful: (err ? false : true),
 			message: (err ? err : ""),
 			data: result,
-			recordsFiltered: result.length,
-			recordsTotal: result.length
+			recordsFiltered: result?.length || 0,
+			recordsTotal: result?.length || 0
 		});
 	});
 });

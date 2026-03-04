@@ -3,9 +3,10 @@ const LOGGER_MODEL = require("../models/index.js");
 var wTimes = {};
 var _inService = {};
 
-function getCarCalls(carfloor, data) {
+function getCarCalls(carData, data) {
   var floorsSelected = [];
-  var _offset = parseInt(data["GroupLandingOffset"]);
+  var carfloor = carData.FloorArray || [];
+  var _offset = parseInt(carData.GroupLandingOffset) || 0;
   var First33CallsFront = data["CarCallsF0"];
   var Second33CallsFront = data["CarCallsF1"];
   var Third33CallsFront = data["CarCallsF2"];
@@ -44,11 +45,14 @@ function getCarCalls(carfloor, data) {
   return floorsSelected;
 }
 
-function getHallCalls(carfloor, data) {
+function getHallCalls(carData, data) {
   var floorsSelected = {
     up: [],
     down: [],
   };
+
+  var carfloor = carData.FloorArray || [];
+  var _offset = parseInt(carData.GroupLandingOffset) || 0;
 
   //FRONT
   var firstUpHallCalls = data["HallCallsF0Up"];
@@ -72,11 +76,10 @@ function getHallCalls(carfloor, data) {
   var upLatched = 0;
   var downLatched = 0;
 
-  //REAR
   var upLatchedRear = 0;
   var downLatchedRear = 0;
 
-  var buttonsCount = carfloor.length + 1;
+  var buttonsCount = carfloor.length + _offset + 1;
 
   for (var i = 0; i < buttonsCount; i++) {
     if (i < 32) {
@@ -415,14 +418,16 @@ function startWait(pi_group, floors, direction) {
   });
 }
 
-function waitTimes(pi_group, floors, direction, list_waited_floors, GROUP_FILES) {
+function waitTimes(pi_group, floors, direction, list_waited_floors, CARS_DATA) {
   var register_waitTime = true;
-  max_floors = 0;
-  GROUP_FILES[pi_group]["Cars"].forEach((car) => {
-    if (car.NumberOfFloors > max_floors) {
-      max_floors = car.NumberOfFloors;
-    }
-  });
+  var max_floors = 0;
+  if(CARS_DATA) {
+    CARS_DATA.forEach((car) => {
+      if (car.NumberOfFloors > max_floors) {
+        max_floors = car.NumberOfFloors;
+      }
+    });
+  }
 
   floors.forEach(function (floor) {
     if (list_waited_floors[direction].includes(floor)) {

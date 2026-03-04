@@ -10,26 +10,26 @@ const PI = JSON.parse(fs.readFileSync(process.env.SETTINGS_PI_LOCATION, 'utf-8')
  */
 module.exports = async function (req, res) {
     try {
-        const { group, data } = req.body;
+        const { groupId, data } = req.body;
 
-        if (group === undefined || !data) {
+        if (groupId === undefined || !data) {
             return res.status(400).json({ success: false, error: "Missing 'group' or 'data' in request body." });
         }
 
         // Try to get existing client from PiManager
-        const existingClient = PiManager.getClient(group);
+        const existingClient = PiManager.getClient(groupId);
 
         if (existingClient && existingClient.send(data)) {
-            return res.status(200).json({ success: true, message: "Command sent via persistent connection." });
+            return res.status(200).json({ success: true, message: "Command sent Successfully." });
         }
 
-        console.log(`[Rest Control] No persistent connection for group ${group}, falling back to loose connection.`);
+        console.log(`[Rest Control] No persistent connection for group ${groupId}, falling back to loose connection.`);
 
-        const groupIndex = parseInt(group) - 1;
+        const groupIndex = parseInt(groupId) - 1;
         const targetPi = PI[groupIndex];
 
         if (!targetPi) {
-            return res.status(404).json({ success: false, error: `Group ${group} not found.` });
+            return res.status(404).json({ success: false, error: `Group ${groupId} not found.` });
         }
 
         const wsUrl = `ws://${targetPi['location']}`;

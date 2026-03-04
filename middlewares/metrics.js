@@ -130,23 +130,7 @@ const errorMetricsMiddleware = (err, req, res, next) => {
 const requestLoggingMiddleware = (req, res, next) => {
   const correlationId = req.headers['x-correlation-id'] || req.id || Math.random().toString(36).substr(2, 9);
   
-  // Store in request for later use
-  req.correlationId = correlationId;
-  req.logger = new Logger(`${req.method} ${req.path}`);
-  
-  req.logger.debug(`Incoming request`, {
-    method: req.method,
-    path: req.path,
-    headers: {
-      'user-agent': req.headers['user-agent'],
-      'content-type': req.headers['content-type'],
-      'correlation-id': correlationId
-    },
-    query: req.query,
-    ip: req.ip
-  });
-
-  next();
+  return
 };
 
 module.exports = {

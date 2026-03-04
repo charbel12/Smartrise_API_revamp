@@ -45,7 +45,7 @@ module.exports = {
 
 	getAll: function(callback = null){
 		let _result = [];
-		
+		console.log(PI)
 		PI.forEach(function(p,i){
 			if(p){
 				try{

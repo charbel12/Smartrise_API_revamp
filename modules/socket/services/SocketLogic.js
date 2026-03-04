@@ -1,5 +1,4 @@
 const LOGGER_MODEL = require("../models/index.js");
-const SETTINGS_MODEL = require("../../settings/models/group-config.js");
 const TOOLS = require("../../../helpers/tools.js");
 const {
     getCarCalls,
@@ -44,11 +43,23 @@ class SocketLogic {
         this.dad_parameter_modified_timestamp = 0;
         this._inService = {};
 
-        // Load group files
-        this.GROUP_FILES = {};
-        SETTINGS_MODEL.getGroupStructured((err, files) => {
-            if (files) this.GROUP_FILES = files;
-        });
+        this.CARS_DATA = [];
+        this.updateCarsData();
+        setInterval(this.updateCarsData.bind(this), 5000);
+    }
+
+    async updateCarsData() {
+        try {
+            const data = await TOOLS.getRedisKeyValue('cars_parameters_data');
+            if (data) {
+                this.CARS_DATA = JSON.parse(data);
+            } else {
+                const { syncFloorsData } = require("../../groups/helpers/carFloors.js");
+                this.CARS_DATA = await syncFloorsData();
+            }
+        } catch (err) {
+            console.error("updateCarsData error:", err);
+        }
     }
 
     processMessage(pi_group, pi_ip, data, remoteManager) {
@@ -80,13 +91,9 @@ class SocketLogic {
         if (!this.newHallCalls[pi_group]) this.newHallCalls[pi_group] = { up: [], down: [] };
 
         try {
-            if (
-                this.GROUP_FILES[pi_group] &&
-                this.GROUP_FILES[pi_group]["Cars"] &&
-                this.GROUP_FILES[pi_group]["Cars"][0]
-            ) {
+            if (this.CARS_DATA && this.CARS_DATA[0]) {
                 this.newHallCalls[pi_group] = getHallCalls(
-                    this.GROUP_FILES[pi_group]["Cars"][0]["FloorArray"],
+                    this.CARS_DATA[0],
                     _d.Risers
                 );
             }
@@ -95,8 +102,8 @@ class SocketLogic {
         const hcWaitUp = arrDiff(this.newHallCalls[pi_group]["up"], this.prevHallCalls[pi_group]["up"]);
         const hcWaitDown = arrDiff(this.newHallCalls[pi_group]["down"], this.prevHallCalls[pi_group]["down"]);
 
-        if (hcWaitUp.length > 0) waitTimes(pi_group, hcWaitUp, "up", this.list_waited_floors, this.GROUP_FILES);
-        if (hcWaitDown.length > 0) waitTimes(pi_group, hcWaitDown, "down", this.list_waited_floors, this.GROUP_FILES);
+        if (hcWaitUp.length > 0) waitTimes(pi_group, hcWaitUp, "up", this.list_waited_floors, this.CARS_DATA);
+        if (hcWaitDown.length > 0) waitTimes(pi_group, hcWaitDown, "down", this.list_waited_floors, this.CARS_DATA);
 
         const hallCallDiffUp = arrDiff(this.prevHallCalls[pi_group]["up"], this.newHallCalls[pi_group]["up"]);
         const hallCallDiffDown = arrDiff(this.prevHallCalls[pi_group]["down"], this.newHallCalls[pi_group]["down"]);
@@ -145,14 +152,11 @@ class SocketLogic {
             this.is_modified_dad_parameter = false;
         }
 
-        // if (first_car && this.is_modified_dad_parameter) {
-        //     TOOLS.setRedisKeyValue(
-        //         "requests:" + pi_group + ":last_updated_remote",
-        //         parseInt(first_car.LastUpdateParameter)
-        //     );
-        //     TOOLS.updateAllDataInRedis(pi_group, pi_ip);
-        //     this.is_modified_dad_parameter = false;
-        // }
+        if (first_car && this.is_modified_dad_parameter) {
+             const { syncFloorsData } = require("../../groups/helpers/carFloors.js");
+             syncFloorsData().then(() => this.updateCarsData()).catch(e => console.log('sync error', e));
+             this.is_modified_dad_parameter = false;
+        }
 
         Object.keys(_cars).forEach((e) => {
             this.currentFloors[_cars[e].CarID] = {
@@ -177,26 +181,34 @@ class SocketLogic {
             if (!this.prevCarCalls[pi_group][_cars[e].CarID]) this.prevCarCalls[pi_group][_cars[e].CarID] = [];
 
             if (!this.newCarCalls[pi_group]) this.newCarCalls[pi_group] = {};
-            if (!this.newCarCalls[pi_group][_cars[e].CarID]) this.newCarCalls[pi_group][_cars[e].CarID] = [];
+            // DO NOT OVERWRITE newCarCalls with [] AFTER IT HAS BEEN SET.
+            // But wait, it's just initializing to [] so it's fine.
+            this.newCarCalls[pi_group][_cars[e].CarID] = [];
 
             try {
                 if (
-                    this.GROUP_FILES[pi_group] &&
-                    this.GROUP_FILES[pi_group]["Cars"] &&
-                    this.GROUP_FILES[pi_group]["Cars"][_cars[e].CarID] &&
-                    this.GROUP_FILES[pi_group]["Cars"][_cars[e].CarID]["FloorArray"]
+                    this.CARS_DATA &&
+                    this.CARS_DATA[_cars[e].CarID]
                 ) {
                     this.newCarCalls[pi_group][_cars[e].CarID] = getCarCalls(
-                        this.GROUP_FILES[pi_group]["Cars"][_cars[e].CarID]["FloorArray"],
+                        this.CARS_DATA[_cars[e].CarID],
                         _cars[e]
                     );
+                } else {
+                    console.log(`[DEBUG] Skipped getCarCalls for CarID: ${_cars[e].CarID}. File conditions not met.`);
                 }
-            } catch (catch_error) { }
+            } catch (catch_error) { 
+                console.log('[DEBUG] Error getting car calls:', catch_error);
+            }
 
             const carCallDiff = arrDiff(
                 this.prevCarCalls[pi_group][_cars[e].CarID],
                 this.newCarCalls[pi_group][_cars[e].CarID]
             );
+
+            console.log(`[DEBUG] CarID: ${_cars[e].CarID}, newCarCalls:`, this.newCarCalls[pi_group][_cars[e].CarID]);
+            console.log(`[DEBUG] CarID: ${_cars[e].CarID}, prevCarCalls:`, this.prevCarCalls[pi_group][_cars[e].CarID]);
+            console.log(`[DEBUG] CarID: ${_cars[e].CarID}, carCallDiff:`, carCallDiff);
 
             if (carCallDiff.length > 0) {
                 LOGGER_MODEL.createCarCalls(_cars[e].CarID + 1, pi_group, carCallDiff, () => { });

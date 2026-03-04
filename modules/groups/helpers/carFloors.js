@@ -1,5 +1,5 @@
 const TOOLS = require('../../../helpers/tools.js');
-const { Parameters } = require('../../../database/models');
+const { Parameters, sequelize } = require('../../../database/models');
 const { Op } = require('sequelize');
 
 const PARAM_TYPE_CAR = 24;
@@ -8,7 +8,6 @@ const PARAM_TYPE_NUM_FLOORS = 8;
 const PARAM_INDEX_NUM_FLOORS = 92;
 const PARAM_NAME_NUM_FLOORS = 'Number of FLRs';
 
-// helper to convert a hex string to ascii
 function hexToAscii(hex) {
     let ascii = '';
     for (let i = 0; i < hex.length; i += 2) {
@@ -20,25 +19,21 @@ function hexToAscii(hex) {
     return ascii;
 }
 
-/**
- * Load car labels from redis and merge with parameter data to build
- * the "cars with floors" structure used by the groups model/controller.
- *
- * @param {number} groupID currently unused, but kept for API compatibility
- * @returns {Promise<Array<Object>>} array of car objects with floor data
- */
-async function getCarsWithFloors(groupID) {
-    // right now groupID is ignored; it may be needed in later enhancements
-    const cars = await TOOLS.getRedisKeyValue('car_labels');
-    const carObject = JSON.parse(cars);
-    const numberOfCars = carObject.length;
+async function syncFloorsData() {
+    const carsStr = await TOOLS.getRedisKeyValue('car_labels');
+    let carObject = [];
+    try { 
+        if (carsStr) carObject = JSON.parse(carsStr); 
+    } catch (e) {}
+    const numberOfCars = carObject.length || 8;
 
     const allParameters = await Parameters.findAll({
         where: {
             [Op.or]: [
                 { type: PARAM_TYPE_CAR },
                 { type: PARAM_TYPE_DOOR },
-                { type: PARAM_TYPE_NUM_FLOORS, index: PARAM_INDEX_NUM_FLOORS }
+                { type: PARAM_TYPE_NUM_FLOORS, index: PARAM_INDEX_NUM_FLOORS },
+                { type: 8, index: 174 } // Group Landing Offset
             ]
         },
         attributes: [
@@ -51,13 +46,26 @@ async function getCarsWithFloors(groupID) {
     const carParameters = allParameters.filter(p => p.type === PARAM_TYPE_CAR);
     const doorParameters = allParameters.filter(p => p.type === PARAM_TYPE_DOOR);
     const numFloorsParams = allParameters.filter(p => p.type === PARAM_TYPE_NUM_FLOORS && p.index === PARAM_INDEX_NUM_FLOORS);
+    const offsetParams = allParameters.filter(p => p.type === 8 && p.index === 174);
 
     const carData = [];
+
+    // Clear the existing floors data
+    try {
+        await sequelize.query('SET FOREIGN_KEY_CHECKS = 0;');
+        await sequelize.query('TRUNCATE TABLE elevator_floors;');
+        await sequelize.query('SET FOREIGN_KEY_CHECKS = 1;');
+    } catch (error) {
+        console.error('Error truncating elevator_floors:', error);
+    }
 
     for (let carId = 1; carId <= numberOfCars; carId++) {
         const floorArray = [];
         const numFloorsParam = numFloorsParams.find(p => p.name === PARAM_NAME_NUM_FLOORS);
-        const numberOfFloors = numFloorsParam ? numFloorsParam['value' + carId] : 0;
+        const numberOfFloors = numFloorsParam ? parseInt(numFloorsParam['value' + carId]) : 0;
+
+        const offsetParam = offsetParams.find(p => p.name === 'Group Landing Offset');
+        const groupLandingOffset = offsetParam ? parseInt(offsetParam['value' + carId]) : 0;
 
         const frontOpeningMap = [
             doorParameters.find(p => p.index === 0)?.['value' + carId] || 0,
@@ -93,31 +101,52 @@ async function getCarsWithFloors(groupID) {
                 }
 
                 if (doorSide > 0) {
+                    const floorOrdinal = i + groupLandingOffset;
                     floorArray.push({
                         GroupFloorID: i,
                         DoorSide: doorSide,
                         Pi: piLabel,
+                        ordinal: floorOrdinal
                     });
+
+                    try {
+                        await sequelize.query(`
+                            INSERT INTO elevator_floors (elevator_id, floor_name, door_side, ordinal, date_created, date_modified, status)
+                            VALUES (?, ?, ?, ?, NOW(), NOW(), 1)
+                        `, {
+                            replacements: [carId, piLabel, doorSide, floorOrdinal]
+                        });
+                    } catch (error) {
+                        console.error('Error inserting floor data into elevator_floors:', error);
+                    }
                 }
             }
         }
 
         carData.push({
             Id: carId,
-            Label: carObject[carId - 1],
+            Label: carObject[carId - 1] || `Car ${carId}`,
             TotalHeight: 0,
             NumberOfFloors: numberOfFloors,
             FloorArray: floorArray,
             NumDoors: "0",
-            GroupLandingOffset: "0",
+            GroupLandingOffset: groupLandingOffset,
             id: carId,
-            name: `Car ${carId}`,
+            name: `Car ${carId}`
         });
     }
 
+    await TOOLS.setRedisKeyValue('cars_parameters_data', JSON.stringify(carData));
+    
     return carData;
+}
+
+// Keep older function for backward compatibility
+async function getCarsWithFloors(groupID) {
+    return syncFloorsData();
 }
 
 module.exports = {
     getCarsWithFloors,
+    syncFloorsData,
 };
