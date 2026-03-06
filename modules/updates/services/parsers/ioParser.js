@@ -3,7 +3,7 @@ const FS = require('fs');
 const PATH = require('path');
 const { Inputs, Outputs } = require('../../../../database/models');
 
-const GENERATED_ROOT = './media/io_generated';
+const GENERATED_ROOT = PATH.join(process.env.MEDIA_ROOT_PATH || '/home/pi/media', 'io_generated');
 if (!FS.existsSync(GENERATED_ROOT)) {
     FS.mkdirSync(GENERATED_ROOT, { recursive: true });
 }

@@ -64,6 +64,7 @@ module.exports = {
       { id: 94, name: 'Controls', code: 'Controls.Control.EMS2', permission_group: 'Controls', url: ' ', feature: 'Control', permission_function: 'EMS2', description: 'Should be able to Control the EMS2', status: 1, display_admin: 1, display_customer: 0, date_created: new Date('2025-08-25'), date_modified: new Date('2020-08-25') },
 
     ];
+    await queryInterface.bulkDelete('permissions', null, {});
     await queryInterface.bulkInsert('permissions', data, {});
   },
 

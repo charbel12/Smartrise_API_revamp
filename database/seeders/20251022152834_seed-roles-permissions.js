@@ -960,6 +960,7 @@ module.exports = {
     "permission_id": 92
   }
 ].map(r => ({ ...r, date_created: r.date_created ?? now, date_modified: r.date_modified ?? now }));
+    await queryInterface.bulkDelete('roles_permissions', null, {});
     await queryInterface.bulkInsert('roles_permissions', data, {});
   },
 

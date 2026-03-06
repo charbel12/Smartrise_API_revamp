@@ -15,7 +15,7 @@ const ALARMS_PARSER = require('./parsers/alarmsParser');
 const PARAMS_PARSER = require('./parsers/paramsParser');
 const IO_PARSER = require('./parsers/ioParser');
 
-const MEDIA_ROOT = path.resolve(__dirname, '../../../../media'); // Robust path
+const MEDIA_ROOT = process.env.MEDIA_ROOT_PATH || '/home/pi/media'; // Robust path
 const EXTRACT_PATH = path.join(MEDIA_ROOT, 'update_files', 'extracted');
 
 const ACCEPTED_FILES = ["SystemFaults", "SystemAlarms", "SystemParameters", "IODashboard", "SystemIO"];

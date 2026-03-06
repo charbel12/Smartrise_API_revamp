@@ -192,6 +192,7 @@ module.exports = {
     "date_modified": "2019-08-05 18:00:00"
   }
 ].map(r => ({...r, date_created: r.date_created ?? now, date_modified: r.date_modified ?? now}));
+    await queryInterface.bulkDelete('users', null, {});
     await queryInterface.bulkInsert('users', data, {});
   },
 

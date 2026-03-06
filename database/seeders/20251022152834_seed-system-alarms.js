@@ -13892,6 +13892,7 @@ module.exports = {
     "solution": "Check Phase fault input"
   }
 ].map(r => ({...r}));
+    await queryInterface.bulkDelete('system_alarms', null, {});
     await queryInterface.bulkInsert('system_alarms', data, {});
   },
 

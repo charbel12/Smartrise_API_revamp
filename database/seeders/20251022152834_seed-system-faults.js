@@ -14305,6 +14305,7 @@ module.exports = {
     "solution": "Check wiring of communcation lines. Check for stalled HB LEDs."
   }
 ].map(r => ({...r}));
+    await queryInterface.bulkDelete('system_faults', null, {});
     await queryInterface.bulkInsert('system_faults', data, {});
   },
 

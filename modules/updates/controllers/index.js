@@ -6,7 +6,7 @@ const PATH = require('path');
 const UPDATE_SERVICE = require('../services/updateService');
 
 // Use absolute path for robustness
-const MEDIA_ROOT = PATH.resolve(__dirname, '../../../../media');
+const MEDIA_ROOT = process.env.MEDIA_ROOT_PATH || PATH.resolve(__dirname, '../../../../media');
 const UPLOAD_DIR = PATH.join(MEDIA_ROOT, 'update_files');
 
 // Ensure upload dir exists on startup

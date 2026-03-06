@@ -40,6 +40,7 @@ module.exports = {
     "display_customer": 0
   }
 ].map(r => ({ ...r, date_created: r.date_created ?? now, date_modified: r.date_modified ?? now }));
+    await queryInterface.bulkDelete('roles', null, {});
     await queryInterface.bulkInsert('roles', data, {});
   },
 

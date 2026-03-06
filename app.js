@@ -16,9 +16,29 @@ const appLogger = new Logger('APP');
 
 const migrate = require("./database/migrate");
 const seed = require("./database/seed");
+const { sequelize } = require("./database/models");
 
 (async () => {
   try {
+    // Wait for DB connection
+    let connected = false;
+    let retries = 10;
+    while (!connected && retries > 0) {
+      try {
+        await sequelize.authenticate();
+        connected = true;
+        appLogger.info("Database connection established");
+      } catch (err) {
+        retries--;
+        appLogger.warn(`Database not ready, retrying... (${retries} retries left)`);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      }
+    }
+
+    if (!connected) {
+      throw new Error("Could not connect to database after multiple retries");
+    }
+
     if (process.env.RUN_MIGRATIONS === "true") {
       appLogger.info("Running database migrations...");
       await migrate();

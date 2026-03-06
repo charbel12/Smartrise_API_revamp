@@ -5,6 +5,14 @@ const { sequelize } = require('./models');
 const seeder = new Umzug({
   migrations: {
     glob: 'database/seeders/*.js',
+    resolve: ({ name, path, context }) => {
+      const migration = require(path);
+      return {
+        name,
+        up: async () => migration.up(context, sequelize.constructor),
+        down: async () => migration.down(context, sequelize.constructor),
+      };
+    },
   },
   context: sequelize.getQueryInterface(),
   storage: new SequelizeStorage({
