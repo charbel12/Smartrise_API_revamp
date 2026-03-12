@@ -1,83 +1,34 @@
 module.exports = (sequelize, DataTypes) => {
-  const ElevatorAlarm = sequelize.define(
-    'ElevatorAlarm',
-    {
-      alarm_number: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        allowNull: false,
-      },
+  const ElevatorAlarm = sequelize.define('ElevatorAlarm', {
 
-      which_car: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
+    alarm_number: { type: DataTypes.INTEGER, primaryKey: true },
 
-      alarm_name: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-      },
+    elevator_id: { type: DataTypes.INTEGER },
 
-      alarm_description: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-      },
+    alarm_description: { type: DataTypes.STRING(255) },
+    alarm_solution: { type: DataTypes.STRING(255) },
 
-      alarm_solution: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-      },
+    date_time: { type: DataTypes.DATE },
 
-      date_time: {
-        type: DataTypes.DATE,
-        allowNull: false,
-      },
+    alarm_name: { type: DataTypes.STRING(255) },
 
-      alarm_destination: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-      },
+    alarm_destination: { type: DataTypes.INTEGER },
+    alarm_floor: { type: DataTypes.INTEGER },
 
-      alarm_floor: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
+    alarm_floor_label: { type: DataTypes.STRING(255) },
 
-      alarm_floor_label: {
-        type: DataTypes.STRING(50),
-        allowNull: true,
-      },
+    alarm_node: { type: DataTypes.STRING(255) },
 
-      alarm_node: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-      },
+    alarm_position: { type: DataTypes.STRING(255) },
 
-      alarm_position: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-      },
+    alarms_car_speed_fpm: { type: DataTypes.INTEGER },
 
-      alarms_car_speed_fpm: {
-        type: DataTypes.DOUBLE,
-        allowNull: true,
-      },
-
-      alarms_command_speed_fpm: {
-        type: DataTypes.DOUBLE,
-        allowNull: true,
-      },
-
-      alarm_state: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-    },
-    {
-      tableName: 'alarms_alarm',
-      timestamps: false,
-    }
-  );
+    alarm_state: { type: DataTypes.INTEGER },
+    alarms_command_speed_fpm: { type: DataTypes.INTEGER }
+  }, {
+    tableName: 'elevator_alarms',
+    timestamps: false
+  });
 
   return ElevatorAlarm;
 };

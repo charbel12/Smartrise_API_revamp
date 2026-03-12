@@ -24,7 +24,7 @@ const { Faults } = require('../../../database/models');
  * @security JWT
  */
 APP.post(`${VARS.base_route}/datatables`, (req, res) => {
-    MODEL.all(req.body, function(err, result) {
+    MODEL.all(req.body, function (err, result) {
         res.json(result);
     });
 });
@@ -45,17 +45,17 @@ APP.post(`${VARS.base_route}/datatables`, (req, res) => {
  */
 
 var allGroupPiLabel = ""
-group.getAllGroupPiLabels(function(array1) {
+group.getAllGroupPiLabels(function (array1) {
     allGroupPiLabel = array1
 })
 
 var allGroupCarLabel = ""
-group.getAllGroupCarLabels(function(array1) {
+group.getAllGroupCarLabels(function (array1) {
     allGroupCarLabel = array1
 })
 
 const pi_json = JSON.parse(fs.readFileSync('configs/pi/pi.json', 'utf-8'))['data'];
-APP.post(`${VARS.base_route}/:groupID/cars/:carID/datatables`, async(req, res) => {
+APP.post(`${VARS.base_route}/:groupID/cars/:carID/datatables`, async (req, res) => {
     pi_json.forEach(pi => {
         if (pi.GroupID == req.params.groupID) {
             pi_ip = pi.location.split(':')[0];
@@ -65,10 +65,10 @@ APP.post(`${VARS.base_route}/:groupID/cars/:carID/datatables`, async(req, res) =
 
     req.body.zone = req.headers.zone ? req.headers.zone : "+03:00";
 
-    MODEL.datatables(req.params.groupID, req.params.carID, req.body, function(err, result) {
+    MODEL.datatables(req.params.groupID, req.params.carID, req.body, function (err, result) {
         if (result.data) {
             result.data = result.data.map(x => {
-                return {...x, timezone: TOOLS.getServerTimezone() };
+                return { ...x, timezone: TOOLS.getServerTimezone() };
             });
         } else {
             var data = []
@@ -111,7 +111,7 @@ APP.post(`${VARS.base_route}/:groupID/cars/:carID/datatables`, async(req, res) =
  * @security JWT
  */
 APP.delete(`${VARS.base_route}`, (req, res) => {
-    MODEL.clearAll(req.body.group, function(err, result) {
+    MODEL.clearAll(req.body.group, function (err, result) {
         res.json({
             "successful": (err ? false : true),
             "err": err,
@@ -133,7 +133,7 @@ APP.delete(`${VARS.base_route}`, (req, res) => {
  * @security JWT
  */
 APP.delete(`${VARS.base_route}/:groupID/cars/:carID`, (req, res) => {
-    MODEL.delete(req.params.groupID, req.params.carID, function(err, result) {
+    MODEL.delete(req.params.groupID, req.params.carID, function (err, result) {
         res.json({
             "successful": (err ? false : true),
             "err": err,
@@ -153,7 +153,7 @@ APP.delete(`${VARS.base_route}/:groupID/cars/:carID`, (req, res) => {
  * @security JWT
  */
 APP.get(`${VARS.base_route}/:id`, (req, res) => {
-    MODEL.get(req.params.id, function(err, result) {
+    MODEL.get(req.params.id, function (err, result) {
         res.json({
             "successful": (err ? false : true),
             "err": err,
@@ -174,10 +174,10 @@ APP.get(`${VARS.base_route}/:id`, (req, res) => {
  */
 APP.get(`${VARS.base_route}/:id/car`, (req, res) => {
     req.body.zone = req.headers.zone ? req.headers.zone : "+00:00";
-    MODEL.getCarFault(req.params.id, req.body, function(err, result) {
+    MODEL.getCarFault(req.params.id, req.body, function (err, result) {
 
         result = result.map(x => {
-            return {...x, timezone: TOOLS.getServerTimezone() };
+            return { ...x, timezone: TOOLS.getServerTimezone() };
         });
 
         res.json({
@@ -198,7 +198,7 @@ APP.get(`${VARS.base_route}/:id/car`, (req, res) => {
  * @security JWT
  */
 APP.get(`${VARS.base_route}/oldest-record`, (req, res) => {
-    MODEL.getOldestFaults(function(err, result) {
+    MODEL.getOldestFaults(function (err, result) {
         res.json({
             "successful": (err ? false : true),
             "message": err ? err : "",
@@ -222,7 +222,7 @@ APP.get(`${VARS.base_route}/oldest-record`, (req, res) => {
 
 
 APP.get(`${VARS.base_route}/:id/number`, (req, res) => {
-    MODEL.getNumber(req.params.id, function(err, result) {
+    MODEL.getNumber(req.params.id, function (err, result) {
         res.json({
             "successful": (err ? false : true),
             "err": err,
@@ -233,35 +233,35 @@ APP.get(`${VARS.base_route}/:id/number`, (req, res) => {
 
 
 APP.get('', async (req, res) => {
-  try {
+    try {
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const elevator_id = req.query.elevator_id;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const elevator_id = req.query.elevator_id;
 
-    const offset = (page - 1) * limit;
+        const offset = (page - 1) * limit;
 
-    const whereClause = {};
-    if (elevator_id) {
-      whereClause.which_car = elevator_id;
+        const whereClause = {};
+        if (elevator_id) {
+            whereClause.elevator_id = elevator_id;
+        }
+
+        const faults = await Faults.findAndCountAll({
+            where: whereClause,
+            limit: limit,
+            offset: offset,
+        });
+
+        res.json({
+            total: faults.count,
+            page,
+            limit,
+            data: faults.rows,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
     }
-
-    const faults = await Faults.findAndCountAll({
-      where: whereClause,
-      limit: limit,
-      offset: offset,
-    });
-
-    res.json({
-      total: faults.count,
-      page,
-      limit,
-      data: faults.rows,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
-  }
 });
 
 

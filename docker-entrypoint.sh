@@ -1,10 +1,10 @@
 #!/bin/sh
-# wait for MySQL to be ready
-echo "Waiting for MySQL..."
-until nc -z $DB_HOST 3306; do
+# wait for PostgreSQL to be ready
+echo "Waiting for PostgreSQL..."
+until nc -z $DB_HOST 5432; do
   sleep 1
 done
-echo "MySQL is up!"
+echo "PostgreSQL is up!"
 
 # run migrations
 npx sequelize-cli db:migrate --env ${NODE_ENV:-development}

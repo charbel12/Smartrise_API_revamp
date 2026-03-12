@@ -1,5 +1,5 @@
 const { tableName } = require('../vars.js');
-const mysql = require('../../../helpers/mysqlConnector.js')
+const mysql = require('../../../helpers/postgresConnector.js')
 const TOOLS = require('../../../helpers/tools.js');
 const async = require('async');
 const moment = require('moment')
@@ -113,7 +113,7 @@ var status = data.status ? ` AND users.status = ${data.status} ` : ``
                                 users.first_name,
                                 users.last_name,
                                 users.email,
-                                IF(roles.name is NULL,"N/A",roles.name) as role,
+                                COALESCE(roles.name, 'N/A') as role,
                                 users.status
                             FROM
                                 users
@@ -171,7 +171,7 @@ var status = data.status ? ` AND users.status = ${data.status} ` : ``
                                     users.first_name,
                                     users.last_name,
                                     users.email,
-                                    IF(roles.name is NULL,"N/A",roles.name) as role,
+                                    COALESCE(roles.name, 'N/A') as role,
                                     users.status
                                 FROM
                                     users,user_roles,roles

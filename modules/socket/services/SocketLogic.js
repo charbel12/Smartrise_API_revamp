@@ -153,9 +153,9 @@ class SocketLogic {
         }
 
         if (first_car && this.is_modified_dad_parameter) {
-             const { syncFloorsData } = require("../../groups/helpers/carFloors.js");
-             syncFloorsData().then(() => this.updateCarsData()).catch(e => console.log('sync error', e));
-             this.is_modified_dad_parameter = false;
+            const { syncFloorsData } = require("../../groups/helpers/carFloors.js");
+            syncFloorsData().then(() => this.updateCarsData()).catch(e => console.log('sync error', e));
+            this.is_modified_dad_parameter = false;
         }
 
         Object.keys(_cars).forEach((e) => {
@@ -194,10 +194,8 @@ class SocketLogic {
                         this.CARS_DATA[_cars[e].CarID],
                         _cars[e]
                     );
-                } else {
-                    console.log(`[DEBUG] Skipped getCarCalls for CarID: ${_cars[e].CarID}. File conditions not met.`);
                 }
-            } catch (catch_error) { 
+            } catch (catch_error) {
                 console.log('[DEBUG] Error getting car calls:', catch_error);
             }
 
@@ -205,10 +203,6 @@ class SocketLogic {
                 this.prevCarCalls[pi_group][_cars[e].CarID],
                 this.newCarCalls[pi_group][_cars[e].CarID]
             );
-
-            console.log(`[DEBUG] CarID: ${_cars[e].CarID}, newCarCalls:`, this.newCarCalls[pi_group][_cars[e].CarID]);
-            console.log(`[DEBUG] CarID: ${_cars[e].CarID}, prevCarCalls:`, this.prevCarCalls[pi_group][_cars[e].CarID]);
-            console.log(`[DEBUG] CarID: ${_cars[e].CarID}, carCallDiff:`, carCallDiff);
 
             if (carCallDiff.length > 0) {
                 LOGGER_MODEL.createCarCalls(_cars[e].CarID + 1, pi_group, carCallDiff, () => { });

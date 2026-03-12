@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     group_id: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     secure_all: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     description: { type: DataTypes.TEXT, allowNull: false },
-    status: { type: DataTypes.TINYINT, allowNull: false, defaultValue: 1 },
+    status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     day_type: { type: DataTypes.STRING(255), allowNull: true },
     day_value: { type: DataTypes.TEXT, allowNull: true },
     ending_day: { type: DataTypes.STRING(255), allowNull: true },

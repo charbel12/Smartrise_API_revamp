@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     description: { type: DataTypes.TEXT, allowNull: false },
     date_created: { type: DataTypes.DATE, allowNull: false },
     date_modified: { type: DataTypes.DATE, allowNull: false },
-    status: { type: DataTypes.TINYINT, allowNull: false, defaultValue: 1 },
+    status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     display_admin: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     display_customer: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
   }, {

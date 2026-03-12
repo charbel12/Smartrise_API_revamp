@@ -1,6 +1,6 @@
 const VARS = require('../vars.js');
 
-var mysql = require('../../../helpers/mysqlConnector.js')
+var mysql = require('../../../helpers/postgresConnector.js')
 const TABLE_NAME = VARS.table_name;
 const TABLE_SUB_NAME = VARS.table_sub_name;
 const TOOLS = require('../../../helpers/tools.js');
@@ -74,12 +74,12 @@ module.exports = {
 		this.delete(_data,function(err,result){ 
 			if(typeof _data.controls !== "undefined" && _data.controls === "hall-calls"){
 				delete _data.controls;
-				mysql.pool(`INSERT INTO hall_security SET ?,date_created=utc_timestamp(),date_modified=utc_timestamp()`,[_data],function(err,result){
+				mysql.pool(`INSERT INTO hall_security SET ?,date_created=CURRENT_TIMESTAMP,date_modified=CURRENT_TIMESTAMP`,[_data],function(err,result){
 					callback(err,result);
 				})
 			}else{
 				delete _data.controls;
-				mysql.pool(`insert into ${TABLE_NAME} set ?,date_created=utc_timestamp(),date_modified=utc_timestamp()`,[_data],function(err,result){
+				mysql.pool(`insert into ${TABLE_NAME} set ?,date_created=CURRENT_TIMESTAMP,date_modified=CURRENT_TIMESTAMP`,[_data],function(err,result){
 					callback(err,result);
 				})
 			}

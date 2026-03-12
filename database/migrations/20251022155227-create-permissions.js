@@ -47,21 +47,21 @@ module.exports = {
       allowNull: false
     },
     status: {
-      type: Sequelize.TINYINT,
+      type: Sequelize.BOOLEAN,
       allowNull: false,
-      defaultValue: '1'
+      defaultValue: true
     },
     display_admin: {
-      type: Sequelize.TINYINT,
+      type: Sequelize.BOOLEAN,
       allowNull: true,
-      defaultValue: '1'
+      defaultValue: true
     },
     display_customer: {
-      type: Sequelize.TINYINT,
+      type: Sequelize.BOOLEAN,
       allowNull: true,
-      defaultValue: '0'
+      defaultValue: false
     }
-    }, { engine: "InnoDB", charset: "utf8mb4", collate: "utf8mb4_unicode_ci" });
+    });
   },
 
   async down(queryInterface, Sequelize) {

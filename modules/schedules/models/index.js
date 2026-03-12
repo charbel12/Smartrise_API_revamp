@@ -1,5 +1,5 @@
 const { tableName } = require('../vars.js');
-const mysql = require('../../../helpers/mysqlConnector.js')
+const mysql = require('../../../helpers/postgresConnector.js')
 const TOOLS = require('../../../helpers/tools.js');
 const async = require('async');
 const moment = require('moment')
@@ -217,14 +217,14 @@ module.exports = {
 
 		_data.end_date = MOMENT.utc(_endDate).format('YYYY-MM-DD');
 		_data.end_time = MOMENT.utc(_endDate).format('HH:mm');*/
-		mysql.pool(`insert into ${tableName} set ?,date_created=utc_timestamp(),date_modified=utc_timestamp()`,[_data],function(err,result){
+		mysql.pool(`insert into ${tableName} set ?,date_created=CURRENT_TIMESTAMP,date_modified=CURRENT_TIMESTAMP`,[_data],function(err,result){
 			callback(err,result);
 		})
 	},
 	createV2: function(data, callback = null){
 		const params = data.data;
 		
-		mysql.pool(`INSERT INTO ${tableName} SET ?,date_created=utc_timestamp()`,[params],function(err,result){
+		mysql.pool(`INSERT INTO ${tableName} SET ?,date_created=CURRENT_TIMESTAMP`,[params],function(err,result){
 			callback(err,result);
 		});
 	},
@@ -240,14 +240,14 @@ module.exports = {
 
 		_data.end_date = MOMENT.utc(_endDate).format('YYYY-MM-DD');
 		_data.end_time = MOMENT.utc(_endDate).format('HH:mm');*/
-		mysql.pool(`update ${tableName} set ?,date_modified=utc_timestamp() where id=?`,[_data,id],function(err,result){
+		mysql.pool(`update ${tableName} set ?,date_modified=CURRENT_TIMESTAMP where id=?`,[_data,id],function(err,result){
 			callback(err,result);
 		})
 	},
 	updateV2: function(id,data,callback = null){
 		data.data = {...data.data, start_date: null};
 		const param = data.data
-		mysql.pool(`UPDATE ${tableName} SET ?,date_modified=utc_timestamp() WHERE id=?`,[param,id],function(err,result){
+		mysql.pool(`UPDATE ${tableName} SET ?,date_modified=CURRENT_TIMESTAMP WHERE id=?`,[param,id],function(err,result){
 			callback(err,result);
 		})
 	},

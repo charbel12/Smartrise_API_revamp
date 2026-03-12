@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true, allowNull: false },
     name: { type: DataTypes.STRING(255), allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: false },
-    status: { type: DataTypes.TINYINT, allowNull: false, defaultValue: 1 },
+    status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     date_created: { type: DataTypes.DATE, allowNull: false },
     date_modified: { type: DataTypes.DATE, allowNull: false },
   }, {

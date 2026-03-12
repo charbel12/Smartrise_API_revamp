@@ -18,19 +18,19 @@ module.exports = {
       allowNull: true
     },
     status: {
-      type: Sequelize.TINYINT,
+      type: Sequelize.BOOLEAN,
       allowNull: false,
-      defaultValue: '1'
+      defaultValue: true
     },
     display_admin: {
-      type: Sequelize.TINYINT,
+      type: Sequelize.BOOLEAN,
       allowNull: false,
-      defaultValue: '1'
+      defaultValue: true
     },
     display_customer: {
-      type: Sequelize.TINYINT,
+      type: Sequelize.BOOLEAN,
       allowNull: false,
-      defaultValue: '0'
+      defaultValue: false
     },
     date_created: {
       type: Sequelize.DATE,
@@ -39,8 +39,8 @@ module.exports = {
     date_modified: {
       type: Sequelize.DATE,
       allowNull: false
-    },
-    }, { engine: "InnoDB", charset: "utf8mb4", collate: "utf8mb4_unicode_ci" });
+    }
+    });
     //await queryInterface.addIndex("roles", ["id"], { name: "rpt_alarms_id_unique", unique: true });
   },
 

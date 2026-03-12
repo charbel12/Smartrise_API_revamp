@@ -1,206 +1,161 @@
-const VARS = require('../vars.js');
-
-var mysql = require('../../../helpers/mysqlConnector.js')
-const TABLE_NAME = VARS.table_name;
-const TABLE_SUB_NAME = VARS.table_sub_name;
+const { Faults, SystemFaults, sequelize } = require('../../../database/models');
+const { Op } = require('sequelize');
 const TOOLS = require('../../../helpers/tools.js');
 const MOMENT = require('moment');
+const async = require('async');
 
 module.exports = {
 	datatables: function(groupID,carID, data, callback = null){
-		var async = require('async'),
-		    QueryBuilder = require('datatable');
-         // CONVERT_TZ(DATE_FORMAT(ef.date_created, "%d/%m/%Y %H:%i:%s %p"), '+00:00', @@session.time_zone) as new_date
-		var tableDefinition = {
-			sSelectSql: `*`,
-		    sFromSql: `(
-                SELECT 
-                    ef.id as efid, 
-                    ef.fault_id as number, 
-                    ef.name, 
-                    ef.description as definition, 
-                    ef.solution, 
-                    ef.elevator_id as carid,
-                    ef.floor_pi AS floor,
-                    ef.car_speed,
-                    CAST(ef.car_position AS UNSIGNED) AS car_position, 
-                    ef.fault_speed,
-                    CAST(ef.fault_position AS UNSIGNED) AS fault_position,
-                    ef.date_created,
-                    DATE_FORMAT(ef.date_created, '%Y-%m-%d %H:%i:%S') AS new_date
-                FROM 
-                    elevator_faults ef 
-                where 
-                    ef.elevator_id = ${carID}
-                AND 
-                    ef.elevator_group_id = '${groupID}'
-                AND
-                    ef.status = 1
-            
-            ) as sqlQuery`,
-            aSearchColumns: ['number','name','definition','solution', 'floor', 'new_date']
-        };
-        
-         
-		var queryBuilder = new QueryBuilder(tableDefinition);
-        
-		 
-		// requestQuery is normally provided by the DataTables AJAX call
-		var requestQuery = {
-            start: 0,
-            length: 10,
-            search: {
-                value:"",
-                regex: false
-            }
+		const limit = parseInt(data.length) || 10;
+        const offset = parseInt(data.start) || 0;
+        const search = data.search ? data.search.value : '';
+
+        let where = {
+            elevator_id: carID,
+            elevator_group_id: groupID,
+            status: true
         };
 
-        const date = data.search.value ? MOMENT(data.search.value, "YYYY-MM-DD", true) : "";
-        if(date){
-            if(date.isValid()){
-                data.search.value = MOMENT(data.search.value).format("YYYY-MM-DD")
-            }else{
-                const dateAndTime = data.search.value ? MOMENT(data.search.value, "YYYY-MM-DD HH:mm:ss", true) : "";
-
-                if(dateAndTime){
-                    if(dateAndTime.isValid()){
-                        data.search.value = MOMENT(data.search.value,"YYYY-MM-DD HH:mm:ss").utc().format("YYYY-MM-DD HH:mm:ss")
-                    }
-                }
+        if (search) {
+            // Attempt to handle date search if present in the data.search.value
+            // The original code had some moment logic for search value.
+            where[Op.or] = [
+                { fault_name: { [Op.iLike]: `%${search}%` } },
+                { fault_description: { [Op.iLike]: `%${search}%` } },
+                { faults_solution: { [Op.iLike]: `%${search}%` } },
+                { fault_floor_label: { [Op.iLike]: `%${search}%` } }
+            ];
+            if (!isNaN(search)) {
+                where[Op.or].push({ fault_id: parseInt(search) });
             }
         }
 
-        var opts = TOOLS.extendDefaults(requestQuery, data);
-        opts = TOOLS.datatableColumnName(opts);
-        // Build an object of SQL statements
-        var queries = queryBuilder.buildQuery(opts);
-		// Connect to the database
-		var _params = {
-            recordsTotal: function(cb) {
-                mysql.pool(queries.recordsTotal,[], function(error, results) {
-                	cb(error, results);
-                });
-            },
-            select: function(cb) {
-                mysql.pool(queries.select,[], function(error, results) {
-                    cb(error, results);
-                });
-            },
-        };
-
-        if (opts.search.value != "") {
-            _params["recordsFiltered"] = function(cb) {
-                mysql.pool(queries.recordsTotal,[], function(error, results) {
-                    cb(error, results);
-                });
-            }
-        }
-
-		async.parallel(
-            _params,
-            function(err, results) {		        
-            	callback(err,queryBuilder.parseResponse(results));
-            }
-        );
-
+        Faults.findAndCountAll({
+            where: where,
+            limit: limit,
+            offset: offset,
+            order: [['date_time', 'DESC']],
+            raw: true
+        }).then(result => {
+            const response = {
+                draw: data.draw,
+                recordsTotal: result.count,
+                recordsFiltered: result.count,
+                data: result.rows.map(row => ({
+                    ...row,
+                    efid: row.id || row.fault_number,
+                    number: row.fault_number,
+                    definition: row.fault_description,
+                    carid: row.elevator_id,
+                    floor: row.fault_floor_label,
+                    new_date: row.date_time ? MOMENT(row.date_time).format('YYYY-MM-DD HH:mm:ss') : null
+                }))
+            };
+            callback(null, response);
+        }).catch(err => {
+            callback(err);
+        });
 	},
 	delete: function(groupID,carID,callback = null){
-		mysql.pool(`delete from ${TABLE_NAME} where elevator_id=?`,[carID],function(err,result){
-			callback(err,result);
-		})
+		Faults.destroy({ where: { elevator_id: carID } })
+            .then(result => callback(null, result))
+            .catch(err => callback(err));
     },
     clearAll: function(group,callback = null){
-		mysql.pool(`DELETE FROM  ${TABLE_NAME} WHERE elevator_group_id=?;`,[group],function(err,result){
-			callback(err,result);
-		})
+		Faults.destroy({ where: { elevator_group_id: group } })
+            .then(result => callback(null, result))
+            .catch(err => callback(err));
 	},
 	import: function(data,callback = null){
-		mysql.pool("",[],function(err,result){
-			callback(err,result);
-		})
+		callback(null, []);
 	},
 	export: function(data,callback = null){
-		mysql.pool("",[],function(err,result){
-			callback(err,result);
-		})
+		callback(null, []);
 	},
 	get: function(id,callback = null){
-        mysql.pool(`SELECT * from system_faults where id=?`,[id],function(err,result){
-            callback(err,result);
-        })
+        SystemFaults.findByPk(id)
+            .then(result => callback(null, result ? [result.toJSON()] : []))
+            .catch(err => callback(err));
     },
     getNumber: function(number,callback = null){
-        mysql.pool(`SELECT * from system_faults where number=?`,[number],function(err,result){
-            callback(err,result);
-        })
+        SystemFaults.findOne({ where: { number: number } })
+            .then(result => callback(null, result ? [result.toJSON()] : []))
+            .catch(err => callback(err));
     },
     getCarFault: function(id, data=null, callback = null){
-		mysql.pool(`SELECT ef.elevator_id as carid, ef.date_created AS date_created, DATE_FORMAT(ef.date_created, '%Y-%m-%d %H:%i:%S') AS new_date, ef.floor_pi, ef.car_speed, ef.fault_speed, ef.fault_position, sf.* from ${TABLE_NAME} ef left join system_faults sf on ef.fault_id=sf.number where ef.id=?`,[id],function(err,result){
-			callback(err,result);
-		})
+		Faults.findOne({
+            where: { id: id },
+            include: [{
+                model: SystemFaults,
+                as: 'system_fault',
+                required: false
+            }],
+            raw: true,
+            nest: true
+        }).then(result => {
+            if (result) {
+                const formatted = {
+                    carid: result.elevator_id,
+                    date_created: result.date_time,
+                    new_date: result.date_time ? MOMENT(result.date_time).format('YYYY-MM-DD HH:mm:ss') : null,
+                    floor_pi: result.fault_floor_label,
+                    car_speed: result.car_speed,
+                    fault_speed: result.fault_speed,
+                    fault_position: result.fault_position,
+                    ...result.system_fault
+                };
+                callback(null, [formatted]);
+            } else {
+                callback(null, []);
+            }
+        }).catch(err => callback(err));
     },
     getOldestFaults: function(callback = null){
-        mysql.pool(`SELECT id, date_modified AS date_modified FROM ${TABLE_NAME} WHERE date_modified IS NOT NULL ORDER BY id DESC LIMIT 1;`, [],(err, result) =>{
-            if(result.length){
-                result[0].date_modified =  MOMENT(result[0].date_modified).format("MM/DD/YYYY HH:mm:ss");
-                result[0].timezone = TOOLS.getServerTimezone();
+        Faults.findOne({
+            where: { date_modified: { [Op.ne]: null } },
+            order: [['id', 'DESC']],
+            raw: true
+        }).then(result => {
+            if (result) {
+                result.date_modified = MOMENT(result.date_modified).format("MM/DD/YYYY HH:mm:ss");
+                result.timezone = TOOLS.getServerTimezone();
+                callback(null, result);
+            } else {
+                callback(null, []);
             }
-            callback(err, result.length > 0 ? result[0] : [])
-        });
+        }).catch(err => callback(err));
     },
 	all: function(data,callback = null){
-		var async = require('async'),
-		    QueryBuilder = require('datatable');
-		 
-		var tableDefinition = {
-            sTableName: 'system_faults',
-            aSearchColumns: ['number','name']
-		};
-		 
-		var queryBuilder = new QueryBuilder(tableDefinition);
-		 
-		// requestQuery is normally provided by the DataTables AJAX call
-		var requestQuery = {
-            start: 0,
-            length: 10,
-            search: {
-                value:"",
-                regex: false
-            }
-        };
+		const limit = parseInt(data.length) || 10;
+        const offset = parseInt(data.start) || 0;
+        const search = data.search ? data.search.value : '';
 
-        var opts = TOOLS.extendDefaults(requestQuery, data);
-		opts = TOOLS.datatableColumnName(opts);
-		// Build an object of SQL statements
-		var queries = queryBuilder.buildQuery(opts);
-		 
-		// Connect to the database
-		var _params = {
-            recordsTotal: function(cb) {
-                mysql.pool(queries.recordsTotal,[], function(error, results) {
-                	cb(error, results);
-                });
-            },
-            select: function(cb) {
-                mysql.pool(queries.select,[], function(error, results) {
-                    cb(error, results);
-                });
-            },
-        };
+        let where = search ? {
+            [Op.or]: [
+                { name: { [Op.iLike]: `%${search}%` } },
+                { description: { [Op.iLike]: `%${search}%` } } // description column name check
+            ]
+        } : {};
 
-        if (opts.search.value != "") {
-            _params["recordsFiltered"] = function(cb) {
-                mysql.pool(queries.recordsTotal,[], function(error, results) {
-                    cb(error, results);
-                });
-            }
+        if (search && !isNaN(search)) {
+            where[Op.or].push({ number: parseInt(search) });
         }
 
-		async.parallel(
-            _params,
-            function(err, results) {
-            	callback(err,queryBuilder.parseResponse(results));
-            }
-        );
+        SystemFaults.findAndCountAll({
+            where: where,
+            limit: limit,
+            offset: offset,
+            raw: true
+        }).then(result => {
+            const response = {
+                draw: data.draw,
+                recordsTotal: result.count,
+                recordsFiltered: result.count,
+                data: result.rows
+            };
+            callback(null, response);
+        }).catch(err => {
+            callback(err);
+        });
 	},
 }

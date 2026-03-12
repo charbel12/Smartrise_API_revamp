@@ -199,7 +199,7 @@ APP.get('', async (req, res) => {
 
 		const whereClause = {};
 		if (elevator_id) {
-			whereClause.which_car = elevator_id;
+			whereClause.elevator_id = elevator_id;
 		}
 
 		const faults = await Alarms.findAndCountAll({

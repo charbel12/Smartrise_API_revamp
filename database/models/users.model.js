@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     password: { type: DataTypes.STRING(255), allowNull: false },
     password_salt: { type: DataTypes.STRING(255), allowNull: true },
     force_change_password: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    status: { type: DataTypes.TINYINT, allowNull: false, defaultValue: 1 },
+    status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     email: { type: DataTypes.STRING(255), allowNull: true },
     image: { type: DataTypes.STRING(255), allowNull: true },
     date_created: { type: DataTypes.DATE, allowNull: false },

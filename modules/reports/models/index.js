@@ -69,7 +69,7 @@ function alterData(data) {
       }
     }
     return data;
-  } catch (err) {}
+  } catch (err) { }
 }
 
 module.exports = {
@@ -469,8 +469,8 @@ module.exports = {
       ],
       ...(data.date_from &&
         data.date_to && {
-          date_created: { [Op.between]: [data.date_from, data.date_to] },
-        }),
+        date_created: { [Op.between]: [data.date_from, data.date_to] },
+      }),
       ...(data.car_id ? { car_id: data.car_id } : {}),
     };
     try {
@@ -494,10 +494,10 @@ module.exports = {
           [
             literal(
               "CONCAT(" +
-                "FLOOR(TIMESTAMPDIFF(SECOND, `RptServices`.`date_created`, `RptServices`.`date_next`) / 86400), 'd ', " +
-                "FLOOR(MOD(TIMESTAMPDIFF(SECOND, `RptServices`.`date_created`, `RptServices`.`date_next`), 86400) / 3600), 'h ', " +
-                "FLOOR(MOD(TIMESTAMPDIFF(SECOND, `RptServices`.`date_created`, `RptServices`.`date_next`), 3600) / 60), 'm'" +
-                ")"
+              "FLOOR(TIMESTAMPDIFF(SECOND, `RptServices`.`date_created`, `RptServices`.`date_next`) / 86400), 'd ', " +
+              "FLOOR(MOD(TIMESTAMPDIFF(SECOND, `RptServices`.`date_created`, `RptServices`.`date_next`), 86400) / 3600), 'h ', " +
+              "FLOOR(MOD(TIMESTAMPDIFF(SECOND, `RptServices`.`date_created`, `RptServices`.`date_next`), 3600) / 60), 'm'" +
+              ")"
             ),
             "DURATION",
           ],
@@ -540,7 +540,6 @@ module.exports = {
         raw: true,
       });
       if (callback) {
-        console.log("results ", results);
         return callback(null, results);
       } else {
         return results;
@@ -723,7 +722,6 @@ module.exports = {
       });
 
       if (callback) {
-        console.log(results);
         return callback(null, results);
       } else {
         return results;
@@ -890,7 +888,6 @@ module.exports = {
         raw: true,
       });
       if (callback) {
-        console.log(results);
         return callback(null, results);
       } else {
         return results;

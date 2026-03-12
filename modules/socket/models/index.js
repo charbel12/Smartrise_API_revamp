@@ -1,340 +1,201 @@
-var mysql = require('../../../helpers/mysqlConnector.js')
+const {
+	Alarms, RptAlarm, Faults, RptFault, RptDoors,
+	Report, RptCarCalls, RptHallCalls, RptServices,
+	RptWait, RptFloorToFloor, RptProgramEvents
+} = require('../../../database/models');
+const { Op } = require('sequelize');
 const TOOLS = require('../../../helpers/tools.js');
 const axios = require('axios');
 const _ = require('lodash');
 const fs = require('fs');
 const MOMENT = require('moment');
 
-var car_modes = {"0":"offline","1":"offline","2":"offline","3":"offline","4":"offline","5":"offline","6":"offline","7":"offline"}
+var car_modes = { "0": "offline", "1": "offline", "2": "offline", "3": "offline", "4": "offline", "5": "offline", "6": "offline", "7": "offline" }
 
 module.exports = {
-	updateAlarmsTable: function(group_id, jsonObj, callback = null) {
-		jsonObj.forEach(alarm => {
-			var alarm_datetime = new Date(alarm.timestamp).toISOString().replace("T"," ").split(".")[0]
-			alarm_datetime = MOMENT(MOMENT(alarm_datetime, ["MM-DD-YYYY HH:mm:ss", "YYYY-MM-DD HH:mm:ss"]).format("YYYY-MM-DD HH:mm:ss")).utc().format("YYYY-MM-DD HH:mm:ss");
-			var id = group_id + "-" + alarm.which_car + "-"+ alarm.alarm_number+"-"+ alarm_datetime.toString();
-			_query2 = `
-				INSERT IGNORE
-				INTO
-					elevator_alarms
-					(id,elevator_id,elevator_group_id,alarm_id,alarm_position,alarm_speed,car_speed,car_position,floor_pi,floor_index,name,description,solution,date_created)
-				VALUES
-					(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-			`;
-			mysql.pool(_query2, [id, alarm.which_car, group_id, alarm.alarm_number, alarm.alarm_position, alarm.alarms_command_speed_fpm, alarm.alarms_car_speed_fpm, alarm.alarm_position, alarm.alarm_floor_label,alarm.alarm_floor, alarm.alarm_name, alarm.alarm_description, alarm.alarm_solution, alarm_datetime], function (err, result) {
-				if(err) {
-
-				}
-				callback(err, result);
-			})
-		})
-	},
-
-	updateRptAlarmsTable: function(group_id, jsonObj, callback = null) {
-		var that = this
-		jsonObj.forEach(alarm => {
-			var alarm_datetime = new Date(alarm.timestamp).toISOString().replace("T"," ").split(".")[0]
-			alarm_datetime = MOMENT(MOMENT(alarm_datetime, ["MM-DD-YYYY HH:mm:ss", "YYYY-MM-DD HH:mm:ss"]).format("YYYY-MM-DD HH:mm:ss")).utc().format("YYYY-MM-DD HH:mm:ss");
-			var id = group_id + "-" + alarm.which_car + "-"+ alarm.alarm_number+"-"+ alarm_datetime.toString();
-			_query2 = `
-				INSERT IGNORE
-				INTO
-					rpt_alarms
-					(id,elevator_id,elevator_group_id,alarm_id,alarm_position,alarm_speed,car_speed,car_position,floor_pi,floor_index,name,description,solution,date_created)
-				VALUES
-					(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-			`;
-			mysql.pool(_query2, [id, alarm.which_car, group_id, alarm.alarm_number, alarm.alarm_position, alarm.alarms_command_speed_fpm, alarm.alarms_command_speed_fpm, alarm.alarm_position,alarm.alarm_floor_label, alarm.alarm_floor, alarm.alarm_name, alarm.alarm_description, alarm.alarm_solution, alarm_datetime], function (err, result) {
-				if(err) {
-
-				}
-				if(result && result.affectedRows > 0){
-					that.updateAlarmsTable(group_id,[alarm],function(err,result2){
-					})
-				}
-			})
-		});
-	},
-
-	updateFaultsTable: function(group_id, jsonObj, callback = null) {
-		jsonObj.forEach(fault => {
-			var fault_datetime = new Date(fault.timestamp).toISOString().replace("T"," ").split(".")[0]
-			fault_datetime = MOMENT(MOMENT(fault_datetime, ["MM-DD-YYYY HH:mm:ss", "YYYY-MM-DD HH:mm:ss"]).format("YYYY-MM-DD HH:mm:ss")).utc().format("YYYY-MM-DD HH:mm:ss");
-			var id = group_id + "-" + fault.which_car + "-"+ fault.fault_number+"-"+ fault_datetime.toString();
-			_query2 = `
-				INSERT IGNORE
-				INTO
-					elevator_faults
-					(id,elevator_id,elevator_group_id,fault_id,fault_position,fault_speed,car_speed,car_position,floor_pi,floor_index,name,description,solution,date_created)
-				VALUES
-					(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-			`;
-			mysql.pool(_query2, [id, fault.which_car, group_id, fault.fault_number, fault.fault_position, fault.fault_command_speed_fpm, fault.fault_car_speed_fpm, fault.fault_position,fault.fault_floor_label , fault.fault_floor, fault.fault_name, fault.fault_description, fault.faults_solution, fault_datetime], function (err, result) {
-				if(err) {
-
-				}
-				callback(err, result);
-			})
-			sendNotification('faults', fault.fault_number, group_id, fault.which_car, fault.fault_position, fault.fault_car_speed_fpm, fault.fault_floor_label);
-		})
-	},
-
-	updateRptFaultsTable: function(group_id, jsonObj, callback = null) {
-		var that = this
-		jsonObj.forEach(fault => {
-			var fault_datetime = new Date(fault.timestamp).toISOString().replace("T"," ").split(".")[0]
-			fault_datetime = MOMENT(MOMENT(fault_datetime, ["MM-DD-YYYY HH:mm:ss", "YYYY-MM-DD HH:mm:ss"]).format("YYYY-MM-DD HH:mm:ss")).utc().format("YYYY-MM-DD HH:mm:ss");
-			var id = group_id + "-" + fault.which_car + "-"+ fault.fault_number+"-"+ fault_datetime.toString();
-			_query2 = `
-				INSERT IGNORE
-				INTO
-					rpt_faults
-					(id,elevator_id,elevator_group_id,fault_id,fault_position,fault_speed,car_speed,car_position,floor_pi,floor_index,name,description,solution,date_created)
-				VALUES
-					(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-			`;
-			mysql.pool(_query2, [id, fault.which_car, group_id, fault.fault_number, fault.fault_position, fault.fault_command_speed_fpm, fault.fault_command_speed_fpm, fault.fault_position, fault.fault_floor_label, fault.fault_floor, fault.fault_name, fault.fault_description, fault.faults_solution, fault_datetime], function (err, result) {
-				if(err) {
-
-				}
-				if(result && result.affectedRows > 0){
-					that.updateFaultsTable(group_id,[fault],function(err,result2){
-					})
-				}
-			})
-		})
-	},
-
 	createDoorsReport: function (group_id, car_id, floor_id, door_state, time_sec, opening) {
-		var _query = `
-			INSERT
-			INTO
-				rpt_doors
-				(group_id, car_id, floor_id,door_state,time_sec, opening, date_created)
-			VALUES
-				(?,?,?,?,?,?,UTC_TIMESTAMP())
-		`;
-		mysql.pool(_query, [group_id, car_id, floor_id, door_state, time_sec, opening], function (err, result) {
-		})
+		RptDoors.create({
+			group_id: group_id,
+			car_id: car_id,
+			floor_id: floor_id,
+			door_state: door_state,
+			time_sec: time_sec,
+			opening: opening,
+			date_created: new Date()
+		}).catch(err => {
+			// Handle error
+		});
 	},
 	createReportLog: function (group_id, messageType, message) {
-		var _query = `
-			INSERT
-			INTO
-				reports
-				(group_id,messagetype,message,date_created)
-			VALUES
-				(?,?,?,UTC_TIMESTAMP())
-		`;
-		mysql.pool(_query, [group_id, messageType, message], function (err, result) {
-			//callback(err,result);
-		})
+		Report.create({
+			group_id: group_id,
+			messagetype: messageType,
+			message: message,
+			date_created: new Date()
+		}).catch(err => {
+			// Handle error
+		});
 	},
 	createFault: function (elevator_id, elevator_group_id, fault_id, fault_position, fault_speed, car_speed, car_position, current_landing, callback = null) {
+		if (fault_id != 0) {
+			console.table({
+				"fault_speed": fault_speed,
+				"fault_position": fault_position,
+				"car_speed": car_speed,
+				"car_position": car_position
+			});
 
-		var _query = `
-			SELECT 
-				fault_id 
-			FROM
-				elevator_faults 
-			WHERE 
-				elevator_id = ? 
-			AND 
-				elevator_group_id = ?
-			ORDER BY 
-				date_created
-			DESC
-		`;
+			// Generate a unique ID if needed or let DB handle it. 
+			// Table elevator_faults has STRING(255) id as PK in migrations.
+			const id = elevator_group_id + "-" + elevator_id + "-" + fault_id + "-" + new Date().getTime();
 
-		mysql.pool(_query, [elevator_id, elevator_group_id], function (err, result) {
-
-			var _res = (result && result[0] ? result[0]['fault_id'] : "x");
-
-
-
-			if (fault_id != 0) {
-
-				console.table({
-					"fault_speed": fault_speed,
-					"fault_position": fault_position,
-					"car_speed": car_speed,
-					"car_position": car_position
-				});
-
-				_query = `
-					INSERT
-					INTO
-						elevator_faults
-						(elevator_id,elevator_group_id,fault_id,fault_position,fault_speed,car_speed,car_position,floor_pi,date_created)
-					VALUES
-						(?,?,?,?,?,?,?,?,UTC_TIMESTAMP())
-				`;
-				mysql.pool(_query, [elevator_id, elevator_group_id, fault_id, fault_position, fault_speed, car_speed, car_position, current_landing], function (err, result) {
-					callback(err, result);
-				})
+			Faults.create({
+				id: id,
+				elevator_id: elevator_id,
+				elevator_group_id: elevator_group_id,
+				fault_id: fault_id,
+				fault_position: fault_position,
+				fault_speed: fault_speed,
+				car_speed: car_speed,
+				car_position: car_position,
+				fault_floor_label: current_landing,
+				date_time: new Date()
+			}).then(result => {
+				if (callback) callback(null, result);
 				sendNotification('faults', fault_id, elevator_group_id, elevator_id, fault_position, fault_speed, current_landing);
-			}
-		});
+			}).catch(err => {
+				if (callback) callback(err);
+			});
+		}
 	},
 	createAlarm: function (elevator_id, elevator_group_id, alarm_id, alarm_position, alarm_speed, car_speed, car_position, current_landing, callback = null) {
+		if (alarm_id != 0) {
+			console.table({
+				"alarm_speed": alarm_speed,
+				"alarm_position": alarm_position,
+				"car_speed": car_speed,
+				"car_position": car_position
+			});
 
-		var _query = `
-			SELECT 
-				alarm_id 
-			FROM
-				elevator_alarms
-			WHERE 
-				elevator_id = ? 
-			AND 
-				elevator_group_id = ?
-			ORDER BY 
-				date_created
-			DESC
-		`;
+			const id = elevator_group_id + "-" + elevator_id + "-" + alarm_id + "-" + new Date().getTime();
 
-		mysql.pool(_query, [elevator_id, elevator_group_id], function (err, result) {
-			var _res = (result && result[0] ? result[0]['alarm_id'] : "x");
-
-			if (alarm_id != 0) {
-
-				console.table({
-					"alarm_speed": alarm_speed,
-					"alarm_position": alarm_position,
-					"car_speed": car_speed,
-					"car_position": car_position
-				});
-
-				_query = `
-					INSERT
-					INTO
-						elevator_alarms
-						(elevator_id,elevator_group_id,alarm_id,alarm_position,alarm_speed,car_speed,car_position,floor_pi,date_created)
-					VALUES
-						(?,?,?,?,?,?,?,?,UTC_TIMESTAMP())
-				`;
-				mysql.pool(_query, [elevator_id, elevator_group_id, alarm_id, alarm_position, alarm_speed, car_speed, car_position, current_landing], function (err, result) {
-					callback(err, result);
-				})
+			Alarms.create({
+				id: id,
+				elevator_id: elevator_id,
+				elevator_group_id: elevator_group_id,
+				alarm_id: alarm_id,
+				alarm_position: alarm_position,
+				alarm_speed: alarm_speed,
+				car_speed: car_speed,
+				car_position: car_position,
+				alarm_floor_label: current_landing,
+				date_time: new Date()
+			}).then(result => {
+				if (callback) callback(null, result);
 				sendNotification('alarms', alarm_id, elevator_group_id, elevator_id, alarm_position, alarm_speed, current_landing);
-			}
-		});
+			}).catch(err => {
+				if (callback) callback(err);
+			});
+		}
 	},
 	createCarCalls: function (elevator_id, group_id, floors_id, callback = null) {
 		floors_id.forEach(function (val) {
-			var _query = `
-				INSERT
-				INTO
-					rpt_carcalls
-					(group_id,car_id,floor_id,state,date_created)
-				VALUES
-					(?,?,?,0,UTC_TIMESTAMP())
-			`;
-			mysql.pool(_query, [group_id, elevator_id, val], function (err, result) {
-				callback(err, result);
-			})
+			RptCarCalls.create({
+				group_id: group_id,
+				car_id: elevator_id,
+				floor_id: val,
+				state: 0,
+				date_created: new Date()
+			}).then(result => {
+				if(callback) callback(null, result);
+			}).catch(err => {
+				if(callback) callback(err);
+			});
 		})
 	},
 	createHallCalls: function (group_id, floors_id, direction, callback = null) {
 		floors_id.forEach(function (val) {
-			var _query = `
-				INSERT
-				INTO
-					rpt_hallcalls
-					(group_id,floor_id,direction,state,date_created)
-				VALUES
-					(?,?,?,0,UTC_TIMESTAMP())
-			`;
-			mysql.pool(_query, [group_id, val, direction], function (err, result) {
-
-				callback(err, result);
-			})
+			RptHallCalls.create({
+				group_id: group_id,
+				floor_id: val,
+				direction: direction,
+				state: 0,
+				date_created: new Date()
+			}).then(result => {
+				if(callback) callback(null, result);
+			}).catch(err => {
+				if(callback) callback(err);
+			});
 		})
 
 	},
 	createServices: function (elevator_id, group_id, floor_id, mode_of_operation, class_of_operation, callback = null) {
-		mysql.pool(`SELECT * from rpt_services where group_id = ? AND car_id = ? ORDER BY id DESC LIMIT 1`, [group_id,elevator_id], function (err1, result1) {
-
-			if (err1){
-
-			}else if(result1.length>0){
-				if(result1[0].class_of_operation == class_of_operation && result1[0].mode_of_operation == mode_of_operation){
-					mysql.pool('update rpt_services set date_next=UTC_TIMESTAMP() WHERE group_id=? AND car_id=? ORDER BY id DESC LIMIT 1', [group_id, elevator_id, floor_id], function (err, result) {})
-				} else{
-					var _query = `
-				INSERT
-				INTO
-					rpt_services
-					(group_id,car_id,floor_id,mode_of_operation,class_of_operation,date_created,date_next)
-				VALUES
-					(?,?,?,?,?,UTC_TIMESTAMP(),UTC_TIMESTAMP());`
-			mysql.pool(_query, [group_id, elevator_id, floor_id, mode_of_operation, class_of_operation], function (err, result) {
-
-				callback(err, result);
-			})
-				}
-				}else if(result1.length == 0){
-
-				var _query = `
-				INSERT
-				INTO
-					rpt_services
-					(group_id,car_id,floor_id,mode_of_operation,class_of_operation,date_created,date_next)
-				VALUES
-					(?,?,?,?,?,UTC_TIMESTAMP(),UTC_TIMESTAMP())
-			`;
-			mysql.pool(_query, [group_id, elevator_id, floor_id, mode_of_operation, class_of_operation], function (err, result) {
-
-				callback(err, result);
-			})
-
+		RptServices.findOne({
+			where: { group_id: group_id, car_id: elevator_id },
+			order: [['id', 'DESC']]
+		}).then(lastService => {
+			if (lastService && lastService.class_of_operation == class_of_operation && lastService.mode_of_operation == mode_of_operation) {
+				return lastService.update({ date_next: new Date() });
+			} else {
+				return RptServices.create({
+					group_id: group_id,
+					car_id: elevator_id,
+					floor_id: floor_id,
+					mode_of_operation: mode_of_operation,
+					class_of_operation: class_of_operation,
+					date_created: new Date(),
+					date_next: new Date()
+				});
 			}
-
-		})		
-		
+		}).then(result => {
+			if (callback) callback(null, result);
+		}).catch(err => {
+			if (callback) callback(err);
+		});
 	},
 
 	updateServices: function (elevator_id, group_id, floor_id, callback = null) {
-		mysql.pool('update rpt_services set date_next=UTC_TIMESTAMP() WHERE group_id=? AND car_id=? ORDER BY id DESC LIMIT 1', [group_id, elevator_id, floor_id], function (err, result) {
-			callback(err, result)
-		})
+		RptServices.findOne({
+			where: { group_id: group_id, car_id: elevator_id },
+			order: [['id', 'DESC']]
+		}).then(lastService => {
+			if (lastService) {
+				return lastService.update({ date_next: new Date() });
+			}
+		}).then(result => {
+			if (callback) callback(null, result);
+		}).catch(err => {
+			if (callback) callback(err);
+		});
 	},
 	createWaitTime: function (group, floor, direction, wait_time, max_floors, callback = null) {
-		if (wait_time > 5 && wait_time < 10*max_floors) {
-			var _query = `
-			INSERT
-			INTO
-				rpt_wait
-				(group_id,floor_id,direction,wait_time,date_created)
-			VALUES
-				(?,?,?,?,UTC_TIMESTAMP())
-			`;
-
-			mysql.pool(_query, [group, floor, direction, wait_time], function (err, result) {});
+		if (wait_time > 5 && wait_time < 10 * max_floors) {
+			RptWait.create({
+				group_id: group,
+				floor_id: floor,
+				direction: direction,
+				wait_time: wait_time,
+				date_created: new Date()
+			}).catch(err => { });
 		}
 	},
 	createFTF: function (group, car, floor_from, floor_to, direction, wait_time, callback = null) {
-		var _query = `
-		INSERT
-		INTO
-			rpt_floortofloor
-			(group_id,car_id,floor_from,floor_to,direction,wait_time,date_created)
-		VALUES
-			(?,?,?,?,?,?,UTC_TIMESTAMP())
-		`;
-
-		mysql.pool(_query, [group, car, floor_from, floor_to, direction, wait_time], function (err, result) {});
+		RptFloorToFloor.create({
+			group_id: group,
+			car_id: car,
+			floor_from: floor_from,
+			floor_to: floor_to,
+			direction: direction,
+			wait_time: wait_time,
+			date_created: new Date()
+		}).catch(err => { });
 	},
 	createProgramEvent: function (type, description, callback = null) {
-		var _query = `
-		INSERT
-		INTO
-			rpt_program_events
-			(type,description,date_created)
-		VALUES
-			(?,?,UTC_TIMESTAMP())
-		`;
-
-		mysql.pool(_query, [type, description], function (err, result) {});
+		RptProgramEvents.create({
+			type: type,
+			description: description,
+			date_created: new Date()
+		}).catch(err => { });
 	}
 }
 /* Send faults to the notification engine */
@@ -346,7 +207,7 @@ function sendNotification(type, id, elevator_group_id, elevator_id, position, sp
 			date_created: new Date().toISOString().slice(0, 19).replace('T', ' '),
 			elevator_group_id: elevator_group_id,
 			site_id: process.env.SITE_ID,
-			floor_pi: current_landing,
+			alarm_floor_label: current_landing,
 			elevator_id: elevator_id,
 			car_label: car_label,
 			position: position,

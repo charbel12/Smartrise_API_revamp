@@ -6,8 +6,8 @@ const sequelize = new Sequelize(
   process.env.DB_USERNAME || 'root',
   process.env.DB_PASSWORD || 'root',
   {
-    host: process.env.DB_HOST || 'mysql_lm',
-    dialect: process.env.DB_CONNECTION || 'mysql',
+    host: process.env.DB_HOST || 'postgres_lm',
+    dialect: process.env.DB_CONNECTION || 'postgres',
     logging: false,
   }
 );
@@ -37,6 +37,7 @@ function init(sequelize) {
   models.Parameters = require("./parameters_parameter")(sequelize, DataTypes);
   models.Inputs = require("./inputs_inputs")(sequelize, DataTypes);
   models.Outputs = require("./outputs_outputs")(sequelize, DataTypes);
+  models.Report = require("./reports.model")(sequelize, DataTypes);
 
   // Pivot tables
   models.UserRole = sequelize.define("UserRole", {}, { tableName: "user_roles", timestamps: false });
@@ -49,6 +50,8 @@ function init(sequelize) {
   models.Permission.belongsToMany(models.Role, { through: models.RolesPermissions, foreignKey: "permission_id", otherKey: "role_id" });
   models.RptFaults.belongsTo(models.SystemFaults, { as: "system_fault", foreignKey: "fault_id", targetKey: "number" });
   models.RptAlarms.belongsTo(models.SystemAlarms, { as: "system_alarms", foreignKey: "alarm_id", targetKey: "number" });
+  models.Faults.belongsTo(models.SystemFaults, { as: "system_fault", foreignKey: "fault_id", targetKey: "number" });
+  models.Alarms.belongsTo(models.SystemAlarms, { as: "system_alarms", foreignKey: "alarm_number", targetKey: "number" });
   models.RptServices.belongsTo(models.RefCategory, { as: "refClassCategory", foreignKey: "mode_of_operation", targetKey: "ref_cat_id" });
   models.RefCategory.belongsTo(models.RefClass, { as: "refClass", foreignKey: "ref_class_id", targetKey: "class_id" });
 

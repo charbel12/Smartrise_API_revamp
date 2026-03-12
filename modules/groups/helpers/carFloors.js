@@ -52,9 +52,9 @@ async function syncFloorsData() {
 
     // Clear the existing floors data
     try {
-        await sequelize.query('SET FOREIGN_KEY_CHECKS = 0;');
-        await sequelize.query('TRUNCATE TABLE elevator_floors;');
-        await sequelize.query('SET FOREIGN_KEY_CHECKS = 1;');
+        await sequelize.query("SET session_replication_role = 'replica';");
+        await sequelize.query('TRUNCATE TABLE elevator_floors RESTART IDENTITY CASCADE;');
+        await sequelize.query("SET session_replication_role = 'origin';");
     } catch (error) {
         console.error('Error truncating elevator_floors:', error);
     }
@@ -112,7 +112,7 @@ async function syncFloorsData() {
                     try {
                         await sequelize.query(`
                             INSERT INTO elevator_floors (elevator_id, floor_name, door_side, ordinal, date_created, date_modified, status)
-                            VALUES (?, ?, ?, ?, NOW(), NOW(), 1)
+                            VALUES (?, ?, ?, ?, NOW(), NOW(), true)
                         `, {
                             replacements: [carId, piLabel, doorSide, floorOrdinal]
                         });

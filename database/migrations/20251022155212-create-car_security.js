@@ -28,14 +28,14 @@ module.exports = {
       allowNull: false
     },
     front_permission: {
-      type: Sequelize.TINYINT,
+      type: Sequelize.BOOLEAN,
       allowNull: false,
-      defaultValue: '1'
+      defaultValue: true
     },
     rear_permission: {
-      type: Sequelize.TINYINT,
+      type: Sequelize.BOOLEAN,
       allowNull: false,
-      defaultValue: '1'
+      defaultValue: true
     },
     date_created: {
       type: Sequelize.DATE,
@@ -45,7 +45,7 @@ module.exports = {
       type: Sequelize.DATE,
       allowNull: false
     }
-    }, { engine: "InnoDB", charset: "utf8mb4", collate: "utf8mb4_unicode_ci" });
+    });
   },
 
   async down(queryInterface, Sequelize) {

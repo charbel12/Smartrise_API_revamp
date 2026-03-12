@@ -1,9 +1,0 @@
-{
-  "development": {
-    "username": "pre_nucsmartrise",
-    "password": "pre_QyppBa@9nD>zaqKm",
-    "database": "pre_smartriselocal",
-    "host": "mysql_lm",
-    "dialect": "mysql"
-  }
-}
