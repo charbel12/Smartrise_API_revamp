@@ -26,7 +26,7 @@ module.exports = {
                 { fault_floor_label: { [Op.iLike]: `%${search}%` } }
             ];
             if (!isNaN(search)) {
-                where[Op.or].push({ fault_id: parseInt(search) });
+                where[Op.or].push({ fault_number: parseInt(search) });
             }
         }
 

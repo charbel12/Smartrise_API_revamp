@@ -36,68 +36,6 @@ module.exports = {
 			// Handle error
 		});
 	},
-	createFault: function (elevator_id, elevator_group_id, fault_id, fault_position, fault_speed, car_speed, car_position, current_landing, callback = null) {
-		if (fault_id != 0) {
-			console.table({
-				"fault_speed": fault_speed,
-				"fault_position": fault_position,
-				"car_speed": car_speed,
-				"car_position": car_position
-			});
-
-			// Generate a unique ID if needed or let DB handle it. 
-			// Table elevator_faults has STRING(255) id as PK in migrations.
-			const id = elevator_group_id + "-" + elevator_id + "-" + fault_id + "-" + new Date().getTime();
-
-			Faults.create({
-				id: id,
-				elevator_id: elevator_id,
-				elevator_group_id: elevator_group_id,
-				fault_id: fault_id,
-				fault_position: fault_position,
-				fault_speed: fault_speed,
-				car_speed: car_speed,
-				car_position: car_position,
-				fault_floor_label: current_landing,
-				date_time: new Date()
-			}).then(result => {
-				if (callback) callback(null, result);
-				sendNotification('faults', fault_id, elevator_group_id, elevator_id, fault_position, fault_speed, current_landing);
-			}).catch(err => {
-				if (callback) callback(err);
-			});
-		}
-	},
-	createAlarm: function (elevator_id, elevator_group_id, alarm_id, alarm_position, alarm_speed, car_speed, car_position, current_landing, callback = null) {
-		if (alarm_id != 0) {
-			console.table({
-				"alarm_speed": alarm_speed,
-				"alarm_position": alarm_position,
-				"car_speed": car_speed,
-				"car_position": car_position
-			});
-
-			const id = elevator_group_id + "-" + elevator_id + "-" + alarm_id + "-" + new Date().getTime();
-
-			Alarms.create({
-				id: id,
-				elevator_id: elevator_id,
-				elevator_group_id: elevator_group_id,
-				alarm_id: alarm_id,
-				alarm_position: alarm_position,
-				alarm_speed: alarm_speed,
-				car_speed: car_speed,
-				car_position: car_position,
-				alarm_floor_label: current_landing,
-				date_time: new Date()
-			}).then(result => {
-				if (callback) callback(null, result);
-				sendNotification('alarms', alarm_id, elevator_group_id, elevator_id, alarm_position, alarm_speed, current_landing);
-			}).catch(err => {
-				if (callback) callback(err);
-			});
-		}
-	},
 	createCarCalls: function (elevator_id, group_id, floors_id, callback = null) {
 		floors_id.forEach(function (val) {
 			RptCarCalls.create({

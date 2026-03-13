@@ -39,7 +39,7 @@ module.exports = {
         allowNull: false
       },
       wait_time: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
         allowNull: true
       }
     }, { engine: "InnoDB", charset: "utf8mb4", collate: "utf8mb4_unicode_ci" });

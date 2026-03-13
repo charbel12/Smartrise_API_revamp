@@ -45,7 +45,8 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "express-swagger-generator": "^1.1.17"
+    "express-swagger-generator": "^1.1.17",
+    "sequelize-cli": "^6.6.5"
   },
   "pkg": {
     "scripts": [

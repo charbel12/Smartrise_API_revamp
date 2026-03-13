@@ -48,9 +48,8 @@ function init(sequelize) {
   models.Role.belongsToMany(models.User, { through: models.UserRole, foreignKey: "role_id", otherKey: "user_id" });
   models.Role.belongsToMany(models.Permission, { through: models.RolesPermissions, foreignKey: "role_id", otherKey: "permission_id" });
   models.Permission.belongsToMany(models.Role, { through: models.RolesPermissions, foreignKey: "permission_id", otherKey: "role_id" });
-  models.RptFaults.belongsTo(models.SystemFaults, { as: "system_fault", foreignKey: "fault_id", targetKey: "number" });
   models.RptAlarms.belongsTo(models.SystemAlarms, { as: "system_alarms", foreignKey: "alarm_id", targetKey: "number" });
-  models.Faults.belongsTo(models.SystemFaults, { as: "system_fault", foreignKey: "fault_id", targetKey: "number" });
+  models.Faults.belongsTo(models.SystemFaults, { as: "system_fault", foreignKey: "fault_number", targetKey: "number" });
   models.Alarms.belongsTo(models.SystemAlarms, { as: "system_alarms", foreignKey: "alarm_number", targetKey: "number" });
   models.RptServices.belongsTo(models.RefCategory, { as: "refClassCategory", foreignKey: "mode_of_operation", targetKey: "ref_cat_id" });
   models.RefCategory.belongsTo(models.RefClass, { as: "refClass", foreignKey: "ref_class_id", targetKey: "class_id" });

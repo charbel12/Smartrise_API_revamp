@@ -9,7 +9,7 @@ module.exports = {
       car_id: Sequelize.INTEGER,
       floor_id: Sequelize.INTEGER,
       door_state: Sequelize.STRING,
-      opening: Sequelize.BOOLEAN,
+      opening: Sequelize.STRING,
       date_created: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
       time_sec: Sequelize.FLOAT
     }, { engine: "InnoDB", charset: "utf8mb4", collate: "utf8mb4_unicode_ci" });

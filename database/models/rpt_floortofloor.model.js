@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     floor_to: { type: DataTypes.INTEGER, allowNull: false },
     direction: { type: DataTypes.STRING(255), allowNull: false },
     date_created: { type: DataTypes.DATE, allowNull: false },
-    wait_time: { type: DataTypes.INTEGER, allowNull: true },
+    wait_time: { type: DataTypes.FLOAT, allowNull: true },
   }, {
     tableName: 'rpt_floortofloor',
     timestamps: false,

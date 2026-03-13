@@ -10,7 +10,7 @@ const {
   RptAlarms,
   SystemAlarms,
   RptWait,
-  ProgramEvents,
+  RptProgramEvents: ProgramEvents,
   RptServices,
   RefCategory,
   RefClass,
@@ -88,7 +88,7 @@ module.exports = {
           "car_id",
           [fn("COUNT", col("id")), "total_count"],
           [fn("DATE", col("date_created")), "day_created"],
-          [fn("HOUR", col("date_created")), "hour_created"],
+          [fn("date_part", "hour", col("date_created")), "hour_created"],
         ],
         where,
         group: ["car_id", "day_created", "hour_created"],
@@ -97,7 +97,7 @@ module.exports = {
         attributes: [
           [fn("COUNT", col("id")), "total_count"],
           [fn("DATE", col("date_created")), "day_created"],
-          [fn("HOUR", col("date_created")), "hour_created"],
+          [fn("date_part", "hour", col("date_created")), "hour_created"],
         ],
         where,
         group: ["hour_created", "day_created"],
@@ -168,7 +168,7 @@ module.exports = {
           ["date_created", "fault_date"],
           [
             sequelize.literal(
-              "DATE_FORMAT(`date_created`, '%Y-%m-%d %H:%i:%S')"
+              "to_char(\"date_created\", 'YYYY-MM-DD HH24:MI:SS')"
             ),
             "new_date",
           ],
@@ -232,7 +232,7 @@ module.exports = {
           ["date_created", "alarm_date"],
           [
             sequelize.literal(
-              "DATE_FORMAT(`RptAlarms`.`date_created`, '%Y-%m-%d %H:%i:%S')"
+              "to_char(\"RptAlarms\".\"date_created\", 'YYYY-MM-DD HH24:MI:SS')"
             ),
             "new_date",
           ],
@@ -348,7 +348,7 @@ module.exports = {
           "car_id",
           [fn("COUNT", col("id")), "total_count"],
           [fn("DATE", col("date_created")), "day_created"],
-          [fn("HOUR", col("date_created")), "hour_created"],
+          [fn("date_part", "hour", col("date_created")), "hour_created"],
         ],
         where,
         group: ["car_id", "day_created", "hour_created"],
@@ -407,7 +407,7 @@ module.exports = {
           "direction",
           [fn("COUNT", col("id")), "total_count"],
           [fn("DATE", col("date_created")), "day_created"],
-          [fn("HOUR", col("date_created")), "hour_created"],
+          [fn("date_part", "hour", col("date_created")), "hour_created"],
         ],
         where,
         group: ["floor_id", "direction", "day_created", "hour_created"],
@@ -438,7 +438,7 @@ module.exports = {
         attributes: [
           "car_id",
           "door_state",
-          [fn("ROUND", fn("AVG", col("time_sec")), 1), "average"],
+          [literal('ROUND(CAST(AVG("time_sec") AS numeric), 1)'), "average"],
         ],
         where,
         group: ["car_id", "door_state"],
@@ -494,16 +494,16 @@ module.exports = {
           [
             literal(
               "CONCAT(" +
-              "FLOOR(TIMESTAMPDIFF(SECOND, `RptServices`.`date_created`, `RptServices`.`date_next`) / 86400), 'd ', " +
-              "FLOOR(MOD(TIMESTAMPDIFF(SECOND, `RptServices`.`date_created`, `RptServices`.`date_next`), 86400) / 3600), 'h ', " +
-              "FLOOR(MOD(TIMESTAMPDIFF(SECOND, `RptServices`.`date_created`, `RptServices`.`date_next`), 3600) / 60), 'm'" +
+              "FLOOR(EXTRACT(EPOCH FROM (\"RptServices\".\"date_next\" - \"RptServices\".\"date_created\")) / 86400), 'd ', " +
+              "FLOOR(MOD(CAST(EXTRACT(EPOCH FROM (\"RptServices\".\"date_next\" - \"RptServices\".\"date_created\")) AS NUMERIC), 86400) / 3600), 'h ', " +
+              "FLOOR(MOD(CAST(EXTRACT(EPOCH FROM (\"RptServices\".\"date_next\" - \"RptServices\".\"date_created\")) AS NUMERIC), 3600) / 60), 'm'" +
               ")"
             ),
             "DURATION",
           ],
           [
             literal(
-              "DATE_FORMAT(`RptServices`.`date_created`, '%d/%m/%Y %H:%i:%s')"
+              "to_char(\"RptServices\".\"date_created\", 'DD/MM/YYYY HH24:MI:SS')"
             ),
             "Date & Time",
           ],
@@ -623,8 +623,8 @@ module.exports = {
         attributes: [
           "floor_id",
           "direction",
-          [fn("HOUR", col("date_created")), "hour_created"],
-          [fn("ROUND", fn("AVG", col("wait_time")), 1), "average"],
+          [fn("date_part", "hour", col("date_created")), "hour_created"],
+          [literal('ROUND(CAST(AVG("wait_time") AS numeric), 1)'), "average"],
         ],
         where,
         group: ["floor_id", "hour_created", "direction"],
@@ -653,8 +653,8 @@ module.exports = {
         attributes: [
           "floor_id",
           "direction",
-          [fn("HOUR", col("date_created")), "hour_created"],
-          [fn("ROUND", fn("AVG", col("wait_time")), 1), "average"],
+          [fn("date_part", "hour", col("date_created")), "hour_created"],
+          [literal('ROUND(CAST(AVG("wait_time") AS numeric), 1)'), "average"],
         ],
         where,
         group: ["floor_id", "direction", "hour_created"],
@@ -681,7 +681,7 @@ module.exports = {
     };
     try {
       const results = await RptWait.findAll({
-        attributes: ["*", [fn("HOUR", col("date_created")), "hour_created"]],
+        attributes: ["*", [fn("date_part", "hour", col("date_created")), "hour_created"]],
         where,
       });
 
@@ -749,7 +749,7 @@ module.exports = {
     };
     try {
       const results = await RptWait.findAll({
-        attributes: ["*", [fn("HOUR", col("date_created")), "hour_created"]],
+        attributes: ["*", [fn("date_part", "hour", col("date_created")), "hour_created"]],
         where,
       });
       if (callback) {
@@ -774,7 +774,7 @@ module.exports = {
     };
     try {
       const results = await RptWait.findAll({
-        attributes: ["*", [fn("HOUR", col("date_created")), "hour_created"]],
+        attributes: ["*", [fn("date_part", "hour", col("date_created")), "hour_created"]],
         where,
       });
       if (callback) {
@@ -798,7 +798,7 @@ module.exports = {
     };
     try {
       const results = await RptWait.findAll({
-        attributes: ["*", [fn("HOUR", col("date_created")), "hour_created"]],
+        attributes: ["*", [fn("date_part", "hour", col("date_created")), "hour_created"]],
         where,
       });
       if (callback) {
@@ -827,7 +827,7 @@ module.exports = {
           "floor_from",
           "floor_to",
           "direction",
-          [fn("ROUND", fn("AVG", col("wait_time")), 1), "average"],
+          [literal('ROUND(CAST(AVG("wait_time") AS numeric), 1)'), "average"],
         ],
         where: {
           ...where,
@@ -842,7 +842,7 @@ module.exports = {
           "floor_from",
           "floor_to",
           "direction",
-          [fn("ROUND", fn("AVG", col("wait_time")), 1), "average"],
+          [literal('ROUND(CAST(AVG("wait_time") AS numeric), 1)'), "average"],
         ],
         where: {
           ...where,
@@ -872,7 +872,7 @@ module.exports = {
         attributes: [
           "id",
           [
-            fn("DATE_FORMAT", col("date_created"), "%d/%m/%Y %H:%i:%s"),
+            fn("to_char", col("date_created"), "DD/MM/YYYY HH24:MI:SS"),
             "date_created",
           ],
           [

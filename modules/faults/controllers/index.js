@@ -250,6 +250,7 @@ APP.get('', async (req, res) => {
             where: whereClause,
             limit: limit,
             offset: offset,
+            order: [['date_time', 'DESC']],
         });
 
         res.json({

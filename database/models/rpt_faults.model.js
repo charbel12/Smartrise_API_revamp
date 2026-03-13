@@ -3,7 +3,6 @@ module.exports = (sequelize, DataTypes) => {
     id: { type: DataTypes.STRING(255), primaryKey: true, allowNull: false },
     elevator_id: { type: DataTypes.INTEGER, allowNull: false },
     elevator_group_id: { type: DataTypes.INTEGER, allowNull: false },
-    fault_id: { type: DataTypes.INTEGER, allowNull: false },
     status: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
     date_created: { type: DataTypes.DATE, allowNull: false },
     fault_speed: { type: DataTypes.DOUBLE, allowNull: false },
