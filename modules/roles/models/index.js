@@ -1,4 +1,5 @@
 const { Role, Permission, RolesPermissions, sequelize } = require('../../../database/models');
+const { Op } = require('sequelize');
 
 async function fetchRolePermissions(req, res, callback = null) {
     try {
@@ -188,7 +189,7 @@ module.exports = {
                 where: {
                     name,
                     id: {
-                        [sequelize.Op.ne]: id
+                        [Op.ne]: id
                     }
                 }
             });
