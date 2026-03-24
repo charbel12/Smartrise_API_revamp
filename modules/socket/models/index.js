@@ -3,18 +3,38 @@ const {
 	Report, RptCarCalls, RptHallCalls, RptServices,
 	RptWait, RptFloorToFloor, RptProgramEvents
 } = require('../../../database/models');
-const { Op } = require('sequelize');
-const TOOLS = require('../../../helpers/tools.js');
 const axios = require('axios');
 const _ = require('lodash');
 const fs = require('fs');
-const MOMENT = require('moment');
+
+const redisClient = require('../../../helpers/tools.js').redisClient;
+
+function pushToQueue(model, operation, payload, condition) {
+    return new Promise((resolve, reject) => {
+        if (!model || !model.tableName) {
+            return reject(new Error("Invalid model"));
+        }
+        const msg = {
+            table: model.tableName,
+            operation: operation,
+            data: payload,
+            condition: condition || {}
+        };
+        redisClient.lPush('db_write_queue', JSON.stringify(msg))
+            .then(() => resolve(true))
+            .catch(e => {
+                console.error(`Redis DB Queue Error (${model.tableName}):`, e);
+                reject(e);
+            });
+    });
+}
 
 var car_modes = { "0": "offline", "1": "offline", "2": "offline", "3": "offline", "4": "offline", "5": "offline", "6": "offline", "7": "offline" }
 
 module.exports = {
+    car_modes,
 	createDoorsReport: function (group_id, car_id, floor_id, door_state, time_sec, opening) {
-		RptDoors.create({
+		pushToQueue(RptDoors, 'insert', {
 			group_id: group_id,
 			car_id: car_id,
 			floor_id: floor_id,
@@ -22,60 +42,54 @@ module.exports = {
 			time_sec: time_sec,
 			opening: opening,
 			date_created: new Date()
-		}).catch(err => {
-			// Handle error
-		});
+		}).catch(err => console.error(err));
 	},
 	createReportLog: function (group_id, messageType, message) {
-		Report.create({
+		pushToQueue(Report, 'insert', {
 			group_id: group_id,
 			messagetype: messageType,
 			message: message,
 			date_created: new Date()
-		}).catch(err => {
-			// Handle error
-		});
+		}).catch(err => console.error(err));
 	},
 	createCarCalls: function (elevator_id, group_id, floors_id, callback = null) {
-		floors_id.forEach(function (val) {
-			RptCarCalls.create({
+        const promises = floors_id.map(val => {
+			return pushToQueue(RptCarCalls, 'insert', {
 				group_id: group_id,
 				car_id: elevator_id,
 				floor_id: val,
 				state: 0,
 				date_created: new Date()
-			}).then(result => {
-				if(callback) callback(null, result);
-			}).catch(err => {
-				if(callback) callback(err);
 			});
-		})
+		});
+        Promise.all(promises)
+            .then(() => { if (callback) callback(null, true); })
+            .catch(err => { if (callback) callback(err); });
 	},
 	createHallCalls: function (group_id, floors_id, direction, callback = null) {
-		floors_id.forEach(function (val) {
-			RptHallCalls.create({
+		const promises = floors_id.map(val => {
+			return pushToQueue(RptHallCalls, 'insert', {
 				group_id: group_id,
 				floor_id: val,
 				direction: direction,
 				state: 0,
 				date_created: new Date()
-			}).then(result => {
-				if(callback) callback(null, result);
-			}).catch(err => {
-				if(callback) callback(err);
 			});
-		})
-
+		});
+        Promise.all(promises)
+            .then(() => { if (callback) callback(null, true); })
+            .catch(err => { if (callback) callback(err); });
 	},
 	createServices: function (elevator_id, group_id, floor_id, mode_of_operation, class_of_operation, callback = null) {
 		RptServices.findOne({
 			where: { group_id: group_id, car_id: elevator_id },
 			order: [['id', 'DESC']]
 		}).then(lastService => {
+            let promise;
 			if (lastService && lastService.class_of_operation == class_of_operation && lastService.mode_of_operation == mode_of_operation) {
-				return lastService.update({ date_next: new Date() });
+				promise = pushToQueue(RptServices, 'update', { date_next: new Date() }, { id: lastService.id });
 			} else {
-				return RptServices.create({
+				promise = pushToQueue(RptServices, 'insert', {
 					group_id: group_id,
 					car_id: elevator_id,
 					floor_id: floor_id,
@@ -85,9 +99,10 @@ module.exports = {
 					date_next: new Date()
 				});
 			}
-		}).then(result => {
-			if (callback) callback(null, result);
-		}).catch(err => {
+            return promise;
+		}).then(() => {
+            if (callback) callback(null, true);
+        }).catch(err => {
 			if (callback) callback(err);
 		});
 	},
@@ -98,27 +113,28 @@ module.exports = {
 			order: [['id', 'DESC']]
 		}).then(lastService => {
 			if (lastService) {
-				return lastService.update({ date_next: new Date() });
+                return pushToQueue(RptServices, 'update', { date_next: new Date() }, { id: lastService.id });
 			}
-		}).then(result => {
-			if (callback) callback(null, result);
-		}).catch(err => {
+            return Promise.resolve();
+		}).then(() => {
+            if(callback) callback(null, true);
+        }).catch(err => {
 			if (callback) callback(err);
 		});
 	},
 	createWaitTime: function (group, floor, direction, wait_time, max_floors, callback = null) {
 		if (wait_time > 5 && wait_time < 10 * max_floors) {
-			RptWait.create({
+			pushToQueue(RptWait, 'insert', {
 				group_id: group,
 				floor_id: floor,
 				direction: direction,
 				wait_time: wait_time,
 				date_created: new Date()
-			}).catch(err => { });
+			}).catch(err => {});
 		}
 	},
 	createFTF: function (group, car, floor_from, floor_to, direction, wait_time, callback = null) {
-		RptFloorToFloor.create({
+		pushToQueue(RptFloorToFloor, 'insert', {
 			group_id: group,
 			car_id: car,
 			floor_from: floor_from,
@@ -126,16 +142,17 @@ module.exports = {
 			direction: direction,
 			wait_time: wait_time,
 			date_created: new Date()
-		}).catch(err => { });
+		}).catch(err => {});
 	},
 	createProgramEvent: function (type, description, callback = null) {
-		RptProgramEvents.create({
+		pushToQueue(RptProgramEvents, 'insert', {
 			type: type,
 			description: description,
 			date_created: new Date()
-		}).catch(err => { });
+		}).catch(err => {});
 	}
 }
+
 /* Send faults to the notification engine */
 function sendNotification(type, id, elevator_group_id, elevator_id, position, speed, current_landing) {
 	let job_name = getJobNameByGroupId(elevator_group_id);

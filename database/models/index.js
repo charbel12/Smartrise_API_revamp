@@ -1,16 +1,35 @@
 const { Sequelize, DataTypes } = require("sequelize");
 
-// Create Sequelize instance
+const dbName = process.env.DB_DATABASE || 'pre_smartriselocal';
+
+const sequelizeOptions = {
+  dialect: 'sqlite',
+  logging: false,
+  storage: `/db/${dbName}.sqlite`
+};
+
 const sequelize = new Sequelize(
-  process.env.DB_DATABASE || 'pre_smartriselocal',
+  dbName,
   process.env.DB_USERNAME || 'root',
   process.env.DB_PASSWORD || 'root',
-  {
-    host: process.env.DB_HOST || 'postgres_lm',
-    dialect: process.env.DB_CONNECTION || 'postgres',
-    logging: false,
-  }
+  sequelizeOptions
 );
+
+const redisClient = require('../../helpers/tools.js').redisClient;
+
+function pushToQueue(models, modelName, operation, payload, condition) {
+    if (!models[modelName]) return Promise.reject(new Error("Model not found: " + modelName));
+    const msg = {
+        table: models[modelName].tableName,
+        operation: operation,
+        data: payload,
+        condition: condition || {}
+    };
+    return redisClient.lPush('db_write_queue', JSON.stringify(msg)).catch(e => {
+        console.error(`Redis DB Queue Error [${modelName}]:`, e);
+        throw e;
+    });
+}
 
 // Model loader
 function init(sequelize) {
@@ -58,6 +77,91 @@ function init(sequelize) {
 }
 
 const models = init(sequelize);
+
+Object.keys(models).forEach(modelName => {
+  if (models[modelName].name) {
+      // Class Methods
+      models[modelName].create = async function(values, options) {
+          try {
+              await pushToQueue(models, modelName, 'insert', values);
+              return models[modelName].build(values); 
+          } catch(e) {
+              console.error(`Queue error creating ${modelName}:`, e);
+              throw e;
+          }
+      };
+      models[modelName].update = async function(values, options) {
+          try {
+              await pushToQueue(models, modelName, 'update', values, options ? options.where : {});
+              return [1, [models[modelName].build(values)]]; 
+          } catch(e) {
+              console.error(`Queue error updating ${modelName}:`, e);
+              throw e;
+          }
+      };
+      models[modelName].destroy = async function(options) {
+          try {
+              await pushToQueue(models, modelName, 'delete', null, options ? options.where : {});
+              return 1;
+          } catch(e) {
+              console.error(`Queue error destroying ${modelName}:`, e);
+              throw e;
+          }
+      };
+      models[modelName].bulkCreate = async function(records, options) {
+          try {
+              await pushToQueue(models, modelName, 'insert', records);
+              return records.map(r => models[modelName].build(r));
+          } catch(e) {
+              console.error(`Queue error bulk creating ${modelName}:`, e);
+              throw e;
+          }
+      };
+      models[modelName].upsert = async function(values, options) {
+          try {
+              await pushToQueue(models, modelName, 'insert', values);
+              return [models[modelName].build(values), true];
+          } catch(e) {
+              console.error(`Queue error upserting ${modelName}:`, e);
+              throw e;
+          }
+      };
+      
+      // Instance Methods
+      models[modelName].prototype.save = async function() {
+          try {
+              const changed = this.changed();
+              if (changed) {
+                  const values = {};
+                  changed.forEach(c => values[c] = this[c]);
+                  const pk = this.constructor.primaryKeyAttribute || 'id';
+                  const where = {};
+                  where[pk] = this[pk];
+                  await pushToQueue(models, modelName, 'update', values, where);
+              } else if (this.isNewRecord) {
+                  await pushToQueue(models, modelName, 'insert', this.dataValues);
+              }
+              return this;
+          } catch(e) {
+              console.error(`Queue error saving instance of ${modelName}:`, e);
+              throw e;
+          }
+      };
+      
+      models[modelName].prototype.destroy = async function() {
+          try {
+              const pk = this.constructor.primaryKeyAttribute || 'id';
+              const where = {};
+              where[pk] = this[pk];
+              await pushToQueue(models, modelName, 'delete', null, where);
+              return this;
+          } catch(e) {
+              console.error(`Queue error destroying instance of ${modelName}:`, e);
+              throw e;
+          }
+      };
+  }
+});
 
 module.exports = {
   init,

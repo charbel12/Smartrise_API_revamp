@@ -1,21 +1,14 @@
-const { Pool } = require('pg');
+const sqlite3 = require('sqlite3').verbose();
 const ENV = process.env;
 
-const pool = new Pool({
-    host: ENV.DB_HOST,
-    port: ENV.DB_PORT || 5432,
-    user: ENV.DB_USERNAME,
-    password: ENV.DB_PASSWORD,
-    database: ENV.DB_DATABASE,
-    max: 100,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 60000,
+const dbPath = ENV.DB_STORAGE || `/db/${ENV.DB_DATABASE || 'pre_smartriselocal'}.sqlite`;
+
+const db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+        console.error('Error opening sqlite database:', err.message);
+    }
 });
 
-/**
- * Converts MySQL-style '?' placeholders to PostgreSQL '$n' placeholders.
- * Also handles basic 'SET ?' conversion for INSERT/UPDATE if it's the only param.
- */
 function convertQuery(qry, params) {
     let sql = qry;
     let newParams = params ? [...params] : [];
@@ -31,7 +24,7 @@ function convertQuery(qry, params) {
         const obj = params[0];
         const keys = Object.keys(obj);
         const columns = keys.join(', ');
-        const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
+        const placeholders = keys.map(() => '?').join(', ');
         sql = `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders})`;
         newParams = Object.values(obj);
         return { sql, params: newParams };
@@ -44,43 +37,33 @@ function convertQuery(qry, params) {
         const obj = params[0];
         const remainingParams = params.slice(1);
         const keys = Object.keys(obj);
-        const setClause = keys.map((key, i) => `${key} = $${i + 1}`).join(', ');
+        const setClause = keys.map(key => `${key} = ?`).join(', ');
         
         sql = sql.replace(/SET\s+\?/i, `SET ${setClause}`);
-        
-        let placeholderCount = keys.length;
-        sql = sql.replace(/\?/g, () => {
-            placeholderCount++;
-            return `$${placeholderCount}`;
-        });
         
         newParams = [...Object.values(obj), ...remainingParams];
         return { sql, params: newParams };
     }
 
-    // Standard "?" to "$n" replacement
-    let count = 0;
-    sql = sql.replace(/\?/g, () => {
-        count++;
-        return `$${count}`;
-    });
-
     return { sql, params: newParams };
 }
 
 module.exports = {
-    query: async function (qry, param = [], callback) {
+    query: function (qry, param = [], callback) {
         const { sql, params } = convertQuery(qry, param);
-        try {
-            const res = await pool.query(sql, params);
-            if (callback) callback(null, res.rows);
-            return res.rows;
-        } catch (err) {
-            if (callback) callback(err);
-            throw err;
-        }
+        return new Promise((resolve, reject) => {
+            db.all(sql, params, function(err, rows) {
+                if (err) {
+                    if (callback) callback(err);
+                    reject(err);
+                } else {
+                    if (callback) callback(null, rows || []);
+                    resolve(rows || []);
+                }
+            });
+        });
     },
     pool: function (qry, param = [], callback) {
-        this.query(qry, param, callback);
+        return this.query(qry, param, callback);
     }
 };

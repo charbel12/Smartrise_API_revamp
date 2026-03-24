@@ -13,7 +13,11 @@ const client = redis.createClient({
 client.on('error', err => console.error('Redis Client Error', err));
 
 (async () => {
-    await client.connect();
+    try {
+        await client.connect();
+    } catch (e) {
+        console.error('Failed to connect to Redis initially:', e);
+    }
 })();
 
 
@@ -31,6 +35,7 @@ Array.prototype.unique = function () {
 };
 
 module.exports = {
+    redisClient: client,
 
     getRedisKeyValue: async function (key) {
         try {
