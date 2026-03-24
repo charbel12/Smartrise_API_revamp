@@ -37,7 +37,12 @@ APP.get(`${VARS.base_route}`, async (req, res, next) => {
 
 APP.put(`${VARS.base_route}/:id`, async (req, res, next) => {
     MODEL.updateRole(req, res, function (err, result) {
-        return result
+        if (err) {
+            console.error(err);
+            return res.status(500).send(err.message || "Something went wrong");
+        } else {
+            return result
+        }
     })
 })
 
