@@ -1,4 +1,5 @@
-const { Parameters } = require('../../../database/models')
+const { Op } = require('sequelize');
+const { Parameters } = require('../../../database/models');
 
 const fetchParameterByIndex = async(index, bits) =>{
 
@@ -29,10 +30,30 @@ const fetchParameterByIndexByCar = async(carNum, index, bits) =>{
       attributes: ['id', 'name', 'index', 'type', 'sw_name', targetValueColumn, targetChangedColumn]
     });
 
-    return parameter;
+}
+
+const fetchMultipleParametersByCar = async(carNum, paramsList) => {
+
+    const targetValueColumn = `value${carNum}`;
+    const targetChangedColumn = `is_changed_car${carNum}`;
+
+    const conditions = paramsList.map(p => ({
+        index: p.index,
+        type: p.bits !== undefined ? p.bits : p.type
+    }));
+
+    const parameters = await Parameters.findAll({
+      where: {
+        [Op.or]: conditions
+      },
+      attributes: ['id', 'name', 'index', 'type', 'sw_name', targetValueColumn, targetChangedColumn]
+    });
+
+    return parameters;
 }
 
 module.exports = {
   fetchParameterByIndexByCar,
-  fetchParameterByIndex
+  fetchParameterByIndex,
+  fetchMultipleParametersByCar
 }
