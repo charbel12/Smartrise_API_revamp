@@ -26,12 +26,11 @@ var status = data.status ? ` AND users.status = ${data.status} ` : ``
                     users.first_name,
                     users.last_name,
                     users.email,
-                    COALESCE(roles.name, "N/A") as role,  -- Use COALESCE to return "N/A" if the role is NULL
+                    COALESCE(roles.name, "N/A") as role,
                     users.status
                 FROM
                     users
-                    LEFT JOIN user_roles ON users.id = user_roles.user_id
-                    LEFT JOIN roles ON user_roles.role_id = roles.id
+                    LEFT JOIN roles ON users.role_id = roles.id
                 WHERE
                     1=1
                     ${role_id}
@@ -117,10 +116,7 @@ var status = data.status ? ` AND users.status = ${data.status} ` : ``
                                 users.status
                             FROM
                                 users
-                                LEFT JOIN
-                                    user_roles on user_roles.user_id = users.id
-                                LEFT JOIN 
-                                    roles on user_roles.role_id = roles.id
+                                LEFT JOIN roles ON users.role_id = roles.id
                                 ${role_name}
                                 )as sqQ            `,
                                 //sWhereAndSql: `wait_time >= 50 and date_created >= '${data.date_from}' and date_created <= '${data.date_to}' and group_id= ${data.group_id}`,
@@ -149,16 +145,12 @@ var status = data.status ? ` AND users.status = ${data.status} ` : ``
                             var _params = {
                                 recordsTotal: function (cb) {
                     
-                                    mysql.pool(`SELECT Count
-                                    (users.id)      
+                                    mysql.pool(`SELECT Count(users.id)
                                 FROM
-                                    users,user_roles,roles
-                                    where
-                                    user_roles.user_id = users.id
-                                    AND
-                                    user_roles.role_id = roles.id
-                                    AND
-                                    users.id NOT in (Select devices_user_info.user_id from devices_user_info where devices_user_info.device_id = ${device_id})
+                                    users
+                                    LEFT JOIN roles ON users.role_id = roles.id
+                                WHERE
+                                    users.id NOT IN (SELECT devices_user_info.user_id FROM devices_user_info WHERE devices_user_info.device_id = ${device_id})
                                     ${role_name}
                                     `, [], function (error, results) {
                                         cb(error, results);
@@ -174,13 +166,10 @@ var status = data.status ? ` AND users.status = ${data.status} ` : ``
                                     COALESCE(roles.name, 'N/A') as role,
                                     users.status
                                 FROM
-                                    users,user_roles,roles
-                                    where
-                                    user_roles.user_id = users.id
-                                    AND
-                                    user_roles.role_id = roles.id
-                                    AND
-                                    users.id NOT in (Select devices_user_info.user_id from devices_user_info where devices_user_info.device_id = ${device_id})
+                                    users
+                                    LEFT JOIN roles ON users.role_id = roles.id
+                                WHERE
+                                    users.id NOT IN (SELECT devices_user_info.user_id FROM devices_user_info WHERE devices_user_info.device_id = ${device_id})
                                     ${role_name}`, [], function (error, results) {
                                         cb(error, results);
                                     });
@@ -189,14 +178,11 @@ var status = data.status ? ` AND users.status = ${data.status} ` : ``
                     
                             if (opts.search.value != "") {
                                 _params["recordsFiltered"] = function (cb) {
-                                    mysql.pool(`SELECT Count
-                                    (users.id)      
+                                    mysql.pool(`SELECT Count(users.id)
                                 FROM
-                                    users,user_roles,roles
-                                    where
-                                    user_roles.user_id = users.id
-                                    AND
-                                    user_roles.role_id = roles.id
+                                    users
+                                    LEFT JOIN roles ON users.role_id = roles.id
+                                WHERE 1=1
                                     ${role_name}
                                     `, [], function (error, results) {
                                         cb(error, results);
@@ -226,12 +212,11 @@ var status = data.status ? ` AND users.status = ${data.status} ` : ``
     getUserRole: function (user_id, callback = null) {
         var _query = `
             SELECT 
-                name
+                roles.name
             FROM 
-                users AS p
-                inner join user_roles pc on p.id = pc.user_id
-                inner join roles c on pc.role_id = c.id
-            WHERE p.id = ?
+                users
+                LEFT JOIN roles ON users.role_id = roles.id
+            WHERE users.id = ?
         `;
         mysql.pool(_query, [user_id], function (err, result) {
             callback(err, result);

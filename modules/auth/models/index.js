@@ -26,19 +26,16 @@ module.exports = {
                 return callback(true, 401, { message: "Password is incorrect!" });
             }
 
+            // user.Role is a single object (belongsTo), not an array
             let codes = [];
             let urls = [];
-            if (user.Roles && Array.isArray(user.Roles)) {
-                user.Roles.forEach(role => {
-                  if (role.Permissions && Array.isArray(role.Permissions)) {
-                    role.Permissions.forEach(perm => {
-                      codes.push(perm.code);
-                      urls.push(perm.url);
-                    });
-                  }
+            if (user.Role && user.Role.Permissions && Array.isArray(user.Role.Permissions)) {
+                user.Role.Permissions.forEach(perm => {
+                    codes.push(perm.code);
+                    urls.push(perm.url);
                 });
-              }
-              
+            }
+
             codes = [...new Set(codes)];
             urls = [...new Set(urls)];
 
@@ -59,6 +56,7 @@ module.exports = {
                 username: user.username,
                 name: user.first_name,
                 lastname: user.last_name,
+                role: user.Role ? { id: user.Role.id, name: user.Role.name } : null,
                 urls,
                 token
             });

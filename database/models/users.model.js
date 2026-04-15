@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     date_created: { type: DataTypes.DATE, allowNull: false },
     date_modified: { type: DataTypes.DATE, allowNull: false },
     remember_token: { type: DataTypes.STRING(100), allowNull: true },
+    role_id: { type: DataTypes.BIGINT, allowNull: true },
   }, {
     tableName: 'users',
     timestamps: false,

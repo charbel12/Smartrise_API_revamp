@@ -1,0 +1,11 @@
+1. Put the elevator in inspection mode.
+2. Make sure that the Lobby lock is in the "Lock" position.
+3. Verify that no other service is running on the elevator.
+4. Connect the USB cable between the DAD and the elevator controller.
+5. Select the firmware package to upload (SBF or ZIP format).
+6. Upload the package using the upload section below.
+7. Select the specific firmware file from the table.
+8. Select the boards you wish to update (or choose "Update All").
+9. Start the update process. Do not remove power or USB during update.
+10. Wait for all boards to reach 100% completion.
+11. Click "Done" to finalize the update and restore normal mode.

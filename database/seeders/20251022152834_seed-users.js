@@ -19,7 +19,8 @@ module.exports = {
     "image": "",
     "remember_token": "",
     "date_created": "2019-08-05 18:00:00",
-    "date_modified": "2019-08-05 18:00:00"
+    "date_modified": "2019-08-05 18:00:00",
+    "role_id": "1"
   },
   {
     "id": "2",
@@ -36,7 +37,8 @@ module.exports = {
     "image": "",
     "remember_token": "",
     "date_created": "2019-08-05 18:00:00",
-    "date_modified": "2019-08-05 18:00:00"
+    "date_modified": "2019-08-05 18:00:00",
+    "role_id": "4"
   },
   {
     "id": "3",
@@ -53,7 +55,8 @@ module.exports = {
     "image": "",
     "remember_token": "",
     "date_created": "2019-08-05 18:00:00",
-    "date_modified": "2019-08-05 18:00:00"
+    "date_modified": "2019-08-05 18:00:00",
+    "role_id": "5"
   },
   {
     "id": "4",
@@ -70,7 +73,8 @@ module.exports = {
     "image": "",
     "remember_token": "",
     "date_created": "2019-08-05 18:00:00",
-    "date_modified": "2019-08-05 18:00:00"
+    "date_modified": "2019-08-05 18:00:00",
+    "role_id": "2"
   },
   {
     "id": "5",
@@ -87,7 +91,8 @@ module.exports = {
     "image": "",
     "remember_token": "",
     "date_created": "2019-08-05 18:00:00",
-    "date_modified": "2019-08-05 18:00:00"
+    "date_modified": "2019-08-05 18:00:00",
+    "role_id": "3"
   },
   {
     "id": "6",
@@ -104,7 +109,8 @@ module.exports = {
     "image": "",
     "remember_token": "",
     "date_created": "2019-08-05 18:00:00",
-    "date_modified": "2019-08-05 18:00:00"
+    "date_modified": "2019-08-05 18:00:00",
+    "role_id": "5"
   },
   {
     "id": "7",
@@ -121,7 +127,8 @@ module.exports = {
     "image": "",
     "remember_token": "",
     "date_created": "2019-08-05 18:00:00",
-    "date_modified": "2019-08-05 18:00:00"
+    "date_modified": "2019-08-05 18:00:00",
+    "role_id": "5"
   },
   {
     "id": "8",
@@ -138,7 +145,8 @@ module.exports = {
     "image": "",
     "remember_token": "",
     "date_created": "2019-08-05 18:00:00",
-    "date_modified": "2019-08-05 18:00:00"
+    "date_modified": "2019-08-05 18:00:00",
+    "role_id": "5"
   },
   {
     "id": "9",
@@ -155,7 +163,8 @@ module.exports = {
     "image": "",
     "remember_token": "",
     "date_created": "2019-08-05 18:00:00",
-    "date_modified": "2019-08-05 18:00:00"
+    "date_modified": "2019-08-05 18:00:00",
+    "role_id": "5"
   },
   {
     "id": "10",
@@ -172,7 +181,8 @@ module.exports = {
     "image": "",
     "remember_token": "",
     "date_created": "2019-08-05 18:00:00",
-    "date_modified": "2019-08-05 18:00:00"
+    "date_modified": "2019-08-05 18:00:00",
+    "role_id": "5"
   },
   {
     "id": "11",
@@ -189,7 +199,8 @@ module.exports = {
     "image": "",
     "remember_token": "",
     "date_created": "2019-08-05 18:00:00",
-    "date_modified": "2019-08-05 18:00:00"
+    "date_modified": "2019-08-05 18:00:00",
+    "role_id": "5"
   }
 ].map(r => ({...r, date_created: r.date_created ?? now, date_modified: r.date_modified ?? now}));
     await queryInterface.bulkDelete('users', null, {});

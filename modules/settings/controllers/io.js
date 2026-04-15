@@ -13,7 +13,7 @@ const pi_json = JSON.parse(fs.readFileSync('configs/pi/pi.json', 'utf-8'))['data
 //ROUTER_MIDDLEWARE.USE_STANDARD(APP); //for non authenticated routes
 ROUTER_MIDDLEWARE.USE_AUTHENTICATED(APP); //for secured/authenticated routes
 
-APP.get(`${VARS.base_route}/io/get-selected`, function (req, res) {
+APP.get(`/get-selected`, function (req, res) {
     var inputs = TOOLS.getRedisKeyValue("display_inputs")
     if (inputs == null) {
         inputs = "[]"
@@ -31,7 +31,7 @@ APP.get(`${VARS.base_route}/io/get-selected`, function (req, res) {
     res.json({successful: true, inputs: inputs, outputs: outputs});
 })
 
-APP.get(`${VARS.base_route}/io/get-inputs`, async function (req, res) {
+APP.get(`/get-inputs`, async function (req, res) {
 
     pi_ip = pi_json[0].location.split(':')[0];
 
@@ -44,7 +44,7 @@ APP.get(`${VARS.base_route}/io/get-inputs`, async function (req, res) {
     })
 })
 
-APP.get(`${VARS.base_route}/io/get-outputs`, async function (req, res) {
+APP.get(`/get-outputs`, async function (req, res) {
 
     pi_ip = pi_json[0].location.split(':')[0];
 
@@ -57,7 +57,7 @@ APP.get(`${VARS.base_route}/io/get-outputs`, async function (req, res) {
     })
 })
 
-APP.post(`${VARS.base_route}/io/update-selected`, function (req, res) {
+APP.post(`/update-selected`, function (req, res) {
     var inputs = req.body.inputs
     var outputs = req.body.outputs
     TOOLS.setRedisKeyValue("display_inputs", JSON.stringify(inputs))

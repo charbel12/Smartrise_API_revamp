@@ -143,6 +143,9 @@ APP.use('/settings', SETTINGS_ROUTER);
 // UPDATES
 APP.use('/updates', loadController('./modules/updates/controllers/index.js'));
 
+// BOOTLOADER
+APP.use('/bootloader', loadController('./modules/bootloader/controllers/index.js'));
+
 // MONITORING
 APP.use('/', loadController('./modules/monitoring/routes.js'));
 

@@ -57,14 +57,14 @@ function init(sequelize) {
   models.Inputs = require("./inputs_inputs")(sequelize, DataTypes);
   models.Outputs = require("./outputs_outputs")(sequelize, DataTypes);
   models.Report = require("./reports.model")(sequelize, DataTypes);
+  models.Setting = require("./settings.model")(sequelize, DataTypes);
 
   // Pivot tables
-  models.UserRole = sequelize.define("UserRole", {}, { tableName: "user_roles", timestamps: false });
   models.RolesPermissions = sequelize.define("RolesPermissions", {}, { tableName: "roles_permissions", timestamps: false });
 
   // Associations
-  models.User.belongsToMany(models.Role, { through: models.UserRole, foreignKey: "user_id", otherKey: "role_id" });
-  models.Role.belongsToMany(models.User, { through: models.UserRole, foreignKey: "role_id", otherKey: "user_id" });
+  models.User.belongsTo(models.Role, { foreignKey: "role_id" });
+  models.Role.hasMany(models.User, { foreignKey: "role_id" });
   models.Role.belongsToMany(models.Permission, { through: models.RolesPermissions, foreignKey: "role_id", otherKey: "permission_id" });
   models.Permission.belongsToMany(models.Role, { through: models.RolesPermissions, foreignKey: "permission_id", otherKey: "role_id" });
   models.RptAlarms.belongsTo(models.SystemAlarms, { as: "system_alarms", foreignKey: "alarm_id", targetKey: "number" });

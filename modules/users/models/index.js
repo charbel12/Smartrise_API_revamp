@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { User, UserRole, Role } = require('../../../database/models');
+const { User, Role } = require('../../../database/models');
 const salt = 10;
 
 module.exports = {
@@ -12,7 +12,8 @@ module.exports = {
                 middle_name,
                 contact_number,
                 email,
-                status
+                status,
+                role_id
             } = req.body.details;
 
             const existingUser = await User.findOne({ where: { username } });
@@ -36,7 +37,8 @@ module.exports = {
                 email,
                 date_created: now,
                 date_modified: now,
-                status
+                status,
+                role_id: role_id || null
             });
 
             return callback(null, res.status(200).json({
@@ -54,8 +56,7 @@ module.exports = {
             const user = await User.findByPk(req.params.id, {
                 include: [{
                     model: Role,
-                    attributes: ['id', 'name'],
-                    through: { attributes: [] }
+                    attributes: ['id', 'name']
                 }]
             });
 
@@ -65,7 +66,6 @@ module.exports = {
                 data: user
             }));
         } catch (err) {
-
             return callback(err, res.status(400).json({ message: err.message }));
         }
     },
@@ -73,7 +73,6 @@ module.exports = {
     async deleteUserById(req, res, callback = null) {
         try {
             const id = req.params.id;
-            await UserRole.destroy({ where: { user_id: id } });
             await User.destroy({ where: { id } });
 
             return callback(null, res.status(200).json({
@@ -106,19 +105,9 @@ module.exports = {
     async updateUserRole(req, res, callback = null) {
         try {
             const id = req.params.id;
-            const now = new Date();
-            const existing = await UserRole.findOne({ where: { user_id: id } });
+            const role_id = req.body.roles;
 
-            if (existing) {
-                await UserRole.update({ role_id: req.body.roles }, { where: { user_id: id } });
-            } else {
-                await UserRole.create({
-                    user_id: id,
-                    role_id: req.body.roles,
-                    date_created: now,
-                    date_modified: now
-                });
-            }
+            await User.update({ role_id, date_modified: new Date() }, { where: { id } });
 
             return callback(null, res.status(200).json({
                 successful: true,
@@ -134,17 +123,21 @@ module.exports = {
         try {
             const id = req.params.id;
 
-            const roles = await Role.findAll({
+            const user = await User.findByPk(id, {
                 include: [{
-                    model: UserRole,
-                    where: { user_id: id }
+                    model: Role,
+                    attributes: ['id', 'name', 'description', 'status', 'display_admin', 'display_customer']
                 }]
             });
+
+            if (!user) {
+                return callback(null, res.status(404).json({ successful: false, message: 'User not found' }));
+            }
 
             return callback(null, res.status(200).json({
                 successful: true,
                 message: null,
-                data: roles
+                data: user.Role || null
             }));
         } catch (err) {
             return callback(err, res.status(403).json({ successful: false, message: err.message }));
@@ -167,7 +160,11 @@ module.exports = {
     async getAllUsers(req, res, callback = null) {
         try {
             const users = await User.findAll({
-                attributes: ['id', 'username', 'first_name', 'last_name', 'contact_number', 'email', 'status']
+                attributes: ['id', 'username', 'first_name', 'last_name', 'contact_number', 'email', 'status', 'role_id'],
+                include: [{
+                    model: Role,
+                    attributes: ['id', 'name']
+                }]
             });
 
             return callback(null, res.status(200).json({
