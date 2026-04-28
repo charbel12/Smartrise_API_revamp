@@ -58,7 +58,7 @@ const groupProxy = async (req, res, next) => {
     const piConfigPath = path.join(__dirname, '..', 'configs', 'pi', 'pi.json');
     const piConfig = JSON.parse(fs.readFileSync(piConfigPath, 'utf8'));
     
-    const group = piConfig.data.find(g => g.GroupID.toLowerCase() === groupId.toLowerCase());
+    const group = piConfig.data.find(g => parseInt(g.GroupID) === parseInt(groupId));
 
     if (!group || !group.location) return next();
     
@@ -91,7 +91,7 @@ const groupProxy = async (req, res, next) => {
       return res.status(502).json({ message: 'Bad Gateway: Could not connect to remote group.' });
     }
   } catch (error) {
-    return res.status(500).json({ message: 'Internal Server Error in proxy.' });
+    return res.status(500).json({ message: 'Internal Server Error in proxy.' , err: error});
   }
 };
 
